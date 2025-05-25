@@ -7,7 +7,8 @@
     <link rel="stylesheet" href="css/Style.css">
     <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
     <script>
-      (function(){emailjs.init("PEG2pXIAjJDxX2z9x"); // Your EmailJS User ID
+      (function(){
+        emailjs.init("OGTQ8lEqD_e-k8l0g"); // <-- Your EmailJS User ID
       })();
     </script>
     <style>
@@ -230,8 +231,8 @@
                 delivery_address: "",
                 delivery_time: "",
                 total_price: itemPrice,
-                percentage: 0.6 // Default percentage for delivery fee,
-               
+                phonenumber: "",
+                Email: ""
             };
 
             const deliveryOption = prompt("Choose delivery option:\n1. Pick up\n2. Delivery");
@@ -243,7 +244,9 @@
                 orderDetails.area = prompt("Enter your area:");
                 orderDetails.street = prompt("Enter your street:");
                 orderDetails.address = prompt("Enter your address:");
-            
+                orderDetails.place = prompt("Enter your place (optional):");
+                orderDetails.phonenumber = prompt("Enter your phone number:");
+                orderDetails.Email = prompt("Enter your email:");
 
                 alert(
                     `Order Summary:\n` +
@@ -257,12 +260,16 @@
                     `Street: ${orderDetails.street}\n` +
                     `Address: ${orderDetails.address}\n` +
                     `Place: ${orderDetails.place}\n` +
-                    `Total Price (with pickup): #${orderDetails.total_price}` 
+                    `Phone number: ${orderDetails.phonenumber}\n` +
+                    `Email: ${orderDetails.Email}\n` +
+                    `Total Price (with pickup): #${orderDetails.total_price}`
                 );
                 sendOrderToAdmin(orderDetails);
             } else if (deliveryOption === "2") {
                 orderDetails.delivery_option = "Delivery";
                 orderDetails.delivery_address = prompt("Enter your delivery address:");
+                orderDetails.phonenumber = prompt("Enter your phone number:");
+                orderDetails.Email = prompt("Enter your email:");
                 const deliveryTime = prompt("We deliver within 24 hours.\n1. Two days\n2. Three days");
                 orderDetails.delivery_time = deliveryTime === "1" ? "2 days" : "3 days";
                 let deliveryFee = deliveryTime === "1" ? itemPrice * 0.4 : itemPrice * 0.3;
@@ -274,6 +281,8 @@
                     `Price: #${orderDetails.item_price}\n` +
                     `Option: ${orderDetails.delivery_option}\n` +
                     `Delivery Address: ${orderDetails.delivery_address}\n` +
+                    `Phone number: ${orderDetails.phonenumber}\n` +
+                    `Email: ${orderDetails.Email}\n` +
                     `Delivery Time: ${orderDetails.delivery_time}\n` +
                     `Total Price (with delivery): #${orderDetails.total_price}`
                 );
@@ -308,7 +317,9 @@
                 place: "",
                 delivery_address: "",
                 delivery_time: "",
-                total_price: total
+                total_price: total,
+                phonenumber: "",
+                Email: ""
             };
             if (deliveryOption === "1") {
                 orderDetails.delivery_option = "Pick up";
@@ -319,11 +330,15 @@
                 orderDetails.street = prompt("Enter your street:");
                 orderDetails.address = prompt("Enter your address:");
                 orderDetails.place = prompt("Enter your place (optional):");
+                orderDetails.phonenumber = prompt("Enter your phone number:");
+                orderDetails.Email = prompt("Enter your email:");
                 alert(`Your order will be ready for pickup at ${orderDetails.pickup_location} in ${orderDetails.pickup_time}.`);
                 sendOrderToAdmin(orderDetails);
             } else if (deliveryOption === "2") {
                 orderDetails.delivery_option = "Delivery";
                 orderDetails.delivery_address = prompt("Enter your delivery address:");
+                orderDetails.phonenumber = prompt("Enter your phone number:");
+                orderDetails.Email = prompt("Enter your email:");
                 const deliveryTime = prompt("We deliver within 24 hours.\n1. Two days\n2. Three days");
                 orderDetails.delivery_time = deliveryTime === "1" ? "2 days" : "3 days";
                 let deliveryFee = deliveryTime === "1" ? total * 0.4 : total * 0.3;
@@ -337,7 +352,7 @@
 
         // Send order to admin via EmailJS (no backend needed)
         function sendOrderToAdmin(orderDetails) {
-            emailjs.send("service_2axaypi", "template_z86v2us", orderDetails)
+            emailjs.send("service_0jx7abq", "template_c1fw35l", orderDetails)
             .then(function(response) {
                 alert("Order sent to admin!");
             }, function(error) {
