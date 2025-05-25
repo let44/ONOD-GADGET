@@ -9,7 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
     <script>
       (function(){
-        emailjs.init("OGTQ8lEqD_e-k8l0g"); // <-- Your EmailJS User ID
+        emailjs.init("OGTQ8lEqD_e-k8l0g");
       })();
     </script>
     <style>
@@ -19,7 +19,6 @@
             margin: 0;
             padding: 0;
             animation: fadeIn 10s;
-        
         }
         @keyframes fadeIn {
             from { opacity: 0; }
@@ -238,7 +237,8 @@
                 delivery_time: "",
                 total_price: itemPrice,
                 phonenumber: "",
-                Email: ""
+                Email: "",
+                payment_method: ""
             };
 
             const deliveryOption = prompt("Choose delivery option:\n1. Pick up\n2. Delivery");
@@ -253,6 +253,10 @@
                 orderDetails.place = prompt("Enter your place (optional):");
                 orderDetails.phonenumber = prompt("Enter your phone number:");
                 orderDetails.Email = prompt("Enter your email:");
+                orderDetails.payment_method = prompt("Choose payment method:\n1. Pay on Pickup\n2. Bank Transfer") === "1" ? "Pay on Pickup" : "Bank Transfer";
+                if (orderDetails.payment_method === "Bank Transfer") {
+                    alert('Pay to this account: 9138154963 OPay Bank');
+                }
 
                 alert(
                     `Order Summary:\n` +
@@ -268,6 +272,7 @@
                     `Place: ${orderDetails.place}\n` +
                     `Phone number: ${orderDetails.phonenumber}\n` +
                     `Email: ${orderDetails.Email}\n` +
+                    `Payment Method: ${orderDetails.payment_method}\n` +
                     `Total Price (with pickup): #${orderDetails.total_price}`
                 );
                 sendOrderToAdmin(orderDetails);
@@ -280,6 +285,10 @@
                 orderDetails.delivery_time = deliveryTime === "1" ? "2 days" : "3 days";
                 let deliveryFee = deliveryTime === "1" ? itemPrice * 0.4 : itemPrice * 0.3;
                 orderDetails.total_price = itemPrice + deliveryFee;
+                orderDetails.payment_method = prompt("Choose payment method:\n1. Pay on Delivery\n2. Bank Transfer") === "1" ? "Pay on Delivery" : "Bank Transfer";
+                if (orderDetails.payment_method === "Bank Transfer") {
+                    alert('Pay to this account: 9138154963 OPay Bank');
+                }
 
                 alert(
                     `Order Summary:\n` +
@@ -290,6 +299,7 @@
                     `Phone number: ${orderDetails.phonenumber}\n` +
                     `Email: ${orderDetails.Email}\n` +
                     `Delivery Time: ${orderDetails.delivery_time}\n` +
+                    `Payment Method: ${orderDetails.payment_method}\n` +
                     `Total Price (with delivery): #${orderDetails.total_price}`
                 );
                 sendOrderToAdmin(orderDetails);
@@ -325,7 +335,8 @@
                 delivery_time: "",
                 total_price: total,
                 phonenumber: "",
-                Email: ""
+                Email: "",
+                payment_method: ""
             };
             if (deliveryOption === "1") {
                 orderDetails.delivery_option = "Pick up";
@@ -338,7 +349,14 @@
                 orderDetails.place = prompt("Enter your place (optional):");
                 orderDetails.phonenumber = prompt("Enter your phone number:");
                 orderDetails.Email = prompt("Enter your email:");
-                alert(`Your order will be ready for pickup at ${orderDetails.pickup_location} in ${orderDetails.pickup_time}.`);
+                orderDetails.payment_method = prompt("Choose payment method:\n1. Pay on Pickup\n2. Bank Transfer") === "1" ? "Pay on Pickup" : "Bank Transfer";
+                if (orderDetails.payment_method === "Bank Transfer") {
+                    alert('Pay to this account: 9138154963 OPay Bank');
+                }
+                alert(
+                    `Your order will be ready for pickup at ${orderDetails.pickup_location} in ${orderDetails.pickup_time}.\n` +
+                    `Payment Method: ${orderDetails.payment_method}`
+                );
                 sendOrderToAdmin(orderDetails);
             } else if (deliveryOption === "2") {
                 orderDetails.delivery_option = "Delivery";
@@ -349,7 +367,14 @@
                 orderDetails.delivery_time = deliveryTime === "1" ? "2 days" : "3 days";
                 let deliveryFee = deliveryTime === "1" ? total * 0.4 : total * 0.3;
                 orderDetails.total_price = total + deliveryFee;
-                alert(`Your order will be delivered to ${orderDetails.delivery_address} in ${orderDetails.delivery_time}.`);
+                orderDetails.payment_method = prompt("Choose payment method:\n1. Pay on Delivery\n2. Bank Transfer") === "1" ? "Pay on Delivery" : "Bank Transfer";
+                if (orderDetails.payment_method === "Bank Transfer") {
+                    alert('Pay to this account: 9138154963 OPay Bank');
+                }
+                alert(
+                    `Your order will be delivered to ${orderDetails.delivery_address} in ${orderDetails.delivery_time}.\n` +
+                    `Payment Method: ${orderDetails.payment_method}`
+                );
                 sendOrderToAdmin(orderDetails);
             } else {
                 alert("Invalid option. Please choose 1 for pickup or 2 for delivery.");
@@ -361,8 +386,31 @@
             emailjs.send("service_0jx7abq", "template_c1fw35l", orderDetails)
             .then(function(response) {
                 alert("Order sent to admin!");
+                sendOrderToUser(orderDetails);
             }, function(error) {
                 alert("Failed to send order to admin.");
+                console.error(error);
+            });
+        } 
+
+        // Send order confirmation to user using another EmailJS service/template
+        function sendOrderToUser(orderDetails) {
+            emailjs.send(
+                "service_0jx7abq",
+                "template_1qn546l",
+                {
+                    to_email: orderDetails.Email,
+                    item_name: orderDetails.item_name,
+                    item_price: orderDetails.item_price,
+                    delivery_option: orderDetails.delivery_option,
+                    total_price: orderDetails.total_price,
+                    payment_method: orderDetails.payment_method
+                }
+            )
+            .then(function(response) {
+                alert("Order confirmation sent to your email!");
+            }, function(error) {
+                alert("Failed to send confirmation email.");
                 console.error(error);
             });
         }
