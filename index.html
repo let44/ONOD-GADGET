@@ -284,24 +284,96 @@
         });
     }
 
-    function checkout() {
-        let cart = JSON.parse(localStorage.getItem('cart')) || [];
-        if (cart.length === 0) {
-            alert("Your cart is empty!");
-            return;
+    function checkout(itemName, pickupTotal, deliveryTotal) {
+         const choice = prompt(`Do you want to pick up or have it delivered? \n1. Pick up\n2. Delivery:`);
+        let state, area, street, phone, email, address, selectedPickup;
+        if (choice === '1') {
+            state = prompt('Enter your state (Lagos, Abuja, Port Harcourt, Ibadan):');
+            let pickupLocations = '';
+            if (state && state.toLowerCase() === 'lagos') {
+                pickupLocations = 'Ikeja, Lekki, Victoria Island, Ikeja GRA';
+            } else if (state && state.toLowerCase() === 'abuja') {
+                pickupLocations = 'Wuse, Garki, Maitama, Asokoro';
+            } else if (state && state.toLowerCase() === 'port harcourt') {
+                pickupLocations = 'GRA, Old GRA, New GRA, Rumuomoi';
+            } else if (state && state.toLowerCase() === 'ibadan') {
+                pickupLocations = 'Jericho, Bodija, Dugbe, Agodi';
+            } else {
+                alert('Pickup is not available in your state.');
+                return;
+            }
+            alert(`Available pickup locations in ${state}:\n${pickupLocations}`);
+            area = prompt('Enter your area:');
+            street = prompt('Enter your street:');
+            phone = prompt('Enter your phone number:');
+            if (!phone || phone.length < 10) {
+                alert('Please enter a valid phone number.');
+                return;
+            }
+            email = prompt('Enter your email address:');
+            if (!email || !email.includes('@')) {
+                alert('Please enter a valid email address.');
+                return;
+            }
+            selectedPickup = pickupLocations.split(',')[0].trim();
+            alert(`You have chosen to pick up ${itemName}.\nTotal: #${pickupTotal.toLocaleString()}\nState: ${state}\nArea: ${area}\nStreet: ${street}\nPickup Location: ${selectedPickup}\nPhone: ${phone}\nEmail: ${email}`);
+
+            sendOrderToEmailJS({
+                type: 'Pickup',
+                item: itemName,
+                state: state,
+                area: area,
+                street: street,
+                pickup_location: selectedPickup,
+                phone: phone,
+                email: email,
+                total: pickupTotal
+            });
+
+        } else if (choice === '2') {
+            state = prompt('Enter your state:');
+            area = prompt('Enter your area:');
+            street = prompt('Enter your street:');
+            address = prompt('Enter your delivery address:');
+            phone = prompt('Enter your phone number:');
+            if (!phone || phone.length < 10) {
+                alert('Please enter a valid phone number.');
+                return;
+            }
+            email = prompt('Enter your email address:');
+            if (!email || !email.includes('@')) {
+                alert('Please enter a valid email address.');
+                return;
+            }
+            alert(`You have chosen delivery for ${itemName}.\nTotal: #${deliveryTotal.toLocaleString()}\nState: ${state}\nArea: ${area}\nStreet: ${street}\nAddress: ${address}\nPhone: ${phone}\nEmail: ${email}`);
+
+            sendOrderToEmailJS({
+                type: 'Delivery',
+                item: itemName,
+                state: state,
+                area: area,
+                street: street,
+                address: address,
+                phone: phone,
+                email: email,
+                total: deliveryTotal
+            });
+
+        } else {
+            alert('Invalid choice. Please try again.');
         }
-        let summary = "Order Summary:\n";
-        let total = 0;
-        cart.forEach(item => {
-            summary += `${item.name} - #${item.price.toLocaleString()}\n`;
-            total += Number(item.price);
-        });
-        summary += `Total: #${total.toLocaleString()}`;
-        alert(summary);
-        // You can add order submission logic here
     }
 
-    window.onload = renderCart;
+    function sendOrderToEmailJS(order) {
+        emailjs.send("service_0jx7abq", "template_c1fw35l", order)
+        .then(function(response) {
+            alert("Order sent! You will be contacted soon.");
+        }, function(error) {
+            alert("Order could not be sent. Please try again.");
+        });
+    }
+       
+
 
     function buyNow(itemName, pickupTotal, deliveryTotal) {
         const choice = prompt(`Do you want to pick up or have it delivered? \n1. Pick up\n2. Delivery:`);
