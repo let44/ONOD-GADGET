@@ -2,13 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Phone Gadget Shop</title>
+    <title>Ongod Gadget Shop</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f4f4f4; }
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f4f4f4; animation: fadein 8s;}
+        @keyframes fadein {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
         .container { max-width: 400px; margin: 60px auto; background: #fff; padding: 30px 20px 20px 20px; border-radius: 8px; box-shadow: 0 2px 8px #0001; }
         h2 { text-align: center; margin-bottom: 20px; }
-        input, button { width: 100%; padding: 10px; margin: 10px 0 0 0; border-radius: 5px; border: 1px solid #ddd; font-size: 16px; box-sizing: border-box; }
+        input, select, button { width: 100%; padding: 10px; margin: 10px 0 0 0; border-radius: 5px; border: 1px solid #ddd; font-size: 16px; box-sizing: border-box; }
         button { background: #28a745; color: #fff; border: none; margin-bottom: 10px; cursor: pointer; transition: background 0.2s; }
         button:hover { background: #218838; }
         .error { color: #d00; text-align: center; margin-bottom: 10px; }
@@ -83,7 +87,14 @@
         <input type="text" id="regName" placeholder="Full Name" required>
         <input type="email" id="regEmail" placeholder="Email" required>
         <input type="password" id="regPassword" placeholder="Password" required>
-        <input type="text" id="regState" placeholder="State" required>
+        <input type="text" id="regPhone" placeholder="Phone Number" required>
+        <select id="regState" required>
+            <option value="">Select State</option>
+            <option value="Lagos">Lagos</option>
+            <option value="Abuja">Abuja</option>
+            <option value="Ogun">Ogun</option>
+            <!-- Add more states as needed -->
+        </select>
         <input type="text" id="regArea" placeholder="Area" required>
         <input type="text" id="regStreet" placeholder="Street" required>
         <button onclick="register()">Register</button>
@@ -97,7 +108,7 @@
         </div>
         <header>
             <div class="logo">
-                <img src="logo.png" alt="Phone Gadget Logo">
+                <img src="logo.png" alt="Ongod Gadget Logo">
             </div>
             <span class="notification-bell" onclick="showNotifications()" title="Notifications">
                 <i class="fa fa-bell"></i>
@@ -204,7 +215,7 @@
                         <button onclick="addToCart('Samsung Galaxy A54', 180000)">Add to Cart</button>
                     </div>
                     <div class="gadget-item">
-                        <img src="phone 10.jpeg" alt="iPhone 13 Pro Max">
+                        <img src="phone10.jpeg" alt="iPhone 13 Pro Max">
                         <h3>iPhone 13 Pro Max</h3>
                         <div class="prices">
                             <span>Pickup Total: #540,000</span>
@@ -214,6 +225,19 @@
                         <button onclick="buyNow('iPhone 13 Pro Max', 540000, 630000)">Buy Now</button>
                         <br>
                         <button onclick="addToCart('iPhone 13 Pro Max', 450000)">Add to Cart</button>
+                    </div>
+                    <!-- New Gadget: Realme GT 5 Pro -->
+                    <div class="gadget-item">
+                        <img src="realmegt5pro.jpg" alt="Realme GT 5 Pro">
+                        <h3>Realme GT 5 Pro</h3>
+                        <div class="prices">
+                            <span>Pickup Total: #350,000</span>
+                            <br>
+                            <span>Delivery Total: #400,000</span>
+                        </div>
+                        <button onclick="buyNow('Realme GT 5 Pro', 350000, 400000)">Buy Now</button>
+                        <br>
+                        <button onclick="addToCart('Realme GT 5 Pro', 300000)">Add to Cart</button>
                     </div>
                 </div>
                 <h2 class="section-title">Latest Laptops</h2>
@@ -329,7 +353,7 @@
                 <a href="mailto:ayomideoluniyi49@gmail.com">ayomideoluniyi49@gmail.com</a>
         </address>
         <footer>
-            <p>&copy; 2025 Phone Gadget. All rights reserved.</p>
+            <p>&copy; 2025 Ongod Gadget. All rights reserved.</p>
         </footer>
     </div>
     <!-- Notification Modal -->
@@ -365,9 +389,296 @@
         <button onclick="closePaymentModal()" style="margin-top:14px;margin-left:10px;padding:8px 20px;background:#dc3545;color:#fff;border:none;border-radius:4px;cursor:pointer;">Cancel</button>
       </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
     <script>
- const _0x4d476e=_0x51c9;(function(_0x2ca70b,_0x55ef48){const _0x104040=_0x51c9,_0x3be5d6=_0x2ca70b();while(!![]){try{const _0x25aee5=parseInt(_0x104040(0x116))/0x1+parseInt(_0x104040(0x11e))/0x2*(-parseInt(_0x104040(0x12a))/0x3)+parseInt(_0x104040(0x114))/0x4+-parseInt(_0x104040(0xca))/0x5*(parseInt(_0x104040(0xff))/0x6)+-parseInt(_0x104040(0xd7))/0x7+parseInt(_0x104040(0xdd))/0x8+-parseInt(_0x104040(0xdb))/0x9*(parseInt(_0x104040(0xc8))/0xa);if(_0x25aee5===_0x55ef48)break;else _0x3be5d6['push'](_0x3be5d6['shift']());}catch(_0x2cedc4){_0x3be5d6['push'](_0x3be5d6['shift']());}}}(_0x5ab6,0xb7817));const SHEETBEST_URL='https://api.sheetbest.com/sheets/6b0edbce-49b7-4baf-8bb6-a5c1f6879fa2';function showLogin(){const _0x4d48b5=_0x51c9;document['getElementById'](_0x4d48b5(0x12d))[_0x4d48b5(0x125)][_0x4d48b5(0x10a)]('hidden'),document[_0x4d48b5(0x11b)](_0x4d48b5(0x100))['classList'][_0x4d48b5(0x11c)](_0x4d48b5(0xf7)),document[_0x4d48b5(0x11b)]('mainPage')[_0x4d48b5(0x125)][_0x4d48b5(0x11c)](_0x4d48b5(0xf7));}function _0x51c9(_0x426e9a,_0x283988){const _0x5ab6f0=_0x5ab6();return _0x51c9=function(_0x51c95d,_0x2827b0){_0x51c95d=_0x51c95d-0xc6;let _0x8bed81=_0x5ab6f0[_0x51c95d];return _0x8bed81;},_0x51c9(_0x426e9a,_0x283988);}function showRegister(){const _0x31a8ba=_0x51c9;document[_0x31a8ba(0x11b)]('loginPage')[_0x31a8ba(0x125)][_0x31a8ba(0x11c)](_0x31a8ba(0xf7)),document['getElementById'](_0x31a8ba(0x100))[_0x31a8ba(0x125)]['remove']('hidden'),document[_0x31a8ba(0x11b)]('mainPage')[_0x31a8ba(0x125)][_0x31a8ba(0x11c)](_0x31a8ba(0xf7));}function showMain(){const _0x2801cb=_0x51c9;document[_0x2801cb(0x11b)]('loginPage')[_0x2801cb(0x125)][_0x2801cb(0x11c)](_0x2801cb(0xf7)),document[_0x2801cb(0x11b)]('registerPage')[_0x2801cb(0x125)]['add']('hidden'),document['getElementById'](_0x2801cb(0x11f))[_0x2801cb(0x125)][_0x2801cb(0x10a)](_0x2801cb(0xf7));}function getCurrentUser(){const _0x12f9d2=_0x51c9;return JSON[_0x12f9d2(0x112)](localStorage['getItem'](_0x12f9d2(0xcf)));}function setCurrentUser(_0x1423c0){const _0x4c2341=_0x51c9;localStorage[_0x4c2341(0x105)](_0x4c2341(0xcf),JSON[_0x4c2341(0xfd)](_0x1423c0));}function login(){const _0x41a89d=_0x51c9,_0x22cf5c=document[_0x41a89d(0x11b)](_0x41a89d(0x122))[_0x41a89d(0xf5)]['trim']()[_0x41a89d(0xcc)](),_0x46c8c0=document[_0x41a89d(0x11b)](_0x41a89d(0x106))[_0x41a89d(0xf5)],_0x5bd209=JSON['parse'](localStorage[_0x41a89d(0x133)]('user_'+_0x22cf5c));if(!_0x5bd209||_0x5bd209[_0x41a89d(0xf1)]!==_0x46c8c0){document[_0x41a89d(0x11b)]('loginError')[_0x41a89d(0xf4)]=_0x41a89d(0xe0);return;}setCurrentUser(_0x5bd209),showMain(),onMainLoad();}function register(){const _0x229dd0=_0x51c9,_0x1a6fea=document[_0x229dd0(0x11b)](_0x229dd0(0xdf))[_0x229dd0(0xf5)]['trim'](),_0x1c5ef7=document[_0x229dd0(0x11b)](_0x229dd0(0x12e))[_0x229dd0(0xf5)][_0x229dd0(0xd8)]()[_0x229dd0(0xcc)](),_0x48375c=document['getElementById'](_0x229dd0(0x110))['value'],_0x3c3cb0=document[_0x229dd0(0x11b)](_0x229dd0(0xe9))['value'][_0x229dd0(0xd8)](),_0x4fec6c=document[_0x229dd0(0x11b)]('regArea')[_0x229dd0(0xf5)][_0x229dd0(0xd8)](),_0x34ab45=document[_0x229dd0(0x11b)](_0x229dd0(0x111))[_0x229dd0(0xf5)][_0x229dd0(0xd8)]();if(!_0x1a6fea||!_0x1c5ef7||!_0x48375c||!_0x3c3cb0||!_0x4fec6c||!_0x34ab45){document[_0x229dd0(0x11b)]('registerError')['textContent']='Please\x20fill\x20all\x20fields.';return;}if(localStorage[_0x229dd0(0x133)]('user_'+_0x1c5ef7)){document[_0x229dd0(0x11b)](_0x229dd0(0xe6))[_0x229dd0(0xf4)]=_0x229dd0(0xfa);return;}const _0x494797={'name':_0x1a6fea,'email':_0x1c5ef7,'password':_0x48375c,'state':_0x3c3cb0,'area':_0x4fec6c,'street':_0x34ab45};localStorage['setItem'](_0x229dd0(0xf3)+_0x1c5ef7,JSON[_0x229dd0(0xfd)](_0x494797)),setCurrentUser(_0x494797),showMain(),onMainLoad();}function logout(){localStorage['removeItem']('user'),showLogin();}function onMainLoad(){const _0x4c7dc3=_0x51c9,_0x44db10=getCurrentUser();if(!_0x44db10){showLogin();return;}document[_0x4c7dc3(0x11b)](_0x4c7dc3(0x121))[_0x4c7dc3(0xf4)]=_0x44db10[_0x4c7dc3(0xd4)],renderCart(),checkNotifications(),setInterval(checkNotifications,0x7530);}function addToCart(_0x2adcd4,_0x29799e){const _0x42e914=_0x51c9;let _0x4892a2=JSON[_0x42e914(0x112)](localStorage[_0x42e914(0x133)](_0x42e914(0xec)))||[];_0x4892a2['push']({'name':_0x2adcd4,'price':_0x29799e}),localStorage['setItem']('cart',JSON['stringify'](_0x4892a2)),renderCart();}function removeFromCart(_0x33e123){const _0x4d7278=_0x51c9;let _0xd4c71=JSON[_0x4d7278(0x112)](localStorage[_0x4d7278(0x133)](_0x4d7278(0xec)))||[];_0xd4c71['splice'](_0x33e123,0x1),localStorage[_0x4d7278(0x105)](_0x4d7278(0xec),JSON[_0x4d7278(0xfd)](_0xd4c71)),renderCart();}function clearCart(){const _0x293b74=_0x51c9;localStorage[_0x293b74(0xf2)](_0x293b74(0xec)),renderCart();}function renderCart(){const _0x44b242=_0x51c9,_0x1cc3a2=document['getElementById'](_0x44b242(0x124));_0x1cc3a2[_0x44b242(0xe5)]='';let _0x2e898d=JSON[_0x44b242(0x112)](localStorage[_0x44b242(0x133)]('cart'))||[];_0x2e898d[_0x44b242(0x134)]((_0x5c3df0,_0x22b04d)=>{const _0x3807e0=_0x44b242,_0x4f42bb=document['createElement']('li');_0x4f42bb[_0x3807e0(0xf4)]=_0x5c3df0[_0x3807e0(0xd4)]+_0x3807e0(0x131)+_0x5c3df0[_0x3807e0(0x104)]['toLocaleString']();const _0x4613c0=document['createElement'](_0x3807e0(0x117));_0x4613c0[_0x3807e0(0xf4)]='Remove',_0x4613c0[_0x3807e0(0xc6)][_0x3807e0(0x137)]='10px',_0x4613c0[_0x3807e0(0x118)]=()=>removeFromCart(_0x22b04d),_0x4f42bb['appendChild'](_0x4613c0),_0x1cc3a2[_0x3807e0(0xf9)](_0x4f42bb);});}function checkoutCart(){const _0xbccde7=_0x51c9,_0x4d9908=getCurrentUser();let _0x4825ba=JSON[_0xbccde7(0x112)](localStorage[_0xbccde7(0x133)](_0xbccde7(0xec)))||[];if(_0x4825ba[_0xbccde7(0x11a)]===0x0){alert(_0xbccde7(0x10b));return;}let _0x533ce3=prompt(_0xbccde7(0xe4));if(!_0x533ce3||_0x533ce3[_0xbccde7(0x11a)]<0xa){alert(_0xbccde7(0x127));return;}window[_0xbccde7(0x12f)]={'user':_0x4d9908,'cart':_0x4825ba,'phone':_0x533ce3},showPaymentModal();}function showPaymentModal(){const _0x233bea=_0x51c9;document['getElementById'](_0x233bea(0x109))[_0x233bea(0xc6)][_0x233bea(0xfb)]=_0x233bea(0xd3),document[_0x233bea(0xe3)](_0x233bea(0xde))[_0x233bea(0x134)](_0x1e1186=>{const _0x1d115d=_0x233bea;_0x1e1186[_0x1d115d(0xe7)]=function(){const _0x1db7c4=_0x1d115d;document[_0x1db7c4(0x11b)](_0x1db7c4(0x135))[_0x1db7c4(0xc6)][_0x1db7c4(0xfb)]=this[_0x1db7c4(0xf5)]===_0x1db7c4(0x102)?'block':_0x1db7c4(0xe2),document[_0x1db7c4(0x11b)](_0x1db7c4(0x108))[_0x1db7c4(0xc6)][_0x1db7c4(0xfb)]=this[_0x1db7c4(0xf5)]===_0x1db7c4(0xef)?_0x1db7c4(0xd3):_0x1db7c4(0xe2);};}),document[_0x233bea(0x11b)](_0x233bea(0xeb))['onclick']=completePayment;}function closePaymentModal(){const _0x2d91c1=_0x51c9;document[_0x2d91c1(0x11b)](_0x2d91c1(0x109))['style'][_0x2d91c1(0xfb)]=_0x2d91c1(0xe2),window[_0x2d91c1(0x12f)]=null;}function completePayment(){const _0x1c194d=_0x51c9,_0xe9803c=document[_0x1c194d(0x115)]('input[name=\x22paymethod\x22]:checked')[_0x1c194d(0xf5)];if(_0xe9803c===_0x1c194d(0x102)){const _0x533468=document[_0x1c194d(0x11b)]('cardNumber')[_0x1c194d(0xf5)]['trim'](),_0x1e2c3f=document[_0x1c194d(0x11b)]('cardExpiry')['value']['trim'](),_0x4377ef=document['getElementById']('cardCVV')['value'][_0x1c194d(0xd8)]();if(!_0x533468||!_0x1e2c3f||!_0x4377ef){alert('Please\x20fill\x20in\x20all\x20card\x20details.');return;}}const {user:_0x528934,cart:_0x3c2b56,phone:_0x5e78f3}=window[_0x1c194d(0x12f)];let _0x1ddf73=_0x528934[_0x1c194d(0xd5)],_0x11564=_0x3c2b56[_0x1c194d(0xcd)](_0x690b88=>_0x690b88[_0x1c194d(0xd4)]+_0x1c194d(0x131)+_0x690b88[_0x1c194d(0x104)][_0x1c194d(0x103)]())[_0x1c194d(0x10f)]('\x0a'),_0x68c345={'date':new Date()[_0x1c194d(0x103)](),'type':'Cart\x20Checkout','name':_0x528934[_0x1c194d(0xd4)],'phone':_0x5e78f3,'email':_0x1ddf73,'items':_0x11564,'details':_0x1c194d(0xdc)+_0x528934['state']+_0x1c194d(0x11d)+_0x528934['area']+',\x20Street:\x20'+_0x528934[_0x1c194d(0xfc)],'total':_0x3c2b56[_0x1c194d(0xfe)]((_0x15d110,_0x4bd5dd)=>_0x15d110+_0x4bd5dd['price'],0x0),'payment_method':_0xe9803c===_0x1c194d(0x102)?_0x1c194d(0xe1):_0x1c194d(0x12b)};const _0x119a3c=encodeURIComponent(_0x68c345[_0x1c194d(0xce)]+'-'+_0x68c345[_0x1c194d(0x129)]),_0x4127e9=_0x1c194d(0xf6)+_0x119a3c;_0x68c345[_0x1c194d(0xd0)]=_0x4127e9,localStorage['setItem'](_0x1c194d(0xf8),_0x1ddf73),sendOrderToSheetBest(_0x68c345,_0x4127e9),clearCart(),closePaymentModal();}function buyNow(_0x27f9c4,_0x5b123b,_0x41b22c){const _0x438217=_0x51c9,_0x19fdee=getCurrentUser(),_0x192728=prompt(_0x438217(0x113));let _0x292120,_0x26f846,_0x1b165f,_0x2d5b6f,_0x3b4673,_0x99c3ba={};if(_0x192728==='1'){_0x292120=prompt(_0x438217(0xe4));if(!_0x292120||_0x292120['length']<0xa){alert(_0x438217(0x127));return;}_0x26f846=_0x19fdee[_0x438217(0xd5)],_0x3b4673=_0x19fdee[_0x438217(0xd4)],_0x2d5b6f=_0x438217(0xdc)+_0x19fdee[_0x438217(0x120)]+_0x438217(0x11d)+_0x19fdee[_0x438217(0xe8)]+',\x20Street:\x20'+_0x19fdee[_0x438217(0xfc)]+_0x438217(0x136)+_0x19fdee['state'],_0x99c3ba={'date':new Date()['toLocaleString'](),'type':'Pickup','name':_0x3b4673,'phone':_0x292120,'email':_0x26f846,'items':_0x27f9c4,'details':_0x2d5b6f,'total':_0x5b123b};}else{if(_0x192728==='2'){_0x1b165f=prompt('Enter\x20your\x20delivery\x20address:'),_0x292120=prompt(_0x438217(0xe4));if(!_0x292120||_0x292120[_0x438217(0x11a)]<0xa){alert(_0x438217(0x127));return;}_0x26f846=_0x19fdee[_0x438217(0xd5)],_0x3b4673=_0x19fdee[_0x438217(0xd4)],_0x2d5b6f='State:\x20'+_0x19fdee['state']+',\x20Area:\x20'+_0x19fdee['area']+_0x438217(0x10d)+_0x19fdee['street']+_0x438217(0x123)+_0x1b165f,_0x99c3ba={'date':new Date()[_0x438217(0x103)](),'type':_0x438217(0x10e),'name':_0x3b4673,'phone':_0x292120,'email':_0x26f846,'items':_0x27f9c4,'details':_0x2d5b6f,'total':_0x41b22c};}else{alert(_0x438217(0xf0));return;}}window[_0x438217(0x12f)]={'order':_0x99c3ba},showPaymentModalBuyNow();}function showPaymentModalBuyNow(){const _0x59714e=_0x51c9;document[_0x59714e(0x11b)](_0x59714e(0x109))[_0x59714e(0xc6)]['display']=_0x59714e(0xd3),document[_0x59714e(0xe3)]('input[name=\x22paymethod\x22]')[_0x59714e(0x134)](_0x47d186=>{const _0x1b593b=_0x59714e;_0x47d186[_0x1b593b(0xe7)]=function(){const _0x488caf=_0x1b593b;document[_0x488caf(0x11b)]('cardFields')[_0x488caf(0xc6)][_0x488caf(0xfb)]=this[_0x488caf(0xf5)]===_0x488caf(0x102)?_0x488caf(0xd3):_0x488caf(0xe2),document[_0x488caf(0x11b)]('transferFields')[_0x488caf(0xc6)][_0x488caf(0xfb)]=this[_0x488caf(0xf5)]==='transfer'?_0x488caf(0xd3):_0x488caf(0xe2);};}),document[_0x59714e(0x11b)](_0x59714e(0xeb))[_0x59714e(0x118)]=completePaymentBuyNow;}function completePaymentBuyNow(){const _0x11df35=_0x51c9,_0x5b7314=document[_0x11df35(0x115)](_0x11df35(0xd1))[_0x11df35(0xf5)];if(_0x5b7314===_0x11df35(0x102)){const _0x14f470=document[_0x11df35(0x11b)](_0x11df35(0xd6))['value']['trim'](),_0x1cb96c=document[_0x11df35(0x11b)](_0x11df35(0xda))[_0x11df35(0xf5)][_0x11df35(0xd8)](),_0x240183=document['getElementById']('cardCVV')['value'][_0x11df35(0xd8)]();if(!_0x14f470||!_0x1cb96c||!_0x240183){alert(_0x11df35(0xd9));return;}}const {order:_0xc7330d}=window[_0x11df35(0x12f)];_0xc7330d[_0x11df35(0x101)]=_0x5b7314===_0x11df35(0x102)?_0x11df35(0xe1):'Transfer';const _0x21088a=encodeURIComponent(_0xc7330d['date']+'-'+_0xc7330d['items']),_0x18cebf=_0x11df35(0xf6)+_0x21088a;_0xc7330d[_0x11df35(0xd0)]=_0x18cebf,localStorage['setItem']('lastOrderEmail',_0xc7330d[_0x11df35(0xd5)]),sendOrderToSheetBest(_0xc7330d,_0x18cebf),closePaymentModal();}function sendOrderToSheetBest(_0x51d660,_0x10a7e7){const _0x2af7fb=_0x51c9;fetch(SHEETBEST_URL,{'method':_0x2af7fb(0x107),'headers':{'Content-Type':_0x2af7fb(0x119)},'body':JSON[_0x2af7fb(0xfd)](_0x51d660)}),fetch(SHEETBEST_URL,{'method':_0x2af7fb(0x107),'headers':{'Content-Type':_0x2af7fb(0x119)},'body':JSON[_0x2af7fb(0xfd)]({'email':_0x51d660[_0x2af7fb(0xd5)],'message':_0x2af7fb(0x130)+_0x51d660[_0x2af7fb(0x129)]+_0x2af7fb(0xed),'date':new Date()[_0x2af7fb(0x103)](),'status':_0x2af7fb(0x128)})}),alert('Order\x20sent!\x20You\x20will\x20be\x20contacted\x20soon.');}let userNotifications=[];function _0x5ab6(){const _0x1a1c4d=['4007192OlAVWc','trim','Please\x20fill\x20in\x20all\x20card\x20details.','cardExpiry','9WdHiQD','State:\x20','5960528bYeBPv','input[name=\x22paymethod\x22]','regName','Invalid\x20email\x20or\x20password.','Card','none','querySelectorAll','Enter\x20your\x20phone\x20number:','innerHTML','registerError','onchange','area','regState','then','completePaymentBtn','cart',')\x20has\x20been\x20received!','<br>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<hr>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20','transfer','Invalid\x20choice.\x20Please\x20try\x20again.','password','removeItem','user_','textContent','value','https://your-tracking-url.com/?order=','hidden','lastOrderEmail','appendChild','Email\x20already\x20registered.','display','street','stringify','reduce','164364bYdpNj','registerPage','payment_method','card','toLocaleString','price','setItem','loginPassword','POST','transferFields','paymentModal','remove','Your\x20cart\x20is\x20empty.','json',',\x20Street:\x20','Delivery','join','regPassword','regStreet','parse','Do\x20you\x20want\x20to\x20pick\x20up\x20or\x20have\x20it\x20delivered?\x20\x0a1.\x20Pick\x20up\x0a2.\x20Delivery:','1378872vyIpWd','querySelector','1238499dbKrNO','button','onclick','application/json','length','getElementById','add',',\x20Area:\x20','30wlEhFA','mainPage','state','userName','loginEmail',',\x20Address:\x20','cart-items','classList','trackModalContent','Please\x20enter\x20a\x20valid\x20phone\x20number.','unread','items','52113BOMXsq','Transfer','trackModal','loginPage','regEmail','_pendingOrder','Your\x20order\x20(','\x20-\x20#','message','getItem','forEach','cardFields',',\x20Pickup:\x20','marginLeft','style','\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20style=\x22margin-bottom:16px;\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<b>Date:</b>\x20','5244710AEwwqY','<br>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<b>Message:</b>\x20','40TfigJa','notification-dot','toLowerCase','map','date','user','tracking_link','input[name=\x22paymethod\x22]:checked','DOMContentLoaded','block','name','email','cardNumber'];_0x5ab6=function(){return _0x1a1c4d;};return _0x5ab6();}function checkNotifications(){const _0x3ba46c=_0x51c9,_0x16ae59=getCurrentUser();if(!_0x16ae59||!_0x16ae59[_0x3ba46c(0xd5)])return;fetch(SHEETBEST_URL)[_0x3ba46c(0xea)](_0x1ef678=>_0x1ef678[_0x3ba46c(0x10c)]())['then'](_0x450f2c=>{const _0x5c4d58=_0x3ba46c;userNotifications=_0x450f2c['filter'](_0x51c0c5=>(_0x51c0c5[_0x5c4d58(0xd5)]||'')[_0x5c4d58(0xcc)]()===_0x16ae59['email'][_0x5c4d58(0xcc)]()&&_0x51c0c5[_0x5c4d58(0x132)]);const _0x2618bc=document[_0x5c4d58(0x11b)](_0x5c4d58(0xcb));_0x2618bc&&(userNotifications[_0x5c4d58(0x11a)]>0x0?(_0x2618bc[_0x5c4d58(0x125)]['add']('active'),_0x2618bc[_0x5c4d58(0xc6)][_0x5c4d58(0xfb)]=_0x5c4d58(0xd3)):(_0x2618bc[_0x5c4d58(0x125)]['remove']('active'),_0x2618bc['style'][_0x5c4d58(0xfb)]='none'));});}function showNotifications(){const _0x4f11fd=_0x51c9;if(userNotifications[_0x4f11fd(0x11a)]===0x0){alert('No\x20new\x20notifications.');return;}let _0x41e5d0='';userNotifications[_0x4f11fd(0x134)](_0xaa2ffc=>{const _0x4012f5=_0x4f11fd;_0x41e5d0+=_0x4012f5(0xc7)+(_0xaa2ffc[_0x4012f5(0xce)]||'')+_0x4012f5(0xc9)+(_0xaa2ffc[_0x4012f5(0x132)]||'')+_0x4012f5(0xee);}),document[_0x4f11fd(0x11b)](_0x4f11fd(0x126))[_0x4f11fd(0xe5)]=_0x41e5d0,document[_0x4f11fd(0x11b)](_0x4f11fd(0x12c))[_0x4f11fd(0xc6)][_0x4f11fd(0xfb)]=_0x4f11fd(0xd3);}function closeTrackModal(){const _0x46a43b=_0x51c9;document[_0x46a43b(0x11b)](_0x46a43b(0x12c))[_0x46a43b(0xc6)][_0x46a43b(0xfb)]=_0x46a43b(0xe2);}window['addEventListener'](_0x4d476e(0xd2),function(){getCurrentUser()?(showMain(),onMainLoad()):showLogin();});
+    // Demo: Available pickup areas by state
+    const AVAILABLE_AREAS = {
+        Lagos: ["Ikeja", "Yaba", "Lekki", "Surulere"],
+        Abuja: ["Garki", "Wuse", "Maitama"],
+        Ogun: ["Abeokuta", "Ota", "Ijebu Ode"],
+        // Add more states and areas as needed
+    };
+
+    function formatDate(dateStr) {
+        if (!dateStr) return '';
+        const d = new Date(dateStr);
+        if (isNaN(d)) return dateStr;
+        return d.toLocaleString('en-GB', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+        });
+    }
+
+    function showLogin() {
+        document.getElementById('loginPage').classList.remove('hidden');
+        document.getElementById('registerPage').classList.add('hidden');
+        document.getElementById('mainPage').classList.add('hidden');
+    }
+    function showRegister() {
+        document.getElementById('loginPage').classList.add('hidden');
+        document.getElementById('registerPage').classList.remove('hidden');
+        document.getElementById('mainPage').classList.add('hidden');
+    }
+    function showMain() {
+        document.getElementById('loginPage').classList.add('hidden');
+        document.getElementById('registerPage').classList.add('hidden');
+        document.getElementById('mainPage').classList.remove('hidden');
+    }
+    function getCurrentUser() {
+        return JSON.parse(localStorage.getItem('user'));
+    }
+    function setCurrentUser(user) {
+        localStorage.setItem('user', JSON.stringify(user));
+    }
+    function login() {
+        const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+        const password = document.getElementById('loginPassword').value;
+        const user = JSON.parse(localStorage.getItem('user_' + email));
+        if (!user || user.password !== password) {
+            document.getElementById('loginError').textContent = 'Invalid email or password.';
+            return;
+        }
+        setCurrentUser(user);
+        showMain();
+        onMainLoad();
+    }
+    function register() {
+        const name = document.getElementById('regName').value.trim();
+        const email = document.getElementById('regEmail').value.trim().toLowerCase();
+        const password = document.getElementById('regPassword').value;
+        const phone = document.getElementById('regPhone').value.trim();
+        const state = document.getElementById('regState').value;
+        const area = document.getElementById('regArea').value.trim();
+        const street = document.getElementById('regStreet').value.trim();
+        if (!name || !email || !password || !phone || !state || !area || !street) {
+            document.getElementById('registerError').textContent = 'Please fill all fields.';
+            return;
+        }
+        if (phone.length < 10) {
+            document.getElementById('registerError').textContent = 'Please enter a valid phone number.';
+            return;
+        }
+        if (localStorage.getItem('user_' + email)) {
+            document.getElementById('registerError').textContent = 'Email already registered.';
+            return;
+        }
+        const user = { name, email, password, phone, state, area, street };
+        localStorage.setItem('user_' + email, JSON.stringify(user));
+        setCurrentUser(user);
+        showMain();
+        onMainLoad();
+    }
+    function logout() {
+        localStorage.removeItem('user');
+        showLogin();
+    }
+
+    function addToCart(name, price) {
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        cart.push({ name, price });
+        localStorage.setItem('cart', JSON.stringify(cart));
+        renderCart();
+    }
+    function removeFromCart(index) {
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        cart.splice(index, 1);
+        localStorage.setItem('cart', JSON.stringify(cart));
+        renderCart();
+    }
+    function clearCart() {
+        localStorage.removeItem('cart');
+        renderCart();
+    }
+    function renderCart() {
+        const cartList = document.getElementById('cart-items');
+        cartList.innerHTML = '';
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        cart.forEach((item, i) => {
+            const li = document.createElement('li');
+            li.textContent = item.name + ' - #' + item.price.toLocaleString();
+            const btn = document.createElement('button');
+            btn.textContent = 'Remove';
+            btn.style.marginLeft = '10px';
+            btn.onclick = () => removeFromCart(i);
+            li.appendChild(btn);
+            cartList.appendChild(li);
+        });
+    }
+
+    function checkoutCart() {
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        if (cart.length === 0) {
+            alert('Your cart is empty.');
+            return;
+        }
+        window._pendingOrder = {
+            user: getCurrentUser(),
+            cart
+        };
+        showPaymentModal();
+    }
+    function buyNow(name, pickup, delivery) {
+        const user = getCurrentUser();
+        if (!user) {
+            alert('Please login first.');
+            return;
+        }
+        let choice = prompt('Do you want to pick up or have it delivered?\n1. Pick up\n2. Delivery:');
+        let order = {};
+        if (choice === '1') {
+            // Show available areas for user's state
+            const state = user.state;
+            const availableAreas = AVAILABLE_AREAS[state] || [];
+            if (availableAreas.length === 0) {
+                alert('No pickup areas available for your state.');
+                return;
+            }
+            let areaList = availableAreas.map((a, i) => `${i + 1}. ${a}`).join('\n');
+            let areaChoice = prompt(`Available pickup areas in ${state}:\n${areaList}\nEnter the number of your preferred area:`);
+            let areaIndex = parseInt(areaChoice, 10) - 1;
+            if (isNaN(areaIndex) || areaIndex < 0 || areaIndex >= availableAreas.length) {
+                alert('Invalid area selection.');
+                return;
+            }
+            let selectedArea = availableAreas[areaIndex];
+            order = {
+                date: new Date().toISOString(),
+                type: 'Pickup',
+                name: user.name,
+                phone: user.phone,
+                email: user.email,
+                items: name,
+                details: `State: ${state}, Area: ${selectedArea}`,
+                total: pickup
+            };
+        } else if (choice === '2') {
+            let address = prompt('Enter your delivery address:');
+            order = {
+                date: new Date().toISOString(),
+                type: 'Delivery',
+                name: user.name,
+                phone: user.phone,
+                email: user.email,
+                items: name,
+                details: `State: ${user.state}, Area: ${user.area}, Street: ${user.street}, Address: ${address}`,
+                total: delivery
+            };
+        } else {
+            alert('Invalid choice. Please try again.');
+            return;
+        }
+        window._pendingOrder = { order };
+        showPaymentModalBuyNow();
+    }
+
+    function showPaymentModal() {
+        document.getElementById('paymentModal').style.display = 'block';
+        document.querySelectorAll('input[name="paymethod"]').forEach(radio => {
+            radio.onchange = function() {
+                document.getElementById('cardFields').style.display = this.value === 'card' ? 'block' : 'none';
+                document.getElementById('transferFields').style.display = this.value === 'transfer' ? 'block' : 'none';
+            };
+        });
+        document.getElementById('completePaymentBtn').onclick = completePayment;
+    }
+    function closePaymentModal() {
+        document.getElementById('paymentModal').style.display = 'none';
+        window._pendingOrder = null;
+    }
+    function completePayment() {
+        const paymethod = document.querySelector('input[name="paymethod"]:checked').value;
+        if (paymethod === 'card') {
+            const cardNumber = document.getElementById('cardNumber').value.trim();
+            const cardExpiry = document.getElementById('cardExpiry').value.trim();
+            const cardCVV = document.getElementById('cardCVV').value.trim();
+            if (!cardNumber || !cardExpiry || !cardCVV) {
+                alert('Please fill in all card details.');
+                return;
+            }
+        }
+        clearCart();
+        closePaymentModal();
+        alert('Payment successful! You will be contacted soon.');
+    }
+    function showPaymentModalBuyNow() {
+        document.getElementById('paymentModal').style.display = 'block';
+        document.querySelectorAll('input[name="paymethod"]').forEach(radio => {
+            radio.onchange = function() {
+                document.getElementById('cardFields').style.display = this.value === 'card' ? 'block' : 'none';
+                document.getElementById('transferFields').style.display = this.value === 'transfer' ? 'block' : 'none';
+            };
+        });
+        document.getElementById('completePaymentBtn').onclick = completePaymentBuyNow;
+    }
+    function completePaymentBuyNow() {
+        const paymethod = document.querySelector('input[name="paymethod"]:checked').value;
+        if (paymethod === 'card') {
+            const cardNumber = document.getElementById('cardNumber').value.trim();
+            const cardExpiry = document.getElementById('cardExpiry').value.trim();
+            const cardCVV = document.getElementById('cardCVV').value.trim();
+            if (!cardNumber || !cardExpiry || !cardCVV) {
+                alert('Please fill in all card details.');
+                return;
+            }
+        }
+        closePaymentModal();
+        alert('Payment successful! You will be contacted soon.');
+    }
+
+    let userNotifications = [
+        { date: new Date().toISOString(), message: "Welcome to Ongod Gadget!", unread: true }
+    ];
+    function checkNotifications() {
+        const user = getCurrentUser();
+        if (!user) return;
+        const dot = document.getElementById('notification-dot');
+        if (userNotifications.some(n => n.unread)) {
+            dot.classList.add('active');
+            dot.style.display = 'block';
+        } else {
+            dot.classList.remove('active');
+            dot.style.display = 'none';
+        }
+    }
+    function showNotifications() {
+        if (!userNotifications.length) {
+            alert('No new notifications.');
+            return;
+        }
+        let html = '';
+        userNotifications.forEach(n => {
+            html += `<div style="margin-bottom:16px;">
+                <b>Date:</b> ${formatDate(n.date)}<br>
+                <b>Message:</b> ${n.message}
+                <hr>
+            </div>`;
+            n.unread = false;
+        });
+        document.getElementById('trackModalContent').innerHTML = html;
+        document.getElementById('trackModal').style.display = 'block';
+        checkNotifications();
+    }
+    function closeTrackModal() {
+        document.getElementById('trackModal').style.display = 'none';
+    }
+
+    function onMainLoad() {
+        const user = getCurrentUser();
+        if (!user) {
+            showLogin();
+            return;
+        }
+        document.getElementById('userName').textContent = user.name;
+        renderCart();
+        checkNotifications();
+    }
+
+    window.addEventListener('DOMContentLoaded', function() {
+        getCurrentUser() ? (showMain(), onMainLoad()) : showLogin();
+    });
     </script>
 </body>
 </html>
