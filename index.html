@@ -2,309 +2,405 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <title>Phone Gadget Shop</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phone Gadget</title>
-    <link rel="stylesheet" href="css/Style.css">
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; }
-        header { background-color: #333; color: white; padding: 10px 0; text-align: left; }
-        .logo img { width: 100px; height: 100px; }
-        main { max-width: 1200px; margin: 30px auto; padding: 20px; background: #fff; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);}
-        .section-title { margin-top: 30px; }
-        .gadget-list { display: flex; flex-wrap: wrap; gap: 20px; justify-content: flex-start; }
-        .gadget-item { background: #fafafa; border: 1px solid #ddd; border-radius: 8px; width: 220px; padding: 15px; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,0.04); transition: box-shadow 0.2s;}
-        .gadget-item:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.10);}
-        .gadget-item img { width: 100%; height: 120px; object-fit: contain; margin-bottom: 10px;}
-        .gadget-item h3 { font-size: 1.1em; margin: 10px 0 5px 0;}
-        .gadget-item p { margin: 5px 0 10px 0; color: #444;}
-        .gadget-item .prices { font-size: 0.95em; margin-bottom: 8px; }
-        .gadget-item .prices span { display: block; }
-        button { background-color: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; margin: 5px 2px; cursor: pointer; font-size: 1em; transition: background 0.2s;}
-        button:hover { background: #218838;}
-        .cart { margin-top: 40px; background: #fafafa; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); padding: 20px;}
-        .cart ul { list-style-type: none; padding: 0;}
-        .cart ul li { margin-bottom: 10px;}
-        .orders-section { margin-top: 50px; background: #fff; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); padding: 20px;}
-        table { width: 100%; border-collapse: collapse; }
-        th, td { border: 1px solid #ddd; padding: 8px; }
-        th { background: #eee; }
-        tr:nth-child(even) { background: #fafafa; }
-        .action-btn { padding: 4px 10px; margin: 0 2px; border: none; border-radius: 3px; cursor: pointer;}
-        .confirm-btn { background: #007bff; color: #fff; }
-        .delete-btn { background: #dc3545; color: #fff; }
-        .refresh-btn { margin-bottom: 20px; padding: 8px 16px; background: #28a745; color: #fff; border: none; border-radius: 4px; cursor: pointer;}
-        .refresh-btn:hover { background: #218838; }
-        @media (max-width: 900px) {
-            main { padding: 10px; }
-            .gadget-list {
-                flex-wrap: wrap;
-                flex-direction: row;
-                justify-content: center;
-            }
-            .gadget-item {
-                width: 48%;
-                min-width: 160px;
-                margin-bottom: 16px;
-            }
-        }
-        @media (max-width: 600px) {
-            .gadget-item {
-                width: 98%;
-            }
-        }
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f4f4f4; }
+        .container { max-width: 400px; margin: 60px auto; background: #fff; padding: 30px 20px 20px 20px; border-radius: 8px; box-shadow: 0 2px 8px #0001; }
+        h2 { text-align: center; margin-bottom: 20px; }
+        input, button { width: 100%; padding: 10px; margin: 10px 0 0 0; border-radius: 5px; border: 1px solid #ddd; font-size: 16px; box-sizing: border-box; }
+        button { background: #28a745; color: #fff; border: none; margin-bottom: 10px; cursor: pointer; transition: background 0.2s; }
+        button:hover { background: #218838; }
+        .error { color: #d00; text-align: center; margin-bottom: 10px; }
+        .hidden { display: none; }
+        .user-bar { background: #eee; padding: 10px; text-align: right; font-size: 15px; }
+        .user-bar button { width: auto; padding: 5px 12px; margin-left: 10px; background: #dc3545; border-radius: 4px; font-size: 14px; }
+        .user-bar button:hover { background: #b52a37; }
+        header { background: #333; color: #fff; padding: 10px 0; text-align: left; position: relative; }
+        .logo img { width: 120px; height: auto; margin-left: 20px; }
+        .notification-bell { position: absolute; top: 20px; right: 30px; cursor: pointer; font-size: 28px; color: #fff; }
+        .notification-dot { position: absolute; top: 15px; right: 25px; width: 12px; height: 12px; background: red; border-radius: 50%; border: 2px solid #fff; display: none; }
+        .notification-dot.active { display: block; }
+        main { padding: 20px; }
+        .gadget-section { margin-bottom: 40px; }
+        .section-title { font-size: 24px; margin-bottom: 16px; color: #333; font-weight: bold; }
+        .gadget-list { display: flex; flex-wrap: wrap; justify-content: space-between; }
+        .gadget-item { background: #fff; border: 1px solid #ddd; border-radius: 5px; padding: 12px; margin-bottom: 18px; width: calc(33.33% - 10px); box-sizing: border-box; text-align: center; box-shadow: 0 1px 4px #0001; }
+        .gadget-item img { max-width: 100%; height: 110px; object-fit: cover; border-radius: 5px; }
+        .gadget-item h3 { font-size: 18px; margin: 8px 0 6px 0; color: #333; }
+        .gadget-item .prices { font-size: 15px; color: #555; margin-bottom: 8px; }
+        .gadget-item button { width: auto; padding: 7px 14px; margin: 0 4px 0 0; font-size: 14px; }
+        .cart { background: #fff; padding: 16px; border-radius: 5px; margin-top: 20px; box-shadow: 0 1px 4px #0001; }
+        .cart h2 { font-size: 20px; margin-bottom: 14px; color: #333; }
+        .cart ul { list-style-type: none; padding: 0; }
+        .cart li { display: flex; justify-content: space-between; margin-bottom: 8px; padding: 7px 0; border-bottom: 1px solid #eee; font-size: 15px; }
+        .cart li button { background: #dc3545; color: #fff; border: none; padding: 4px 10px; border-radius: 4px; font-size: 13px; }
+        .cart li button:hover { background: #b52a37; }
+        address { text-align: center; margin-top: 20px; font-style: normal; font-size: 15px; }
+        footer { background: #333; color: #fff; text-align: center; padding: 10px 0; position: relative; bottom: 0; width: 100%; font-size: 15px; }
+        footer a { color: #fff; text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+        @media (max-width: 900px) { .gadget-item { width: calc(50% - 10px); } }
+        @media (max-width: 600px) { .gadget-item { width: 100%; } main { padding: 8px; } }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
 <body>
-    <header>
-        <div class="logo">
-            <img src="logo.png" alt="Phone Gadget Logo">
+    <!-- LOGIN FORM -->
+    <div id="loginPage" class="container">
+        <h2>Login</h2>
+        <div class="error" id="loginError"></div>
+        <input type="email" id="loginEmail" placeholder="Email" required>
+        <input type="password" id="loginPassword" placeholder="Password" required>
+        <button onclick="login()">Login</button>
+        <button onclick="showRegister()">Register</button>
+    </div>
+    <!-- REGISTER FORM -->
+    <div id="registerPage" class="container hidden">
+        <h2>Register</h2>
+        <div class="error" id="registerError"></div>
+        <input type="text" id="regName" placeholder="Full Name" required>
+        <input type="email" id="regEmail" placeholder="Email" required>
+        <input type="password" id="regPassword" placeholder="Password" required>
+        <input type="text" id="regState" placeholder="State" required>
+        <input type="text" id="regArea" placeholder="Area" required>
+        <input type="text" id="regStreet" placeholder="Street" required>
+        <button onclick="register()">Register</button>
+        <button onclick="showLogin()">Back to Login</button>
+    </div>
+    <!-- MAIN SHOP PAGE -->
+    <div id="mainPage" class="hidden">
+        <div class="user-bar">
+            Logged in as <b id="userName"></b>
+            <button onclick="logout()">Logout</button>
         </div>
-    </header>
-    <main>
-        <section class="gadget-section">
-            <h2 class="section-title" style="font-size: 24px; font-weight: bold;">Latest Phones</h2>
-            <div class="gadget-list">
-                <div class="gadget-item">
-                    <img src="phone1.webp" alt="Redmi Note 14">
-                    <h3>Redmi Note 14</h3>
-                    <div class="prices">
-                        <span>Pickup Total: #262,983</span>
-                        <span>Delivery Total: #306,813</span>
-                    </div>
-                    <button onclick="buyNow('Redmi Note 14', 262983, 306813)">Buy Now</button>
-                    <button onclick="addToCart('Redmi Note 14', 219152)">Add to Cart</button>
-                </div>
-                <div class="gadget-item">
-                    <img src="phone2.jpeg" alt="iPhone 14">
-                    <h3>iPhone 14</h3>
-                    <div class="prices">
-                        <span>Pickup Total: #278,279</span>
-                        <span>Delivery Total: #324,659</span>
-                    </div>
-                    <button onclick="buyNow('iPhone 14', 278279, 324659)">Buy Now</button>
-                    <button onclick="addToCart('iPhone 14', 231899)">Add to Cart</button>
-                </div>
-                <div class="gadget-item">
-                    <img src="phone4.webp" alt="Samsung Galaxy S22">
-                    <h3>Samsung Galaxy S22</h3>
-                    <div class="prices">
-                        <span>Pickup Total: #294,000</span>
-                        <span>Delivery Total: #343,000</span>
-                    </div>
-                    <button onclick="buyNow('Samsung Galaxy S22', 294000, 343000)">Buy Now</button>
-                    <button onclick="addToCart('Samsung Galaxy S22', 245000)">Add to Cart</button>
-                </div>
-                <div class="gadget-item">
-                    <img src="phone5.jpeg" alt="Google Pixel 6">
-                    <h3>Google Pixel 6</h3>
-                    <div class="prices">
-                        <span>Pickup Total: #310,800</span>
-                        <span>Delivery Total: #362,600</span>
-                    </div>
-                    <button onclick="buyNow('Google Pixel 6', 310800, 362600)">Buy Now</button>
-                    <button onclick="addToCart('Google Pixel 6', 259000)">Add to Cart</button>
-                </div>
-                <div class="gadget-item">
-                    <img src="phone6.jpg" alt="OnePlus 9 Pro">
-                    <h3>OnePlus 9 Pro</h3>
-                    <div class="prices">
-                        <span>Pickup Total: #324,000</span>
-                        <span>Delivery Total: #378,000</span>
-                    </div>
-                    <button onclick="buyNow('OnePlus 9 Pro', 324000, 378000)">Buy Now</button>
-                    <button onclick="addToCart('OnePlus 9 Pro', 270000)">Add to Cart</button>
-                </div>
-                <div class="gadget-item">
-                    <img src="phone7.jpeg" alt="Tecno Camon 20">
-                    <h3>Tecno Camon 20</h3>
-                    <div class="prices">
-                        <span>Pickup Total: #144,000</span>
-                        <span>Delivery Total: #168,000</span>
-                    </div>
-                    <button onclick="buyNow('Tecno Camon 20', 144000, 168000)">Buy Now</button>
-                    <button onclick="addToCart('Tecno Camon 20', 120000)">Add to Cart</button>
-                </div>
-                <div class="gadget-item">
-                    <img src="phone8.jpeg" alt="Infinix Hot 30">
-                    <h3>Infinix Hot 30</h3>
-                    <div class="prices">
-                        <span>Pickup Total: #117,600</span>
-                        <span>Delivery Total: #137,200</span>
-                    </div>
-                    <button onclick="buyNow('Infinix Hot 30', 117600, 137200)">Buy Now</button>
-                    <button onclick="addToCart('Infinix Hot 30', 98000)">Add to Cart</button>
-                </div>
-                <div class="gadget-item">
-                    <img src="phone9.jpeg" alt="Samsung Galaxy A54">
-                    <h3>Samsung Galaxy A54</h3>
-                    <div class="prices">
-                        <span>Pickup Total: #216,000</span>
-                        <span>Delivery Total: #252,000</span>
-                    </div>
-                    <button onclick="buyNow('Samsung Galaxy A54', 216000, 252000)">Buy Now</button>
-                    <button onclick="addToCart('Samsung Galaxy A54', 180000)">Add to Cart</button>
-                </div>
-                <div class="gadget-item">
-                    <img src="phone10.jpeg" alt="iPhone 13 Pro Max">
-                    <h3>iPhone 13 Pro Max</h3>
-                    <div class="prices">
-                        <span>Pickup Total: #540,000</span>
-                        <span>Delivery Total: #630,000</span>
-                    </div>
-                    <button onclick="buyNow('iPhone 13 Pro Max', 540000, 630000)">Buy Now</button>
-                    <button onclick="addToCart('iPhone 13 Pro Max', 450000)">Add to Cart</button>
-                </div>
+        <header>
+            <div class="logo">
+                <img src="logo.png" alt="Phone Gadget Logo">
             </div>
-            <h2 class="section-title" style="font-size: 24px; font-weight: bold;">Latest Laptops</h2>
-            <div class="gadget-list">
-                <div class="gadget-item">
-                    <img src="laptop1.jpeg" alt="Dell Inspiron 15">
-                    <h3>Dell Inspiron 15</h3>
-                    <div class="prices">
-                        <span>Pickup Total: #180,000</span>
-                        <span>Delivery Total: #210,000</span>
+            <span class="notification-bell" onclick="showNotifications()" title="Notifications">
+                <i class="fa fa-bell"></i>
+                <span class="notification-dot" id="notification-dot"></span>
+            </span>
+        </header>
+        <main>
+            <section class="gadget-section">
+                <h2 class="section-title">Latest Phones</h2>
+                <div class="gadget-list">
+                    <div class="gadget-item">
+                        <img src="phone1.webp" alt="Redmi Note 14">
+                        <h3>Redmi Note 14</h3>
+                        <div class="prices">
+                            <span>Pickup Total: #262,983</span>
+                            <span>Delivery Total: #306,813</span>
+                        </div>
+                        <button onclick="buyNow('Redmi Note 14', 262983, 306813)">Buy Now</button>
+                        <button onclick="addToCart('Redmi Note 14', 219152)">Add to Cart</button>
                     </div>
-                    <button onclick="buyNow('Dell Inspiron 15', 180000, 210000)">Buy Now</button>
-                    <button onclick="addToCart('Dell Inspiron 15', 150000)">Add to Cart</button>
-                </div>
-                <div class="gadget-item">
-                    <img src="laptop2.jpeg" alt="HP Pavilion x360">
-                    <h3>HP Pavilion x360</h3>
-                    <div class="prices">
-                        <span>Pickup Total: #240,000</span>
-                        <span>Delivery Total: #280,000</span>
+                    <div class="gadget-item">
+                        <img src="phone2.jpeg" alt="iPhone 14">
+                        <h3>iPhone 14</h3>
+                        <div class="prices">
+                            <span>Pickup Total: #278,279</span>
+                            <span>Delivery Total: #324,659</span>
+                        </div>
+                        <button onclick="buyNow('iPhone 14', 278279, 324659)">Buy Now</button>
+                        <button onclick="addToCart('iPhone 14', 231899)">Add to Cart</button>
                     </div>
-                    <button onclick="buyNow('HP Pavilion x360', 240000, 280000)">Buy Now</button>
-                    <button onclick="addToCart('HP Pavilion x360', 200000)">Add to Cart</button>
-                </div>
-                <div class="gadget-item">
-                    <img src="laptop3.jpeg" alt="Lenovo ThinkPad X1">
-                    <h3>Lenovo ThinkPad X1</h3>
-                    <div class="prices">
-                        <span>Pickup Total: #300,000</span>
-                        <span>Delivery Total: #350,000</span>
+                    <div class="gadget-item">
+                        <img src="phone4.webp" alt="Samsung Galaxy S22">
+                        <h3>Samsung Galaxy S22</h3>
+                        <div class="prices">
+                            <span>Pickup Total: #294,000</span>
+                            <span>Delivery Total: #343,000</span>
+                        </div>
+                        <button onclick="buyNow('Samsung Galaxy S22', 294000, 343000)">Buy Now</button>
+                        <button onclick="addToCart('Samsung Galaxy S22', 245000)">Add to Cart</button>
                     </div>
-                    <button onclick="buyNow('Lenovo ThinkPad X1', 300000, 350000)">Buy Now</button>
-                    <button onclick="addToCart('Lenovo ThinkPad X1', 250000)">Add to Cart</button>
-                </div>
-                <div class="gadget-item">
-                    <img src="laptop9.jpeg" alt="Asus ZenBook 14">
-                    <h3>Asus ZenBook 14</h3>
-                    <div class="prices">
-                        <span>Pickup Total: #360,000</span>
-                        <span>Delivery Total: #420,000</span>
+                    <div class="gadget-item">
+                        <img src="phone5.jpeg" alt="Google Pixel 6">
+                        <h3>Google Pixel 6</h3>
+                        <div class="prices">
+                            <span>Pickup Total: #310,800</span>
+                            <span>Delivery Total: #362,600</span>
+                        </div>
+                        <button onclick="buyNow('Google Pixel 6', 310800, 362600)">Buy Now</button>
+                        <button onclick="addToCart('Google Pixel 6', 259000)">Add to Cart</button>
                     </div>
-                    <button onclick="buyNow('Asus ZenBook 14', 360000, 420000)">Buy Now</button>
-                    <button onclick="addToCart('Asus ZenBook 14', 300000)">Add to Cart</button>
-                </div>
-                <div class="gadget-item">
-                    <img src="laptop5.webp" alt="Apple MacBook Air M2">
-                    <h3>Apple MacBook Air M2</h3>
-                    <div class="prices">
-                        <span>Pickup Total: #720,000</span>
-                        <span>Delivery Total: #840,000</span>
+                    <div class="gadget-item">
+                        <img src="phone6.jpg" alt="OnePlus 9 Pro">
+                        <h3>OnePlus 9 Pro</h3>
+                        <div class="prices">
+                            <span>Pickup Total: #324,000</span>
+                            <span>Delivery Total: #378,000</span>
+                        </div>
+                        <button onclick="buyNow('OnePlus 9 Pro', 324000, 378000)">Buy Now</button>
+                        <button onclick="addToCart('OnePlus 9 Pro', 270000)">Add to Cart</button>
                     </div>
-                    <button onclick="buyNow('Apple MacBook Air M2', 720000, 840000)">Buy Now</button>
-                    <button onclick="addToCart('Apple MacBook Air M2', 600000)">Add to Cart</button>
-                </div>
-                <div class="gadget-item">
-                    <img src="laptop4.jpeg" alt="Acer Aspire 5">
-                    <h3>Acer Aspire 5</h3>
-                    <div class="prices">
-                        <span>Pickup Total: #216,000</span>
-                        <span>Delivery Total: #252,000</span>
+                    <div class="gadget-item">
+                        <img src="phone7.jpeg" alt="Tecno Camon 20">
+                        <h3>Tecno Camon 20</h3>
+                        <div class="prices">
+                            <span>Pickup Total: #144,000</span>
+                            <span>Delivery Total: #168,000</span>
+                        </div>
+                        <button onclick="buyNow('Tecno Camon 20', 144000, 168000)">Buy Now</button>
+                        <button onclick="addToCart('Tecno Camon 20', 120000)">Add to Cart</button>
                     </div>
-                    <button onclick="buyNow('Acer Aspire 5', 216000, 252000)">Buy Now</button>
-                    <button onclick="addToCart('Acer Aspire 5', 180000)">Add to Cart</button>
-                </div>
-                <div class="gadget-item">
-                    <img src="laptop8.webp" alt="HP EliteBook 840">
-                    <h3>HP EliteBook 840</h3>
-                    <div class="prices">
-                        <span>Pickup Total: #420,000</span>
-                        <span>Delivery Total: #490,000</span>
+                    <div class="gadget-item">
+                        <img src="phone8.jpeg" alt="Infinix Hot 30">
+                        <h3>Infinix Hot 30</h3>
+                        <div class="prices">
+                            <span>Pickup Total: #117,600</span>
+                            <span>Delivery Total: #137,200</span>
+                        </div>
+                        <button onclick="buyNow('Infinix Hot 30', 117600, 137200)">Buy Now</button>
+                        <button onclick="addToCart('Infinix Hot 30', 98000)">Add to Cart</button>
                     </div>
-                    <button onclick="buyNow('HP EliteBook 840', 420000, 490000)">Buy Now</button>
-                    <button onclick="addToCart('HP EliteBook 840', 350000)">Add to Cart</button>
-                </div>
-                <div class="gadget-item">
-                    <img src="laptop7.webp" alt="Microsoft Surface Laptop 5">
-                    <h3>Microsoft Surface Laptop 5</h3>
-                    <div class="prices">
-                        <span>Pickup Total: #600,000</span>
-                        <span>Delivery Total: #700,000</span>
+                    <div class="gadget-item">
+                        <img src="phone9.jpeg" alt="Samsung Galaxy A54">
+                        <h3>Samsung Galaxy A54</h3>
+                        <div class="prices">
+                            <span>Pickup Total: #216,000</span>
+                            <span>Delivery Total: #252,000</span>
+                        </div>
+                        <button onclick="buyNow('Samsung Galaxy A54', 216000, 252000)">Buy Now</button>
+                        <button onclick="addToCart('Samsung Galaxy A54', 180000)">Add to Cart</button>
                     </div>
-                    <button onclick="buyNow('Microsoft Surface Laptop 5', 600000, 700000)">Buy Now</button>
-                    <button onclick="addToCart('Microsoft Surface Laptop 5', 500000)">Add to Cart</button>
+                    <div class="gadget-item">
+                        <img src="phone10.jpeg" alt="iPhone 13 Pro Max">
+                        <h3>iPhone 13 Pro Max</h3>
+                        <div class="prices">
+                            <span>Pickup Total: #540,000</span>
+                            <span>Delivery Total: #630,000</span>
+                        </div>
+                        <button onclick="buyNow('iPhone 13 Pro Max', 540000, 630000)">Buy Now</button>
+                        <button onclick="addToCart('iPhone 13 Pro Max', 450000)">Add to Cart</button>
+                    </div>
                 </div>
-            </div>
-        </section>
-        <section class="cart">
-            <h2>Your Cart</h2>
-            <ul id="cart-items"></ul>
-            <button onclick="checkoutCart()">Checkout</button>
-            <button onclick="clearCart()">Clear Cart</button>
-        </section>
-        <section class="orders-section">
-            <h2>Track & Manage Your Orders</h2>
-            <input type="email" id="user-email" placeholder="Enter your email to view your orders" style="padding:8px; width:250px;">
-            <button class="refresh-btn" onclick="fetchOrders()">Show My Orders</button>
-            <div style="overflow-x:auto;">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Type</th>
-                        <th>Name</th>
-                        <th>Phone</th>
-                        <th>Email</th>
-                        <th>Items</th>
-                        <th>Details</th>
-                        <th>Total</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="orders-table">
-                    <tr><td colspan="10" style="text-align:center;">Enter your email and click "Show My Orders".</td></tr>
-                </tbody>
-            </table>
-            </div>
-        </section>
-    </main>
-    <address>
-        <p>Contact us at: 
-            <a href="tel:+2349138154963">+234 913 815 4963</a></p>
-            <a href="mailto:ayomideoluniyi49@gmail.com">ayomideoluniyi49@gmail.com</a>
-    </address>
-    <footer>
-        <p>&copy; 2025 Phone Gadget. All rights reserved.</p>
-    </footer>
+                <h2 class="section-title">Latest Laptops</h2>
+                <div class="gadget-list">
+                    <div class="gadget-item">
+                        <img src="laptop1.jpeg" alt="Dell Inspiron 15">
+                        <h3>Dell Inspiron 15</h3>
+                        <div class="prices">
+                            <span>Pickup Total: #180,000</span>
+                            <span>Delivery Total: #210,000</span>
+                        </div>
+                        <button onclick="buyNow('Dell Inspiron 15', 180000, 210000)">Buy Now</button>
+                        <button onclick="addToCart('Dell Inspiron 15', 150000)">Add to Cart</button>
+                    </div>
+                    <div class="gadget-item">
+                        <img src="laptop2.jpeg" alt="HP Pavilion x360">
+                        <h3>HP Pavilion x360</h3>
+                        <div class="prices">
+                            <span>Pickup Total: #240,000</span>
+                            <span>Delivery Total: #280,000</span>
+                        </div>
+                        <button onclick="buyNow('HP Pavilion x360', 240000, 280000)">Buy Now</button>
+                        <button onclick="addToCart('HP Pavilion x360', 200000)">Add to Cart</button>
+                    </div>
+                    <div class="gadget-item">
+                        <img src="laptop3.jpeg" alt="Lenovo ThinkPad X1">
+                        <h3>Lenovo ThinkPad X1</h3>
+                        <div class="prices">
+                            <span>Pickup Total: #300,000</span>
+                            <span>Delivery Total: #350,000</span>
+                        </div>
+                        <button onclick="buyNow('Lenovo ThinkPad X1', 300000, 350000)">Buy Now</button>
+                        <button onclick="addToCart('Lenovo ThinkPad X1', 250000)">Add to Cart</button>
+                    </div>
+                    <div class="gadget-item">
+                        <img src="laptop9.jpeg" alt="Asus ZenBook 14">
+                        <h3>Asus ZenBook 14</h3>
+                        <div class="prices">
+                            <span>Pickup Total: #360,000</span>
+                            <span>Delivery Total: #420,000</span>
+                        </div>
+                        <button onclick="buyNow('Asus ZenBook 14', 360000, 420000)">Buy Now</button>
+                        <button onclick="addToCart('Asus ZenBook 14', 300000)">Add to Cart</button>
+                    </div>
+                    <div class="gadget-item">
+                        <img src="laptop5.webp" alt="Apple MacBook Air M2">
+                        <h3>Apple MacBook Air M2</h3>
+                        <div class="prices">
+                            <span>Pickup Total: #720,000</span>
+                            <span>Delivery Total: #840,000</span>
+                        </div>
+                        <button onclick="buyNow('Apple MacBook Air M2', 720000, 840000)">Buy Now</button>
+                        <button onclick="addToCart('Apple MacBook Air M2', 600000)">Add to Cart</button>
+                    </div>
+                    <div class="gadget-item">
+                        <img src="laptop4.jpeg" alt="Acer Aspire 5">
+                        <h3>Acer Aspire 5</h3>
+                        <div class="prices">
+                            <span>Pickup Total: #216,000</span>
+                            <span>Delivery Total: #252,000</span>
+                        </div>
+                        <button onclick="buyNow('Acer Aspire 5', 216000, 252000)">Buy Now</button>
+                        <button onclick="addToCart('Acer Aspire 5', 180000)">Add to Cart</button>
+                    </div>
+                    <div class="gadget-item">
+                        <img src="laptop8.webp" alt="HP EliteBook 840">
+                        <h3>HP EliteBook 840</h3>
+                        <div class="prices">
+                            <span>Pickup Total: #420,000</span>
+                            <span>Delivery Total: #490,000</span>
+                        </div>
+                        <button onclick="buyNow('HP EliteBook 840', 420000, 490000)">Buy Now</button>
+                        <button onclick="addToCart('HP EliteBook 840', 350000)">Add to Cart</button>
+                    </div>
+                    <div class="gadget-item">
+                        <img src="laptop7.webp" alt="Microsoft Surface Laptop 5">
+                        <h3>Microsoft Surface Laptop 5</h3>
+                        <div class="prices">
+                            <span>Pickup Total: #600,000</span>
+                            <span>Delivery Total: #700,000</span>
+                        </div>
+                        <button onclick="buyNow('Microsoft Surface Laptop 5', 600000, 700000)">Buy Now</button>
+                        <button onclick="addToCart('Microsoft Surface Laptop 5', 500000)">Add to Cart</button>
+                    </div>
+                </div>
+            </section>
+            <section class="cart">
+                <h2>Your Cart</h2>
+                <ul id="cart-items"></ul>
+                <button onclick="checkoutCart()">Checkout</button>
+                <button onclick="clearCart()">Clear Cart</button>
+            </section>
+        </main>
+        <address>
+            <p>Contact us at: 
+                <a href="tel:+2349138154963">+234 913 815 4963</a></p>
+                <a href="mailto:ayomideoluniyi49@gmail.com">ayomideoluniyi49@gmail.com</a>
+        </address>
+        <footer>
+            <p>&copy; 2025 Phone Gadget. All rights reserved.</p>
+        </footer>
+    </div>
+    <!-- Notification Modal -->
+    <div id="trackModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#0005;z-index:1000;">
+      <div style="background:#fff;padding:24px 18px;border-radius:8px;max-width:370px;margin:80px auto;position:relative;">
+        <h3>Notifications</h3>
+        <div id="trackModalContent"></div>
+        <button onclick="closeTrackModal()" style="margin-top:14px;padding:6px 16px;border:none;background:#007bff;color:#fff;border-radius:4px;cursor:pointer;">Close</button>
+      </div>
+    </div>
+    <!-- Payment Modal -->
+    <div id="paymentModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#0005;z-index:2000;">
+      <div style="background:#fff;padding:24px 18px;border-radius:8px;max-width:370px;margin:80px auto;position:relative;">
+        <h3>Choose Payment Method</h3>
+        <div>
+          <label><input type="radio" name="paymethod" value="card" checked> Card</label>
+          <label style="margin-left:20px;"><input type="radio" name="paymethod" value="transfer"> Transfer</label>
+        </div>
+        <div id="cardFields" style="margin-top:12px;">
+          <input type="text" id="cardNumber" placeholder="Card Number" style="width:100%;margin-bottom:8px;">
+          <input type="text" id="cardExpiry" placeholder="Expiry (MM/YY)" style="width:100%;margin-bottom:8px;">
+          <input type="text" id="cardCVV" placeholder="CVV" style="width:100%;">
+        </div>
+        <div id="transferFields" style="margin-top:12px;display:none;">
+          <b>Transfer to:</b>
+          <div style="margin:8px 0;">
+            <span>9138154963</span><br>
+            <span>Opay Bank</span>
+          </div>
+          <small>After transfer, click "Complete Payment"</small>
+        </div>
+        <button id="completePaymentBtn" style="margin-top:14px;padding:8px 20px;background:#28a745;color:#fff;border:none;border-radius:4px;cursor:pointer;">Complete Payment</button>
+        <button onclick="closePaymentModal()" style="margin-top:14px;margin-left:10px;padding:8px 20px;background:#dc3545;color:#fff;border:none;border-radius:4px;cursor:pointer;">Cancel</button>
+      </div>
+    </div>
     <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
     <script>
-    (function(){
-        emailjs.init("OGTQ8lEqD_e-k8l0g");
-    })();
+    // --- SHEETBEST API URL ---
+    const SHEETBEST_URL = 'https://api.sheetbest.com/sheets/6b0edbce-49b7-4baf-8bb6-a5c1f6879fa2';
 
+    // --- LOGIN/REGISTER LOGIC ---
+    function showLogin() {
+        document.getElementById('loginPage').classList.remove('hidden');
+        document.getElementById('registerPage').classList.add('hidden');
+        document.getElementById('mainPage').classList.add('hidden');
+    }
+    function showRegister() {
+        document.getElementById('loginPage').classList.add('hidden');
+        document.getElementById('registerPage').classList.remove('hidden');
+        document.getElementById('mainPage').classList.add('hidden');
+    }
+    function showMain() {
+        document.getElementById('loginPage').classList.add('hidden');
+        document.getElementById('registerPage').classList.add('hidden');
+        document.getElementById('mainPage').classList.remove('hidden');
+    }
+    function getCurrentUser() {
+        return JSON.parse(localStorage.getItem('user'));
+    }
+    function setCurrentUser(user) {
+        localStorage.setItem('user', JSON.stringify(user));
+    }
+    function login() {
+        const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+        const password = document.getElementById('loginPassword').value;
+        const user = JSON.parse(localStorage.getItem('user_' + email));
+        if (!user || user.password !== password) {
+            document.getElementById('loginError').textContent = 'Invalid email or password.';
+            return;
+        }
+        setCurrentUser(user);
+        showMain();
+        onMainLoad();
+    }
+    function register() {
+        const name = document.getElementById('regName').value.trim();
+        const email = document.getElementById('regEmail').value.trim().toLowerCase();
+        const password = document.getElementById('regPassword').value;
+        const state = document.getElementById('regState').value.trim();
+        const area = document.getElementById('regArea').value.trim();
+        const street = document.getElementById('regStreet').value.trim();
+        if (!name || !email || !password || !state || !area || !street) {
+            document.getElementById('registerError').textContent = 'Please fill all fields.';
+            return;
+        }
+        if (localStorage.getItem('user_' + email)) {
+            document.getElementById('registerError').textContent = 'Email already registered.';
+            return;
+        }
+        const user = { name, email, password, state, area, street };
+        localStorage.setItem('user_' + email, JSON.stringify(user));
+        setCurrentUser(user);
+        showMain();
+        onMainLoad();
+    }
+    function logout() {
+        localStorage.removeItem('user');
+        showLogin();
+    }
+    // --- MAIN PAGE LOGIC ---
+    function onMainLoad() {
+        const user = getCurrentUser();
+        if (!user) { showLogin(); return; }
+        document.getElementById('userName').textContent = user.name;
+        renderCart();
+        checkNotifications();
+        setInterval(checkNotifications, 30000);
+    }
+    // --- CART LOGIC ---
     function addToCart(itemName, itemPrice) {
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
         cart.push({ name: itemName, price: itemPrice });
         localStorage.setItem('cart', JSON.stringify(cart));
         renderCart();
     }
-
     function removeFromCart(index) {
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
         cart.splice(index, 1);
         localStorage.setItem('cart', JSON.stringify(cart));
         renderCart();
     }
-
     function clearCart() {
         localStorage.removeItem('cart');
         renderCart();
     }
-
     function renderCart() {
         const cartItems = document.getElementById('cart-items');
         cartItems.innerHTML = '';
@@ -320,72 +416,86 @@
             cartItems.appendChild(li);
         });
     }
-
+    // --- PAYMENT MODAL LOGIC ---
     function checkoutCart() {
+        const user = getCurrentUser();
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
         if (cart.length === 0) {
             alert('Your cart is empty.');
             return;
         }
-        let orderDetails = cart.map(item => `${item.name} - #${item.price.toLocaleString()}`).join('\n');
-        let name = prompt('Enter your name:');
         let phone = prompt('Enter your phone number:');
-        let email = prompt('Enter your email address:');
-        if (!name || !phone || !email) {
-            alert('Please fill all details.');
+        if (!phone || phone.length < 10) {
+            alert('Please enter a valid phone number.');
             return;
         }
+        window._pendingOrder = { user, cart, phone };
+        showPaymentModal();
+    }
+    function showPaymentModal() {
+        document.getElementById('paymentModal').style.display = 'block';
+        document.querySelectorAll('input[name="paymethod"]').forEach(radio => {
+            radio.onchange = function() {
+                document.getElementById('cardFields').style.display = this.value === 'card' ? 'block' : 'none';
+                document.getElementById('transferFields').style.display = this.value === 'transfer' ? 'block' : 'none';
+            };
+        });
+        document.getElementById('completePaymentBtn').onclick = completePayment;
+    }
+    function closePaymentModal() {
+        document.getElementById('paymentModal').style.display = 'none';
+        window._pendingOrder = null;
+    }
+    function completePayment() {
+        const method = document.querySelector('input[name="paymethod"]:checked').value;
+        if (method === 'card') {
+            const cardNumber = document.getElementById('cardNumber').value.trim();
+            const cardExpiry = document.getElementById('cardExpiry').value.trim();
+            const cardCVV = document.getElementById('cardCVV').value.trim();
+            if (!cardNumber || !cardExpiry || !cardCVV) {
+                alert('Please fill in all card details.');
+                return;
+            }
+        }
+        const { user, cart, phone } = window._pendingOrder;
+        let email = user.email;
+        let orderDetails = cart.map(item => `${item.name} - #${item.price.toLocaleString()}`).join('\n');
         let order = {
             date: new Date().toLocaleString(),
             type: 'Cart Checkout',
-            name: name,
+            name: user.name,
             phone: phone,
             email: email,
             items: orderDetails,
-            details: '',
-            total: cart.reduce((sum, item) => sum + item.price, 0)
+            details: `State: ${user.state}, Area: ${user.area}, Street: ${user.street}`,
+            total: cart.reduce((sum, item) => sum + item.price, 0),
+            payment_method: method === 'card' ? 'Card' : 'Transfer'
         };
-        sendOrderToEmailJS(order);
-        clearCart();
-    }
+        const trackingCode = encodeURIComponent(order.date + '-' + order.items);
+        const trackingLink = `https://your-tracking-url.com/?order=${trackingCode}`;
+        order.tracking_link = trackingLink;
 
+        localStorage.setItem('lastOrderEmail', email);
+        sendOrderToSheetBest(order, trackingLink);
+        clearCart();
+        closePaymentModal();
+    }
+    // --- BUY NOW LOGIC (uses payment modal too) ---
     function buyNow(itemName, pickupTotal, deliveryTotal) {
+        const user = getCurrentUser();
         const choice = prompt('Do you want to pick up or have it delivered? \n1. Pick up\n2. Delivery:');
-        let state, area, street, phone, email, address, selectedPickup, details, name;
+        let phone, email, address, details, name;
+        let order = {};
         if (choice === '1') {
-            state = prompt('Enter your state (Lagos, Abuja, Port Harcourt, Ibadan):');
-            let pickupLocations = '';
-            if (state && state.toLowerCase() === 'lagos') {
-                pickupLocations = 'Ikeja, Lekki, Victoria Island, Ikeja GRA';
-            } else if (state && state.toLowerCase() === 'abuja') {
-                pickupLocations = 'Wuse, Garki, Maitama, Asokoro';
-            } else if (state && state.toLowerCase() === 'port harcourt') {
-                pickupLocations = 'GRA, Old GRA, New GRA, Rumuomoi';
-            } else if (state && state.toLowerCase() === 'ibadan') {
-                pickupLocations = 'Jericho, Bodija, Dugbe, Agodi';
-            } else {
-                alert('Pickup is not available in your state.');
-                return;
-            }
-            alert(`Available pickup locations in ${state}:\n${pickupLocations}`);
-            area = prompt('Enter your area:');
-            street = prompt('Enter your street:');
             phone = prompt('Enter your phone number:');
             if (!phone || phone.length < 10) {
                 alert('Please enter a valid phone number.');
                 return;
             }
-            email = prompt('Enter your email address:');
-            if (!email || !email.includes('@')) {
-                alert('Please enter a valid email address.');
-                return;
-            }
-            name = prompt('Enter your name:');
-            selectedPickup = pickupLocations.split(',')[0].trim();
-            details = `State: ${state}, Area: ${area}, Street: ${street}, Pickup: ${selectedPickup}`;
-            alert(`You have chosen to pick up ${itemName}.\nTotal: #${pickupTotal.toLocaleString()}\n${details}\nPhone: ${phone}\nEmail: ${email}`);
-
-            sendOrderToEmailJS({
+            email = user.email;
+            name = user.name;
+            details = `State: ${user.state}, Area: ${user.area}, Street: ${user.street}, Pickup: ${user.state}`;
+            order = {
                 date: new Date().toLocaleString(),
                 type: 'Pickup',
                 name: name,
@@ -394,28 +504,18 @@
                 items: itemName,
                 details: details,
                 total: pickupTotal
-            });
-
+            };
         } else if (choice === '2') {
-            state = prompt('Enter your state:');
-            area = prompt('Enter your area:');
-            street = prompt('Enter your street:');
             address = prompt('Enter your delivery address:');
             phone = prompt('Enter your phone number:');
             if (!phone || phone.length < 10) {
                 alert('Please enter a valid phone number.');
                 return;
             }
-            email = prompt('Enter your email address:');
-            if (!email || !email.includes('@')) {
-                alert('Please enter a valid email address.');
-                return;
-            }
-            name = prompt('Enter your name:');
-            details = `State: ${state}, Area: ${area}, Street: ${street}, Address: ${address}`;
-            alert(`You have chosen delivery for ${itemName}.\nTotal: #${deliveryTotal.toLocaleString()}\n${details}\nPhone: ${phone}\nEmail: ${email}`);
-
-            sendOrderToEmailJS({
+            email = user.email;
+            name = user.name;
+            details = `State: ${user.state}, Area: ${user.area}, Street: ${user.street}, Address: ${address}`;
+            order = {
                 date: new Date().toLocaleString(),
                 type: 'Delivery',
                 name: name,
@@ -424,92 +524,116 @@
                 items: itemName,
                 details: details,
                 total: deliveryTotal
-            });
-
+            };
         } else {
             alert('Invalid choice. Please try again.');
+            return;
         }
+        window._pendingOrder = { order };
+        showPaymentModalBuyNow();
     }
-
-    function sendOrderToEmailJS(order) {
-        emailjs.send("service_0jx7abq", "template_c1fw35l", order)
-        .then(function(response) {
-            alert("Order sent! You will be contacted soon.");
-        }, function(error) {
-            alert("Order could not be sent. Please try again.");
+    function showPaymentModalBuyNow() {
+        document.getElementById('paymentModal').style.display = 'block';
+        document.querySelectorAll('input[name="paymethod"]').forEach(radio => {
+            radio.onchange = function() {
+                document.getElementById('cardFields').style.display = this.value === 'card' ? 'block' : 'none';
+                document.getElementById('transferFields').style.display = this.value === 'transfer' ? 'block' : 'none';
+            };
         });
-        // Send to Google Sheet via Sheet.best
-        fetch('https://api.sheetbest.com/sheets/bc2aae76-3ae3-4072-988a-0ce32d7fde97', {
+        document.getElementById('completePaymentBtn').onclick = completePaymentBuyNow;
+    }
+    function completePaymentBuyNow() {
+        const method = document.querySelector('input[name="paymethod"]:checked').value;
+        if (method === 'card') {
+            const cardNumber = document.getElementById('cardNumber').value.trim();
+            const cardExpiry = document.getElementById('cardExpiry').value.trim();
+            const cardCVV = document.getElementById('cardCVV').value.trim();
+            if (!cardNumber || !cardExpiry || !cardCVV) {
+                alert('Please fill in all card details.');
+                return;
+            }
+        }
+        const { order } = window._pendingOrder;
+        order.payment_method = method === 'card' ? 'Card' : 'Transfer';
+        const trackingCode = encodeURIComponent(order.date + '-' + order.items);
+        const trackingLink = `https://your-tracking-url.com/?order=${trackingCode}`;
+        order.tracking_link = trackingLink;
+
+        localStorage.setItem('lastOrderEmail', order.email);
+        sendOrderToSheetBest(order, trackingLink);
+        closePaymentModal();
+    }
+    // --- SHEETBEST & NOTIFICATION LOGIC ---
+    function sendOrderToSheetBest(order, trackingLink) {
+        fetch(SHEETBEST_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(order)
         });
-    }
-
-    // USER ORDER TRACKING SECTION
-    const SHEET_URL = 'https://api.sheetbest.com/sheets/bc2aae76-3ae3-4072-988a-0ce32d7fde97';
-
-    function fetchOrders() {
-      const email = document.getElementById('user-email').value.trim().toLowerCase();
-      const tbody = document.getElementById('orders-table');
-      if (!email) {
-        tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;">Please enter your email.</td></tr>';
-        return;
-      }
-      tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;">Loading...</td></tr>';
-      fetch(SHEET_URL)
-        .then(res => res.json())
-        .then(data => {
-          const userOrders = data.filter(order => (order.email || '').toLowerCase() === email);
-          if (userOrders.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;">No orders found for this email.</td></tr>';
-            return;
-          }
-          tbody.innerHTML = '';
-          userOrders.reverse().forEach(order => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-              <td>${order.date || ''}</td>
-              <td>${order.type || ''}</td>
-              <td>${order.name || ''}</td>
-              <td>${order.phone || ''}</td>
-              <td>${order.email || ''}</td>
-              <td>${order.items || ''}</td>
-              <td>${order.details || ''}</td>
-              <td>${order.total ? ('#' + order.total) : ''}</td>
-              <td>${order.status || ''}</td>
-              <td>
-                <button class="action-btn confirm-btn" onclick="confirmOrder('${order.date}','${order.email}')">Confirm</button>
-                <button class="action-btn delete-btn" onclick="deleteOrder('${order.date}','${order.email}')">Delete</button>
-              </td>
-            `;
-            tbody.appendChild(tr);
-          });
-        })
-        .catch(() => {
-          tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;">Failed to load orders.</td></tr>';
+        fetch(SHEETBEST_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                email: order.email,
+                message: `Your order (${order.items}) has been received!`,
+                date: new Date().toLocaleString(),
+                status: 'unread'
+            })
         });
+        alert("Order sent! You will be contacted soon.");
     }
-
-    function confirmOrder(date, email) {
-      fetch(`${SHEET_URL}/date/${encodeURIComponent(date)}/email/${encodeURIComponent(email)}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: 'Confirmed' })
-      })
-      .then(() => fetchOrders());
+    let userNotifications = [];
+    function checkNotifications() {
+        const user = getCurrentUser();
+        if (!user || !user.email) return;
+        fetch(SHEETBEST_URL)
+            .then(res => res.json())
+            .then(data => {
+                userNotifications = data.filter(row =>
+                    (row.email || '').toLowerCase() === user.email.toLowerCase() &&
+                    row.message
+                );
+                const dot = document.getElementById('notification-dot');
+                if (dot) {
+                    if (userNotifications.length > 0) {
+                        dot.classList.add('active');
+                        dot.style.display = 'block';
+                    } else {
+                        dot.classList.remove('active');
+                        dot.style.display = 'none';
+                    }
+                }
+            });
     }
-
-    function deleteOrder(date, email) {
-      if (!confirm('Are you sure you want to delete this order?')) return;
-      fetch(`${SHEET_URL}/date/${encodeURIComponent(date)}/email/${encodeURIComponent(email)}`, {
-        method: 'DELETE'
-      })
-      .then(() => fetchOrders());
+    function showNotifications() {
+        if (userNotifications.length === 0) {
+            alert('No new notifications.');
+            return;
+        }
+        let html = '';
+        userNotifications.forEach(note => {
+            html += `
+                <div style="margin-bottom:16px;">
+                    <b>Date:</b> ${note.date || ''}<br>
+                    <b>Message:</b> ${note.message || ''}<br>
+                </div>
+                <hr>
+            `;
+        });
+        document.getElementById('trackModalContent').innerHTML = html;
+        document.getElementById('trackModal').style.display = 'block';
     }
-
-    // Render cart on page load
-    renderCart();
+    function closeTrackModal() {
+        document.getElementById('trackModal').style.display = 'none';
+    }
+    window.addEventListener('DOMContentLoaded', function() {
+        if (getCurrentUser()) {
+            showMain();
+            onMainLoad();
+        } else {
+            showLogin();
+        }
+    });
     </script>
 </body>
 </html>
