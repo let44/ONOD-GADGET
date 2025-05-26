@@ -24,8 +24,24 @@
         main { padding: 20px; }
         .gadget-section { margin-bottom: 40px; }
         .section-title { font-size: 24px; margin-bottom: 16px; color: #333; font-weight: bold; }
-        .gadget-list { display: flex; flex-wrap: wrap; justify-content: space-between; }
-        .gadget-item { background: #fff; border: 1px solid #ddd; border-radius: 5px; padding: 12px; margin-bottom: 18px; width: calc(33.33% - 10px); box-sizing: border-box; text-align: center; box-shadow: 0 1px 4px #0001; }
+        .gadget-list {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+        .gadget-item {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 12px;
+            margin-bottom: 0;
+            box-sizing: border-box;
+            text-align: center;
+            box-shadow: 0 1px 4px #0001;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
         .gadget-item img { max-width: 100%; height: 110px; object-fit: cover; border-radius: 5px; }
         .gadget-item h3 { font-size: 18px; margin: 8px 0 6px 0; color: #333; }
         .gadget-item .prices { font-size: 15px; color: #555; margin-bottom: 8px; }
@@ -40,8 +56,13 @@
         footer { background: #333; color: #fff; text-align: center; padding: 10px 0; position: relative; bottom: 0; width: 100%; font-size: 15px; }
         footer a { color: #fff; text-decoration: none; }
         footer a:hover { text-decoration: underline; }
-        @media (max-width: 900px) { .gadget-item { width: calc(50% - 10px); } }
-        @media (max-width: 600px) { .gadget-item { width: 100%; } main { padding: 8px; } }
+        @media (max-width: 900px) {
+            .gadget-list { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 600px) {
+            .gadget-list { grid-template-columns: repeat(2, 1fr); }
+            main { padding: 8px; }
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
