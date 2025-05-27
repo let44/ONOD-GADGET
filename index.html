@@ -83,6 +83,12 @@
       </span>
     </div>
     <div id="notification"></div>
+    <!-- Notification Messages Modal -->
+    <div id="notifMessagesModal" style="display:none;position:fixed;top:60px;right:32px;background:#fff;color:#333;padding:18px 28px;border-radius:8px;z-index:9999;min-width:260px;max-width:90vw;box-shadow:0 2px 8px #0003;">
+      <h4 style="margin-top:0;">Your Messages</h4>
+      <ul id="notifMessagesList" style="padding-left:18px;font-size:1rem;max-height:300px;overflow:auto;"></ul>
+      <button onclick="closeNotifMessages()" style="margin-top:10px;">Close</button>
+    </div>
     <div id="loginPage" class="container">
         <h2>Login</h2>
         <div class="error" id="loginError"></div>
@@ -173,6 +179,13 @@
         <h2>Admin Panel - Orders</h2>
         <div id="adminOrders" style="max-height:500px;overflow:auto;"></div>
         <button onclick="closeAdminPanel()">Close</button>
+        <!-- Broadcast Message Form (Admin Only) -->
+        <hr>
+        <h3>Send Broadcast Message</h3>
+        <form id="broadcastForm">
+            <input type="text" id="broadcastMsg" placeholder="Type message to all users" required>
+            <button type="submit">Send Message</button>
+        </form>
       </div>
     </div>
     <!-- Checkout Modal -->
@@ -243,6 +256,11 @@
     }
 
     // --- NOTIFICATION LOGIC ---
+    function saveNotification(msg) {
+        let messages = JSON.parse(localStorage.getItem('user_messages') || '[]');
+        messages.unshift({ msg, time: new Date().toLocaleString() });
+        localStorage.setItem('user_messages', JSON.stringify(messages.slice(0, 50)));
+    }
     function showNotification(msg, color = "#333") {
         const n = document.getElementById('notification');
         const dot = document.getElementById('notifDot');
@@ -250,21 +268,29 @@
         n.style.background = color;
         n.style.display = 'block';
         dot.style.display = 'block';
+        saveNotification(msg);
         clearTimeout(window._notifTimeout);
         window._notifTimeout = setTimeout(() => {
             n.style.display = 'none';
             dot.style.display = 'none';
         }, 3000);
     }
-    document.getElementById('notificationIcon').onclick = function() {
-        const n = document.getElementById('notification');
-        if (n.style.display === 'block') {
-            n.style.display = 'none';
-            document.getElementById('notifDot').style.display = 'none';
-        } else if (n.textContent) {
-            n.style.display = 'block';
+    function showNotifMessages() {
+        const modal = document.getElementById('notifMessagesModal');
+        const list = document.getElementById('notifMessagesList');
+        let messages = JSON.parse(localStorage.getItem('user_messages') || '[]');
+        if (messages.length === 0) {
+            list.innerHTML = "<li>No messages yet.</li>";
+        } else {
+            list.innerHTML = messages.map(m => `<li>${m.msg}<br><small style="color:#888;">${m.time}</small></li>`).join('');
         }
-    };
+        modal.style.display = 'block';
+    }
+    function closeNotifMessages() {
+        document.getElementById('notifMessagesModal').style.display = 'none';
+    }
+    document.getElementById('notificationIcon').onclick = showNotifMessages;
+    document.getElementById('notification').onclick = showNotifMessages;
 
     // --- SOUND LOGIC ---
     function playClick() {
@@ -370,9 +396,9 @@
                     mapMarker = L.marker([lat, lng]).addTo(map)
                         .bindPopup(address).openPopup();
                     let img = document.getElementById('placeImage');
-                    img.src = `https://maps.googleapis.com/maps/api/streetview?size=350x120&location=${lat},${lng}&fov=80&heading=70&pitch=0&key=YOUR_GOOGLE_API_KEY`;
+                    img.src = `https://source.unsplash.com/350x120/?${encodeURIComponent(user.street + " " + user.area + " " + user.state + ", Nigeria")}`;
                     img.onerror = function() {
-                        img.src = `https://source.unsplash.com/350x120/?${encodeURIComponent(user.street + " " + user.area + " " + user.state)}`;
+                        img.src = "https://images.unsplash.com/photo-1506744038136-46273834b3fb?fit=crop&w=350&q=80";
                     };
                     img.style.display = 'block';
                 } else {
@@ -591,6 +617,24 @@
         alert('Order with date ' + date + ' marked as Confirmed!');
         // Here you can send a PATCH/PUT request to SheetBest to update the status if you want
     }
+
+    // --- SHOW-ONCE PER MESSAGE LOGIC ---
+    function getShownMessageIds() {
+        return JSON.parse(localStorage.getItem('shown_message_ids') || '[]');
+    }
+    function addShownMessageId(id) {
+        let ids = getShownMessageIds();
+        ids.push(id);
+        localStorage.setItem('shown_message_ids', JSON.stringify(ids));
+    }
+    function showNotificationOnce(msg, color = "#333", id = null) {
+        if (id) {
+            let ids = getShownMessageIds();
+            if (ids.includes(id)) return; // Already shown, skip
+            addShownMessageId(id);
+        }
+        showNotification(msg, color);
+    }
     function checkOrderStatusAndNotify() {
         const user = getCurrentUser();
         if (!user) return;
@@ -598,14 +642,15 @@
             .then(res => res.json())
             .then(data => {
                 const orders = data.filter(o => o.email && o.email.toLowerCase() === user.email.toLowerCase());
-                if (orders.length > 0) {
-                    const latestOrder = orders.sort((a, b) => new Date(b.date) - new Date(a.date))[0];
-                    if (latestOrder.message && latestOrder.status === "Confirmed") {
-                        showNotification(latestOrder.message, "#28a745");
+                // Show alert for each new message (not shown before)
+                orders.forEach(order => {
+                    if (order.message && order.status === "Confirmed") {
+                        showNotificationOnce(order.message, "#28a745", order.date);
                     }
-                }
+                });
             });
     }
+
     function onMainLoad() {
         const user = getCurrentUser();
         if (!user) {
@@ -719,6 +764,70 @@
     window.addEventListener('DOMContentLoaded', function() {
         getCurrentUser() ? (showMain(), onMainLoad()) : showLogin();
     });
+
+    // --- BROADCAST NOTIFICATION SYSTEM ---
+    // Replace with your SheetBest endpoint for broadcast messages
+    const BROADCAST_URL = 'https://api.sheetbest.com/sheets/YOUR_BROADCAST_SHEET_ID';
+
+    // Admin send broadcast
+    document.getElementById('broadcastForm').onsubmit = function(e) {
+        e.preventDefault();
+        const msg = document.getElementById('broadcastMsg').value.trim();
+        if (!msg) return;
+        const id = Date.now().toString();
+        fetch(BROADCAST_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id, msg, time: new Date().toLocaleString() })
+        }).then(() => {
+            alert('Message sent!');
+            document.getElementById('broadcastMsg').value = '';
+        });
+    };
+
+    // User receive broadcast
+    function getShownBroadcastIds() {
+        return JSON.parse(localStorage.getItem('shown_broadcast_ids') || '[]');
+    }
+    function addShownBroadcastId(id) {
+        let ids = getShownBroadcastIds();
+        ids.push(id);
+        localStorage.setItem('shown_broadcast_ids', JSON.stringify(ids));
+    }
+    function showBroadcastNotification(msg) {
+        const n = document.getElementById('notification');
+        const dot = document.getElementById('notifDot');
+        n.textContent = msg;
+        n.style.background = "#007bff";
+        n.style.display = 'block';
+        dot.style.display = 'block';
+        saveNotification(msg);
+        clearTimeout(window._broadcastNotifTimeout);
+        window._broadcastNotifTimeout = setTimeout(() => {
+            n.style.display = 'none';
+            dot.style.display = 'none';
+        }, 4000);
+    }
+    function showBroadcastOnce(msg, id) {
+        let ids = getShownBroadcastIds();
+        if (ids.includes(id)) return;
+        addShownBroadcastId(id);
+        showBroadcastNotification(msg);
+    }
+    // Poll for new broadcast messages every 5 seconds
+    function pollBroadcasts() {
+        fetch(BROADCAST_URL)
+            .then(res => res.json())
+            .then(data => {
+                data.forEach(m => {
+                    if (m.id && m.msg) {
+                        showBroadcastOnce(m.msg, m.id);
+                    }
+                });
+            });
+    }
+    setInterval(pollBroadcasts, 5000);
+    pollBroadcasts();
     </script>
 </body>
 </html>
