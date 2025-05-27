@@ -7,10 +7,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
     <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f4f4f4; animation: fadeIn 8s; }
-        @keyframes fadeIn {
-            0% { opacity: 0; }
-            100% { opacity: 1; }
-        }
+        @keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
         .container { max-width: 400px; margin: 60px auto; background: #fff; padding: 30px 20px 20px 20px; border-radius: 8px; box-shadow: 0 2px 8px #0001; }
         h2 { text-align: center; margin-bottom: 20px; }
         input, select, button { width: 100%; padding: 10px; margin: 10px 0 0 0; border-radius: 5px; border: 1px solid #ddd; font-size: 16px; box-sizing: border-box; }
@@ -26,40 +23,13 @@
         main { padding: 20px; }
         .gadget-section { margin-bottom: 40px; }
         .section-title { font-size: 24px; margin-bottom: 16px; color: #333; font-weight: bold; }
-        .gadget-list {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-        }
-        .gadget-item {
-            background: #fff;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 12px;
-            margin-bottom: 0;
-            box-sizing: border-box;
-            text-align: center;
-            box-shadow: 0 1px 4px #0001;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+        .gadget-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        .gadget-item { background: #fff; border: 1px solid #ddd; border-radius: 5px; padding: 12px; margin-bottom: 0; box-sizing: border-box; text-align: center; box-shadow: 0 1px 4px #0001; display: flex; flex-direction: column; align-items: center; }
         .gadget-item img { max-width: 100%; height: 110px; object-fit: cover; border-radius: 5px; }
         .gadget-item h3 { font-size: 18px; margin: 8px 0 6px 0; color: #333; }
         .gadget-item .prices { font-size: 15px; color: #555; margin-bottom: 8px; }
-        .action-buttons {
-            display: flex;
-            gap: 14px;
-            margin-top: 10px;
-            justify-content: center;
-            width: 100%;
-        }
-        .gadget-item button {
-            width: auto;
-            padding: 7px 18px;
-            margin: 0;
-            font-size: 15px;
-        }
+        .action-buttons { display: flex; gap: 14px; margin-top: 10px; justify-content: center; width: 100%; }
+        .gadget-item button { width: auto; padding: 7px 18px; margin: 0; font-size: 15px; }
         .cart { background: #fff; padding: 16px; border-radius: 5px; margin-top: 20px; box-shadow: 0 1px 4px #0001; }
         .cart h2 { font-size: 40px; margin-bottom: 14px; color: #333; }
         .cart ul { list-style-type: none; padding: 0; }
@@ -70,16 +40,16 @@
         footer { background: #333; color: #fff; text-align: center; padding: 10px 0; position: relative; bottom: 0; width: 100%; font-size: 15px; }
         footer a { color: #fff; text-decoration: none; }
         footer a:hover { text-decoration: underline; }
-        #mapModal { display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:#0005; z-index:3000; }
-        #mapModalBox { background:#fff;padding:24px 18px;border-radius:8px;max-width:400px;margin:80px auto;position:relative; }
+        #mapModal, #checkoutModal { display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:#0005; z-index:3000; }
+        #mapModalBox, #checkoutModalBox { background:#fff;padding:24px 18px;border-radius:8px;max-width:400px;margin:80px auto;position:relative; }
         #map { width: 350px; height: 200px; border-radius: 8px; margin-bottom:12px; }
         #placeImage { width: 350px; height: 120px; border-radius: 8px; object-fit: cover; margin-bottom: 12px; }
-        #mapModalBox button { margin-top: 10px; }
+        #mapModalBox button, #checkoutModalBox button { margin-top: 10px; }
         #paymentModal { display:none; position:fixed; top:0; left:0;width:100vw;height:100vh;background:#0005;z-index:4000;}
         #paymentModalBox { background:#fff;padding:24px 18px;border-radius:8px;max-width:400px;margin:80px auto;position:relative;}
         #paymentModalBox button { margin-top: 10px; }
         #adminPanel { display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#0008;z-index:5000;}
-        #adminPanelBox {background:#fff;padding:24px 18px;border-radius:8px;max-width:600px;margin:40px auto;position:relative;}
+        #adminPanelBox {background:#fff;padding:24px 18px;border-radius:8px;max-width:900px;margin:40px auto;position:relative;}
         #notificationIcon {position:fixed;top:18px;right:24px;z-index:9999;cursor:pointer;}
         #notificationIcon svg {vertical-align:middle;}
         #notifDot {display:none;position:absolute;top:2px;right:2px;width:10px;height:10px;background:#dc3545;border-radius:50%;}
@@ -87,17 +57,22 @@
         @media (max-width: 900px) {
             .gadget-list { grid-template-columns: repeat(2, 1fr); }
             #map, #placeImage { width: 95vw; }
-            #mapModalBox, #paymentModalBox, #adminPanelBox { max-width: 95vw; }
+            #mapModalBox, #paymentModalBox, #adminPanelBox, #checkoutModalBox { max-width: 95vw; }
         }
         @media (max-width: 600px) {
             .gadget-list { grid-template-columns: repeat(2, 1fr); }
             main { padding: 8px; }
             #map, #placeImage { width: 95vw; }
-            #mapModalBox, #paymentModalBox, #adminPanelBox { max-width: 95vw; }
+            #mapModalBox, #paymentModalBox, #adminPanelBox, #checkoutModalBox { max-width: 95vw; }
         }
+        #adminOrders table { width: 100%; border-collapse: collapse; }
+        #adminOrders th, #adminOrders td { border: 1px solid #ddd; padding: 6px 4px; font-size: 13px; }
+        #adminOrders th { background: #333; color: #fff; }
+        #adminOrders tr:nth-child(even) { background: #f9f9f9; }
     </style>
 </head>
 <body>
+    <audio id="clickSound" src="mouse-click-331781.mp3" preload="auto"></audio>
     <!-- Notification Icon -->
     <div id="notificationIcon">
       <span style="font-size:2rem;position:relative;">
@@ -107,9 +82,7 @@
         <span id="notifDot"></span>
       </span>
     </div>
-    <!-- Notification Popup -->
     <div id="notification"></div>
-    <!-- LOGIN FORM -->
     <div id="loginPage" class="container">
         <h2>Login</h2>
         <div class="error" id="loginError"></div>
@@ -118,7 +91,6 @@
         <button onclick="login()">Login</button>
         <button onclick="showRegister()">Register</button>
     </div>
-    <!-- REGISTER FORM -->
     <div id="registerPage" class="container hidden">
         <h2>Register</h2>
         <div class="error" id="registerError"></div>
@@ -128,17 +100,16 @@
         <input type="text" id="regPhone" placeholder="Phone Number" required>
         <select id="regState" required onchange="populateAreas('regState','regArea')">
             <option value="">Select State</option>
-            <option value="Lagos">Lagos</option>
-            <!-- Add other states as needed -->
         </select>
-        <select id="regArea" required>
+        <select id="regArea" required onchange="populateStreets('regState','regArea','regStreet')">
             <option value="">Select Area</option>
         </select>
-        <input type="text" id="regStreet" placeholder="Street" required>
+        <select id="regStreet" required>
+            <option value="">Select Street</option>
+        </select>
         <button onclick="register()">Register</button>
         <button onclick="showLogin()">Back to Login</button>
     </div>
-    <!-- MAIN SHOP PAGE -->
     <div id="mainPage" class="hidden">
         <div class="user-bar">
             Logged in as <b id="userName"></b>
@@ -176,16 +147,16 @@
         </footer>
     </div>
     <!-- Map Modal -->
-    <div id="mapModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#0005;z-index:3000;">
-      <div id="mapModalBox" style="background:#fff;padding:24px 18px;border-radius:8px;max-width:400px;margin:80px auto;position:relative;">
-        <div id="map" style="width:350px;height:200px;border-radius:8px;margin-bottom:12px;"></div>
+    <div id="mapModal">
+      <div id="mapModalBox">
+        <div id="map"></div>
         <img id="placeImage" src="" alt="Place Image" style="display:none;">
         <button onclick="closeMapModal()">Cancel</button>
       </div>
     </div>
     <!-- Payment Modal -->
-    <div id="paymentModal" style="display:none; position:fixed; top:0; left:0;width:100vw;height:100vh;background:#0005;z-index:4000;">
-      <div id="paymentModalBox" style="background:#fff;padding:24px 18px;border-radius:8px;max-width:400px;margin:80px auto;position:relative;">
+    <div id="paymentModal">
+      <div id="paymentModalBox">
         <h3>Payment Method</h3>
         <select id="paymentMethod">
             <option value="transfer">Bank Transfer</option>
@@ -200,13 +171,78 @@
     <div id="adminPanel">
       <div id="adminPanelBox">
         <h2>Admin Panel - Orders</h2>
-        <div id="adminOrders" style="max-height:400px;overflow:auto;"></div>
+        <div id="adminOrders" style="max-height:500px;overflow:auto;"></div>
         <button onclick="closeAdminPanel()">Close</button>
+      </div>
+    </div>
+    <!-- Checkout Modal -->
+    <div id="checkoutModal">
+      <div id="checkoutModalBox">
+        <h3>Choose Order Type</h3>
+        <button onclick="checkoutPick('Pickup')">Pick Up</button>
+        <button onclick="checkoutPick('Delivery')">Delivery</button>
+        <button onclick="closeCheckoutModal()">Cancel</button>
       </div>
     </div>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
-    // Notification icon logic
+    // --- AREA, STATE, STREET LOGIC ---
+    const AVAILABLE_AREAS = {
+        "Lagos": {
+            "Ikeja": ["Allen Avenue", "Opebi", "Alausa", "Oba Akran"],
+            "Yaba": ["Herbert Macaulay", "Commercial Ave", "Tejuosho", "Sabo"],
+            "Lekki": ["Admiralty Way", "Lekki Phase 1", "Chevron", "VGC"],
+            "Surulere": ["Bode Thomas", "Adeniran Ogunsanya", "Aguda", "Ijesha"],
+            "Ikorodu": ["Ijede Road", "Ebute", "Agbede", "Igbogbo"],
+            "Ajah": ["Abraham Adesanya", "Sangotedo", "Badore", "Ilaje"],
+            "Victoria Island": ["Ozumba Mbadiwe", "Akin Adesola", "Ahmadu Bello", "Adeola Odeku"],
+            "Agege": ["Dopemu", "Oko Oba", "Pen Cinema", "Capitol Road"],
+            "Oshodi": ["Oshodi Road", "Bolade", "Mafoluku", "Shogunle"],
+            "Badagry": ["Ajara", "Ibereko", "Topo", "Gbaji"]
+        }
+    };
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const stateSelect = document.getElementById('regState');
+        stateSelect.innerHTML = '<option value="">Select State</option>';
+        Object.keys(AVAILABLE_AREAS).forEach(state => {
+            const opt = document.createElement('option');
+            opt.value = state;
+            opt.textContent = state;
+            stateSelect.appendChild(opt);
+        });
+    });
+
+    function populateAreas(stateId, areaId) {
+        const state = document.getElementById(stateId).value;
+        const areaSelect = document.getElementById(areaId);
+        areaSelect.innerHTML = '<option value="">Select Area</option>';
+        document.getElementById('regStreet').innerHTML = '<option value="">Select Street</option>';
+        if (AVAILABLE_AREAS[state]) {
+            Object.keys(AVAILABLE_AREAS[state]).forEach(area => {
+                const opt = document.createElement('option');
+                opt.value = area;
+                opt.textContent = area;
+                areaSelect.appendChild(opt);
+            });
+        }
+    }
+    function populateStreets(stateId, areaId, streetId) {
+        const state = document.getElementById(stateId).value;
+        const area = document.getElementById(areaId).value;
+        const streetSelect = document.getElementById(streetId);
+        streetSelect.innerHTML = '<option value="">Select Street</option>';
+        if (AVAILABLE_AREAS[state] && AVAILABLE_AREAS[state][area]) {
+            AVAILABLE_AREAS[state][area].forEach(street => {
+                const opt = document.createElement('option');
+                opt.value = street;
+                opt.textContent = street;
+                streetSelect.appendChild(opt);
+            });
+        }
+    }
+
+    // --- NOTIFICATION LOGIC ---
     function showNotification(msg, color = "#333") {
         const n = document.getElementById('notification');
         const dot = document.getElementById('notifDot');
@@ -230,24 +266,23 @@
         }
     };
 
-    // Area logic
-    const AVAILABLE_AREAS = {
-        "Lagos": ["Ikeja", "Yaba", "Lekki", "Surulere", "Ikorodu", "Ajah", "Victoria Island", "Agege", "Oshodi", "Badagry"]
-        // Add other states and areas as needed
-    };
-    function populateAreas(stateId, areaId) {
-        const state = document.getElementById(stateId).value;
-        const areaSelect = document.getElementById(areaId);
-        areaSelect.innerHTML = '<option value="">Select Area</option>';
-        if (AVAILABLE_AREAS[state]) {
-            AVAILABLE_AREAS[state].forEach(area => {
-                const opt = document.createElement('option');
-                opt.value = area;
-                opt.textContent = area;
-                areaSelect.appendChild(opt);
-            });
+    // --- SOUND LOGIC ---
+    function playClick() {
+        const audio = document.getElementById('clickSound');
+        if (audio) {
+            audio.currentTime = 0;
+            audio.play();
         }
     }
+    document.addEventListener('DOMContentLoaded', function() {
+        document.body.addEventListener('click', function(e) {
+            if (e.target.tagName === "BUTTON" || e.target.classList.contains('gadget-item') || e.target.id === "notificationIcon") {
+                playClick();
+            }
+        });
+    });
+
+    // --- LOGIN/REGISTER LOGIC ---
     function showLogin() {
         document.getElementById('loginPage').classList.remove('hidden');
         document.getElementById('registerPage').classList.add('hidden');
@@ -289,7 +324,7 @@
         const phone = document.getElementById('regPhone').value.trim();
         const state = document.getElementById('regState').value;
         const area = document.getElementById('regArea').value;
-        const street = document.getElementById('regStreet').value.trim();
+        const street = document.getElementById('regStreet').value;
         if (!name || !email || !password || !phone || !state || !area || !street) {
             document.getElementById('registerError').textContent = 'Please fill all fields.';
             showNotification("Please fill all fields.", "#dc3545");
@@ -312,7 +347,51 @@
         onMainLoad();
         showNotification("Registration successful!", "#28a745");
     }
-    // --- POLLING FOR ORDER STATUS ---
+
+    // --- MAP LOGIC ---
+    let map, mapMarker;
+    function showMapModal() {
+        document.getElementById('mapModal').style.display = 'block';
+        document.getElementById('placeImage').style.display = 'none';
+        const user = getCurrentUser();
+        const address = `${user.street}, ${user.area}, ${user.state}, Nigeria`;
+        setTimeout(() => {
+            if (map) map.remove();
+            map = L.map('map').setView([9.082, 8.6753], 6);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`)
+            .then(r=>r.json())
+            .then(res=>{
+                if(res && res[0]) {
+                    let lat = parseFloat(res[0].lat), lng = parseFloat(res[0].lon);
+                    map.setView([lat, lng], 16);
+                    mapMarker = L.marker([lat, lng]).addTo(map)
+                        .bindPopup(address).openPopup();
+                    let img = document.getElementById('placeImage');
+                    img.src = `https://maps.googleapis.com/maps/api/streetview?size=350x120&location=${lat},${lng}&fov=80&heading=70&pitch=0&key=YOUR_GOOGLE_API_KEY`;
+                    img.onerror = function() {
+                        img.src = `https://source.unsplash.com/350x120/?${encodeURIComponent(user.street + " " + user.area + " " + user.state)}`;
+                    };
+                    img.style.display = 'block';
+                } else {
+                    map.setView([9.082, 8.6753], 6);
+                    mapMarker = L.marker([9.082, 8.6753]).addTo(map)
+                        .bindPopup("Address not found").openPopup();
+                    let img = document.getElementById('placeImage');
+                    img.src = "https://images.unsplash.com/photo-1506744038136-46273834b3fb?fit=crop&w=350&q=80";
+                    img.style.display = 'block';
+                }
+            });
+        }, 200);
+    }
+    function closeMapModal() {
+        document.getElementById('mapModal').style.display = 'none';
+        showPaymentModal();
+    }
+
+    // --- CART, GADGETS, CHECKOUT, PAYMENT LOGIC ---
     let orderStatusInterval = null;
     function startOrderStatusPolling() {
         if (orderStatusInterval) clearInterval(orderStatusInterval);
@@ -365,10 +444,39 @@
             showNotification('Your cart is empty.', "#dc3545");
             return;
         }
-        showNotification('Order placed! You will be contacted soon.', "#28a745");
+        document.getElementById('checkoutModal').style.display = 'block';
+    }
+    function closeCheckoutModal() {
+        document.getElementById('checkoutModal').style.display = 'none';
+    }
+    function checkoutPick(type) {
+        closeCheckoutModal();
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let user = getCurrentUser();
+        if (!user) {
+            showNotification('Please login first.', "#dc3545");
+            return;
+        }
+        let total = cart.reduce((sum, item) => sum + item.price, 0);
+        let order = {
+            date: new Date().toISOString(),
+            type: type,
+            name: user.name,
+            phone: user.phone,
+            email: user.email,
+            items: cart.map(i => i.name).join(', '),
+            details: type === "Pickup" ? "Ongod Gadget Store, Ikeja, Lagos" : `${user.street}, ${user.area}, ${user.state}, Nigeria`,
+            total: total,
+            status: "pending"
+        };
+        pendingOrder = order;
+        if (type === "Delivery") {
+            showMapModal();
+        } else {
+            showPaymentModal();
+        }
         clearCart();
     }
-    // Buy Now logic
     let pendingOrder = null;
     function buyNow(name, pickup, delivery) {
         const user = getCurrentUser();
@@ -379,85 +487,44 @@
         let choice = prompt('Do you want to pick up or have it delivered?\n1. Pick up\n2. Delivery:');
         if (choice === '1') {
             pendingOrder = {
+                date: new Date().toISOString(),
                 type: 'Pickup',
-                name,
-                price: pickup,
-                address: "Ongod Gadget Store, Ikeja, Lagos"
+                name: user.name,
+                phone: user.phone,
+                email: user.email,
+                items: name,
+                details: "Ongod Gadget Store, Ikeja, Lagos",
+                total: pickup,
+                status: "pending"
             };
             showPaymentModal();
         } else if (choice === '2') {
             pendingOrder = {
+                date: new Date().toISOString(),
                 type: 'Delivery',
-                name,
-                price: delivery,
-                state: user.state,
-                area: user.area,
-                address: `${user.area}, ${user.state}, Nigeria`
+                name: user.name,
+                phone: user.phone,
+                email: user.email,
+                items: name,
+                details: `${user.street}, ${user.area}, ${user.state}, Nigeria`,
+                total: delivery,
+                status: "pending"
             };
             showMapModal();
         } else {
             showNotification('Invalid choice. Please try again.', "#dc3545");
         }
     }
-    // Map logic for Delivery
-    let map, mapMarker;
-    function showMapModal() {
-        document.getElementById('mapModal').style.display = 'block';
-        document.getElementById('placeImage').style.display = 'none';
-        const user = getCurrentUser();
-        const address = `${user.area}, ${user.state}, Nigeria`;
-        setTimeout(() => {
-            if (map) map.remove();
-            map = L.map('map').setView([9.082, 8.6753], 6);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; OpenStreetMap contributors'
-            }).addTo(map);
-            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`)
-            .then(r=>r.json())
-            .then(res=>{
-                if(res && res[0]) {
-                    let lat = parseFloat(res[0].lat), lng = parseFloat(res[0].lon);
-                    map.setView([lat, lng], 14);
-                    mapMarker = L.marker([lat, lng]).addTo(map)
-                        .bindPopup(address).openPopup();
-                    let img = document.getElementById('placeImage');
-                    img.src = `https://source.unsplash.com/350x120/?${encodeURIComponent(user.area + " " + user.state)}`;
-                    img.style.display = 'block';
-                } else {
-                    map.setView([9.082, 8.6753], 6);
-                    mapMarker = L.marker([9.082, 8.6753]).addTo(map)
-                        .bindPopup("Address not found").openPopup();
-                    let img = document.getElementById('placeImage');
-                    img.src = "https://images.unsplash.com/photo-1506744038136-46273834b3fb?fit=crop&w=350&q=80";
-                    img.style.display = 'block';
-                }
-            });
-        }, 200);
-    }
-    function closeMapModal() {
-        document.getElementById('mapModal').style.display = 'none';
-        showPaymentModal();
-    }
-    // Payment Modal
     function showPaymentModal() {
         document.getElementById('paymentModal').style.display = 'block';
     }
-    // SheetBest API URL
-    const SHEETBEST_URL = 'https://api.sheetbest.com/sheets/6b0edbce-49b7-4baf-8bb6-a5c1f6879fa2';
+    const SHEETBEST_URL = 'https://api.sheetbest.com/sheets/4115eaae-b505-4191-83bf-a0d58cec1644';
     function finishOrder() {
         document.getElementById('paymentModal').style.display = 'none';
         let user = getCurrentUser();
-        let order = {
-            date: new Date().toISOString(),
-            type: pendingOrder.type,
-            name: user.name,
-            phone: user.phone,
-            email: user.email,
-            items: pendingOrder.name,
-            details: pendingOrder.type === "Pickup" ? pendingOrder.address : `${user.area}, ${user.state}, Nigeria`,
-            total: pendingOrder.price,
-            status: document.getElementById('paymentMethod').value
-        };
+        let order = pendingOrder;
+        if (!order) return;
+        order.status = document.getElementById('paymentMethod').value;
         fetch(SHEETBEST_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -469,44 +536,69 @@
         });
         pendingOrder = null;
     }
+
+    // --- ADMIN PANEL LOGIC (SHOW ORDERS FROM SHEET) ---
     function showAdminPanel() {
         document.getElementById('adminPanel').style.display = 'block';
-        let orders = JSON.parse(localStorage.getItem('adminOrders') || "[]");
-        let html = "";
-        if (orders.length === 0) {
-            html = "<p>No orders yet.</p>";
-        } else {
-            html = "<ol>";
-            orders.reverse().forEach(order => {
-                html += `<li>
-                    <b>Time:</b> ${order.time}<br>
-                    <b>Customer:</b> ${order.user.name} (${order.user.phone}, ${order.user.email})<br>
-                    <b>Address:</b> ${order.address}<br>
-                    <b>Gadget:</b> ${order.gadget}<br>
-                    <b>Order Type:</b> ${order.type}<br>
-                    <b>Payment:</b> ${order.payment}<br>
-                    <b>Price:</b> #${order.price.toLocaleString()}
-                </li><hr>`;
+        document.getElementById('adminOrders').innerHTML = 'Loading...';
+        fetch(SHEETBEST_URL)
+            .then(res => res.json())
+            .then(data => {
+                if (!data.length) {
+                    document.getElementById('adminOrders').innerHTML = '<p>No orders yet.</p>';
+                    return;
+                }
+                let html = `<table>
+                  <tr>
+                    <th>Date</th>
+                    <th>Order Type</th>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>Items</th>
+                    <th>Address/Details</th>
+                    <th>Total (₦)</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                    <th>Message</th>
+                  </tr>`;
+                data.reverse().forEach(order => {
+                  html += `<tr>
+                    <td>${order.date ? order.date.replace('T', ' ').slice(0, 16) : ''}</td>
+                    <td>${order.type || ''}</td>
+                    <td>${order.name || ''}</td>
+                    <td>${order.phone || ''}</td>
+                    <td>${order.email || ''}</td>
+                    <td>${order.items || ''}</td>
+                    <td>${order.details || ''}</td>
+                    <td>${order.total ? Number(order.total).toLocaleString() : ''}</td>
+                    <td>${order.status || ''}</td>
+                    <td><button onclick="markConfirmed('${order.date}')">Confirm</button></td>
+                    <td>${order.message || ''}</td>
+                  </tr>`;
+                });
+                html += `</table>`;
+                document.getElementById('adminOrders').innerHTML = html;
+            })
+            .catch(() => {
+                document.getElementById('adminOrders').innerHTML = '<p style="color:#d00;">Failed to load orders.</p>';
             });
-            html += "</ol>";
-        }
-        document.getElementById('adminOrders').innerHTML = html;
     }
     function closeAdminPanel() {
         document.getElementById('adminPanel').style.display = 'none';
     }
-
-    // Show admin message if order is confirmed
+    function markConfirmed(date) {
+        alert('Order with date ' + date + ' marked as Confirmed!');
+        // Here you can send a PATCH/PUT request to SheetBest to update the status if you want
+    }
     function checkOrderStatusAndNotify() {
         const user = getCurrentUser();
         if (!user) return;
         fetch(SHEETBEST_URL)
             .then(res => res.json())
             .then(data => {
-                // Find the latest order for this user by email
                 const orders = data.filter(o => o.email && o.email.toLowerCase() === user.email.toLowerCase());
                 if (orders.length > 0) {
-                    // Get the most recent order
                     const latestOrder = orders.sort((a, b) => new Date(b.date) - new Date(a.date))[0];
                     if (latestOrder.message && latestOrder.status === "Confirmed") {
                         showNotification(latestOrder.message, "#28a745");
@@ -514,7 +606,6 @@
                 }
             });
     }
-
     function onMainLoad() {
         const user = getCurrentUser();
         if (!user) {
@@ -526,22 +617,23 @@
         renderGadgets();
         startOrderStatusPolling();
     }
-
-    // Render gadgets dynamically
     function renderGadgets() {
         const phones = [
             { img: "phone1.webp", name: "Redmi Note 14", pickup: 262983, delivery: 306813 },
             { img: "phone2.jpeg", name: "iPhone 14", pickup: 278279, delivery: 324659 },
-            { img: "phone4.webp", name: "Samsung Galaxy S22", pickup: 294000, delivery: 343000 },
+            { img: "phone15.jpeg", name: "Samsung Galaxy S22", pickup: 294000, delivery: 343000 },
             { img: "phone5.jpeg", name: "Google Pixel 6", pickup: 310800, delivery: 362600 },
             { img: "phone6.jpg", name: "OnePlus 9 Pro", pickup: 324000, delivery: 378000 },
             { img: "phone7.jpeg", name: "Tecno Camon 20", pickup: 144000, delivery: 168000 },
             { img: "phone8.jpeg", name: "Infinix Hot 30", pickup: 117600, delivery: 137200 },
-            { img: "phone13.webp", name: "Samsung Galaxy A54", pickup: 216000, delivery: 252000 },
-            { img: "phone 13.jpeg", name: "iPhone 13 Pro Max", pickup: 540000, delivery: 630000 },
+            { img: "phone16.jpeg", name: "Samsung Galaxy A54", pickup: 216000, delivery: 252000 },
+            { img: "phone13.jpeg", name: "iPhone 13 Pro Max", pickup: 540000, delivery: 630000 },
             { img: "phone11.jpeg", name: "Realme GT 5 Pro", pickup: 350000, delivery: 400000 },
             { img: "phone12.jpeg", name: "Nokia G60", pickup: 95000, delivery: 110000 },
-            { img: "phone14.jpeg", name: "Vivo V27", pickup: 180000, delivery: 210000 }
+            { img: "phone14.jpeg", name: "Vivo V27", pickup: 180000, delivery: 210000 },
+            { img: "phone17.jpeg", name: "iPhone 15 Pro", pickup: 900000, delivery: 1050000 },
+            { img: "phone18.jpeg", name: "Tecno Spark 20", pickup: 85000, delivery: 95000 },
+            { img: "phone19.jpeg", name: "Samsung Galaxy Z Fold 5", pickup: 1200000, delivery: 1350000 }
         ];
         const laptops = [
             { img: "laptop1.jpeg", name: "Dell Inspiron 15", pickup: 180000, delivery: 210000 },
@@ -553,15 +645,21 @@
             { img: "laptop8.webp", name: "HP EliteBook 840", pickup: 420000, delivery: 490000 },
             { img: "laptop7.webp", name: "Microsoft Surface Laptop 5", pickup: 600000, delivery: 700000 },
             { img: "laptop10.jpeg", name: "MSI GF63 Thin", pickup: 410000, delivery: 470000 },
-            { img: "laptop11.jpeg", name: "Razer Blade 15", pickup: 900000, delivery: 1050000 }
+            { img: "laptop11.jpeg", name: "Razer Blade 15", pickup: 900000, delivery: 1050000 },
+            { img: "laptop12.jpeg", name: "Apple MacBook Pro M3", pickup: 1200000, delivery: 1350000 },
+            { img: "laptop13.jpeg", name: "Dell XPS 13", pickup: 650000, delivery: 750000 }
         ];
         const accessories = [
-            { img: "airpod.jpg", name: "Apple AirPods Pro", pickup: 85000, delivery: 95000 },
+            { img: "airpod.jpeg", name: "Apple AirPods Pro", pickup: 85000, delivery: 95000 },
             { img: "samsungbunds.jpeg", name: "Samsung Galaxy Buds", pickup: 60000, delivery: 70000 },
             { img: "apowerbanknker.jpeg", name: "Anker Power Bank 20000mAh", pickup: 35000, delivery: 40000 },
             { img: "logitechmouse.jpeg", name: "Logitech MX Master 3 Mouse", pickup: 32000, delivery: 37000 },
             { img: "sandiskssd.jpeg", name: "SanDisk 1TB SSD", pickup: 65000, delivery: 75000 },
-            { img: "jblgo3.jpeg", name: "JBL Go 3 Speaker", pickup: 18000, delivery: 22000 }
+            { img: "jblgo3.jpeg", name: "JBL Go 3 Speaker", pickup: 18000, delivery: 22000 },
+            { img: "ankercharger.jpeg", name: "Anker 65W Charger", pickup: 25000, delivery: 30000 },
+            { img: "applewatch.jpeg", name: "Apple Watch Series 9", pickup: 220000, delivery: 250000 },
+            { img: "fitbit.jpeg", name: "Fitbit Versa 4", pickup: 90000, delivery: 105000 },
+            { img: "logitechkeyboard.jpeg", name: "Logitech K380 Keyboard", pickup: 18000, delivery: 22000 }
         ];
         const phoneList = document.getElementById('phone-list');
         const laptopList = document.getElementById('laptop-list');
@@ -572,7 +670,7 @@
         phones.forEach(phone => {
             phoneList.innerHTML += `
                 <div class="gadget-item">
-                    <img src="${phone.img}" alt="${phone.name}">
+                    <img src="${phone.img}" alt="${phone.name}" onerror="this.onerror=null;this.src='https://source.unsplash.com/200x110/?phone,${encodeURIComponent(phone.name)}';">
                     <h3>${phone.name}</h3>
                     <div class="prices">
                         <span>Pickup Total: #${phone.pickup.toLocaleString()}</span><br>
@@ -588,7 +686,7 @@
         laptops.forEach(laptop => {
             laptopList.innerHTML += `
                 <div class="gadget-item">
-                    <img src="${laptop.img}" alt="${laptop.name}">
+                    <img src="${laptop.img}" alt="${laptop.name}" onerror="this.onerror=null;this.src='https://source.unsplash.com/200x110/?laptop,${encodeURIComponent(laptop.name)}';">
                     <h3>${laptop.name}</h3>
                     <div class="prices">
                         <span>Pickup Total: #${laptop.pickup.toLocaleString()}</span><br>
@@ -604,7 +702,7 @@
         accessories.forEach(acc => {
             accessoryList.innerHTML += `
                 <div class="gadget-item">
-                    <img src="${acc.img}" alt="${acc.name}">
+                    <img src="${acc.img}" alt="${acc.name}" onerror="this.onerror=null;this.src='https://source.unsplash.com/200x110/?accessory,${encodeURIComponent(acc.name)}';">
                     <h3>${acc.name}</h3>
                     <div class="prices">
                         <span>Pickup Total: #${acc.pickup.toLocaleString()}</span><br>
@@ -618,7 +716,6 @@
             `;
         });
     }
-
     window.addEventListener('DOMContentLoaded', function() {
         getCurrentUser() ? (showMain(), onMainLoad()) : showLogin();
     });
