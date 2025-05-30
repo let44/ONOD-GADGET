@@ -318,9 +318,9 @@ document.getElementById('notification-btn').onclick = function() {
     loadNotificationsFromSheet();
 };
 
-// --- LOAD NOTIFICATIONS FROM SHEET ---
+// --- LOAD NOTIFICATIONS FROM SHEETfetch("http://10.121.54.210:3000/send-message", { ... }) ---
 function loadNotificationsFromSheet() {
-    fetch("http://localhost:3000/orders")
+    fetch("http://10.121.54.210:3000/orders")
         .then(res => res.json())
         .then(data => {
             // Show ALL notifications, including rejected/confirmed
@@ -472,11 +472,11 @@ function buyNow(name, price) {
             address = 'Allen Avenue, Ikeja, Lagos';
         }
 
-        // Compose order details as a notification message
+        // Compose order details as a notification messagefetch("http://10.121.54.210:3000/send-message", { ... })
         const orderTitle = `New Order: ${name}`;
         const orderMessage = `User: ${username || 'Guest'}\nProduct: ${name}\nPrice: $${price}\nMethod: ${method}\nAddress: ${address}\nTotal: $${totalAmountSpan.textContent}`;
 
-        fetch("http://localhost:3000/order", {
+        fetch("http://10.121.54.210:3000/order", {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -570,14 +570,14 @@ function searchGadgets() {
         item.style.display = name.includes(query) ? '' : 'none';
     });
 }
-// --- BACKEND URL (auto switch for localhost or hosting) ---
+// --- BACKEND URL (auto switch for localhost or hosting) fetch("http://10.121.54.210:3000/send-message", { ... })---
 const BACKEND_URL =
   window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
     ? "http://localhost:3000"
     : "https://your-domain.com"; // <-- Replace with your hosting URL
 
-const SEND_CHAT_URL =  "http://localhost:3000/send-message";
-const RECEIVE_CHAT_URL =  "http://localhost:3000/receive-messages";
+const SEND_CHAT_URL =  "http://10.121.54.210:3000/send-message";
+const RECEIVE_CHAT_URL =  "http://10.121.54.210:3000/receive-messages";
 
 // Show chat window when button is clicked
 document.getElementById('ai-chat-btn').onclick = function() {
@@ -596,9 +596,9 @@ function sendAIMessage() {
     input.value = '';
     chat.scrollTop = chat.scrollHeight;
 
-    // Send to backend
+    // Send to backendfetch("http://10.121.54.210:3000/send-message", { ... })
     let name = localStorage.getItem('gadgetLoggedIn') || 'Guest';
-    fetch("http://localhost:3000/send-message", {
+    fetch("http://10.121.54.210:3000/send-message", {
         method: "POST",
         body: JSON.stringify({ name, message: msg }),
         headers: { "Content-Type": "application/json" }
@@ -616,9 +616,9 @@ function sendAIMessage() {
     setTimeout(loadAdminReplies, 1000);
 }
 
-// Load admin replies from backend
+// Load admin replies from backendfetch("http://10.121.54.210:3000/send-message", { ... })
 function loadAdminReplies() {
-    fetch("http://localhost:3000/receive-messages")
+    fetch("http://10.121.54.210:3000/receive-messages")
         .then(res => res.json())
         .then(data => {
             const chat = document.getElementById('ai-chat-messages');
