@@ -1,4 +1,4 @@
- body {
+body {
     font-family: 'Segoe UI', Arial, sans-serif;
     margin: 0;
     padding: 0;
@@ -83,8 +83,17 @@ header {
 }
 .header-actions .icon:hover { transform: scale(1.1); }
 .main-title {
-    text-align: center; margin: 36px 0 18px 0; color: #0078d7;
-    font-size: 2.2em; font-weight: 700; letter-spacing: 1px;
+    text-align: center;
+    margin: 36px 0 18px 0;
+    color: #fff;
+    background: linear-gradient(90deg, #0078d7 60%, #005fa3 100%);
+    font-size: 2.4em;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    border-radius: 12px;
+    box-shadow: 0 4px 18px rgba(0,120,215,0.10);
+    padding: 18px 0;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 .section-title {
     padding: 20px 0 10px 0; font-size: 28px; font-weight: bold;
@@ -162,7 +171,7 @@ header {
     .Gadget-list { grid-template-columns: repeat(3, 1fr); gap: 16px; }
 }
 @media (max-width: 700px) {
-    .Gadget-list { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .Gadget-list { grid-template-columns: repeat(3, 1fr); gap: 10px; }
     .header-container {
         flex-direction: column;
         gap: 10px;
