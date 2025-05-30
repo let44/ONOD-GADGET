@@ -2,832 +2,640 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Ongod Gadget Shop</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f4f4f4; animation: fadeIn 8s; }
-        @keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
-        .container { max-width: 400px; margin: 60px auto; background: #fff; padding: 30px 20px 20px 20px; border-radius: 8px; box-shadow: 0 2px 8px #0001; }
-        h2 { text-align: center; margin-bottom: 20px; }
-        input, select, button { width: 100%; padding: 10px; margin: 10px 0 0 0; border-radius: 5px; border: 1px solid #ddd; font-size: 16px; box-sizing: border-box; }
-        button { background: #28a745; color: #fff; border: none; margin-bottom: 10px; cursor: pointer; transition: background 0.2s; }
-        button:hover { background: #218838; }
-        .error { color: #d00; text-align: center; margin-bottom: 10px; }
-        .hidden { display: none; }
-        .user-bar { background: #eee; padding: 10px; text-align: right; font-size: 15px; }
-        .user-bar button { width: auto; padding: 5px 12px; margin-left: 10px; background: #dc3545; border-radius: 4px; font-size: 14px; }
-        .user-bar button:hover { background: #b52a37; }
-        header { background: #333; color: #fff; padding: 10px 0; text-align: left; position: relative; }
-        .logo img { width: 120px; height: auto; margin-left: 20px; }
-        main { padding: 20px; }
-        .gadget-section { margin-bottom: 40px; }
-        .section-title { font-size: 24px; margin-bottom: 16px; color: #333; font-weight: bold; }
-        .gadget-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-        .gadget-item { background: #fff; border: 1px solid #ddd; border-radius: 5px; padding: 12px; margin-bottom: 0; box-sizing: border-box; text-align: center; box-shadow: 0 1px 4px #0001; display: flex; flex-direction: column; align-items: center; }
-        .gadget-item img { max-width: 100%; height: 110px; object-fit: cover; border-radius: 5px; }
-        .gadget-item h3 { font-size: 18px; margin: 8px 0 6px 0; color: #333; }
-        .gadget-item .prices { font-size: 15px; color: #555; margin-bottom: 8px; }
-        .action-buttons { display: flex; gap: 14px; margin-top: 10px; justify-content: center; width: 100%; }
-        .gadget-item button { width: auto; padding: 7px 18px; margin: 0; font-size: 15px; }
-        .cart { background: #fff; padding: 16px; border-radius: 5px; margin-top: 20px; box-shadow: 0 1px 4px #0001; }
-        .cart h2 { font-size: 40px; margin-bottom: 14px; color: #333; }
-        .cart ul { list-style-type: none; padding: 0; }
-        .cart li { display: flex; justify-content: space-between; margin-bottom: 8px; padding: 7px 0; border-bottom: 1px solid #eee; font-size: 9px; }
-        .cart li button { background: #dc3545; color: #fff; border: none; padding: 4px 10px; border-radius: 4px; font-size: 13px; }
-        .cart li button:hover { background: #b52a37; }
-        address { text-align: center; margin-top: 20px; font-style: normal; font-size: 15px; }
-        footer { background: #333; color: #fff; text-align: center; padding: 10px 0; position: relative; bottom: 0; width: 100%; font-size: 15px; }
-        footer a { color: #fff; text-decoration: none; }
-        footer a:hover { text-decoration: underline; }
-        #mapModal, #checkoutModal { display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:#0005; z-index:3000; }
-        #mapModalBox, #checkoutModalBox { background:#fff;padding:24px 18px;border-radius:8px;max-width:400px;margin:80px auto;position:relative; }
-        #map { width: 350px; height: 200px; border-radius: 8px; margin-bottom:12px; }
-        #placeImage { width: 350px; height: 120px; border-radius: 8px; object-fit: cover; margin-bottom: 12px; }
-        #mapModalBox button, #checkoutModalBox button { margin-top: 10px; }
-        #paymentModal { display:none; position:fixed; top:0; left:0;width:100vw;height:100vh;background:#0005;z-index:4000;}
-        #paymentModalBox { background:#fff;padding:24px 18px;border-radius:8px;max-width:400px;margin:80px auto;position:relative;}
-        #paymentModalBox button { margin-top: 10px; }
-        #adminPanel { display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#0008;z-index:5000;}
-        #adminPanelBox {background:#fff;padding:24px 18px;border-radius:8px;max-width:900px;margin:40px auto;position:relative;}
-        #notificationIcon {position:fixed;top:18px;right:24px;z-index:9999;cursor:pointer;}
-        #notificationIcon svg {vertical-align:middle;}
-        #notifDot {display:none;position:absolute;top:2px;right:2px;width:10px;height:10px;background:#dc3545;border-radius:50%;}
-        #notification { display:none;position:fixed;top:60px;right:32px;background:#333;color:#fff;padding:14px 28px;border-radius:6px;z-index:9999;font-size:1.1rem;box-shadow:0 2px 8px #0003;min-width:220px;text-align:center;}
-        @media (max-width: 900px) {
-            .gadget-list { grid-template-columns: repeat(2, 1fr); }
-            #map, #placeImage { width: 95vw; }
-            #mapModalBox, #paymentModalBox, #adminPanelBox, #checkoutModalBox { max-width: 95vw; }
-        }
-        @media (max-width: 600px) {
-            .gadget-list { grid-template-columns: repeat(2, 1fr); }
-            main { padding: 8px; }
-            #map, #placeImage { width: 95vw; }
-            #mapModalBox, #paymentModalBox, #adminPanelBox, #checkoutModalBox { max-width: 95vw; }
-        }
-        #adminOrders table { width: 100%; border-collapse: collapse; }
-        #adminOrders th, #adminOrders td { border: 1px solid #ddd; padding: 6px 4px; font-size: 13px; }
-        #adminOrders th { background: #333; color: #fff; }
-        #adminOrders tr:nth-child(even) { background: #f9f9f9; }
-    </style>
+    <link rel="stylesheet" href="phone.css">
+    <title>ONGOD PHONE GADGET</title>
 </head>
 <body>
-    <audio id="clickSound" src="mouse-click-331781.mp3" preload="auto"></audio>
-    <!-- Notification Icon -->
-    <div id="notificationIcon">
-      <span style="font-size:2rem;position:relative;">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-          <path d="M12 22c1.1 0 2-.9 2-2h-4a2 2 0 0 0 2 2zm6-6V11c0-3.07-1.63-5.64-5-6.32V4a1 1 0 1 0-2 0v.68C7.63 5.36 6 7.92 6 11v5l-1.29 1.29A1 1 0 0 0 6 19h12a1 1 0 0 0 .71-1.71L18 16z" fill="#333"/>
-        </svg>
-        <span id="notifDot"></span>
-      </span>
-    </div>
-    <div id="notification"></div>
-    <!-- Notification Messages Modal -->
-    <div id="notifMessagesModal" style="display:none;position:fixed;top:60px;right:32px;background:#fff;color:#333;padding:18px 28px;border-radius:8px;z-index:9999;min-width:260px;max-width:90vw;box-shadow:0 2px 8px #0003;">
-      <h4 style="margin-top:0;">Your Messages</h4>
-      <ul id="notifMessagesList" style="padding-left:18px;font-size:1rem;max-height:300px;overflow:auto;"></ul>
-      <button onclick="closeNotifMessages()" style="margin-top:10px;">Close</button>
-    </div>
-    <div id="loginPage" class="container">
-        <h2>Login</h2>
-        <div class="error" id="loginError"></div>
-        <input type="email" id="loginEmail" placeholder="Email" required>
-        <input type="password" id="loginPassword" placeholder="Password" required>
-        <button onclick="login()">Login</button>
-        <button onclick="showRegister()">Register</button>
-    </div>
-    <div id="registerPage" class="container hidden">
-        <h2>Register</h2>
-        <div class="error" id="registerError"></div>
-        <input type="text" id="regName" placeholder="Full Name" required>
-        <input type="email" id="regEmail" placeholder="Email" required>
-        <input type="password" id="regPassword" placeholder="Password" required>
-        <input type="text" id="regPhone" placeholder="Phone Number" required>
-        <select id="regState" required onchange="populateAreas('regState','regArea')">
-            <option value="">Select State</option>
-        </select>
-        <select id="regArea" required onchange="populateStreets('regState','regArea','regStreet')">
-            <option value="">Select Area</option>
-        </select>
-        <select id="regStreet" required>
-            <option value="">Select Street</option>
-        </select>
-        <button onclick="register()">Register</button>
-        <button onclick="showLogin()">Back to Login</button>
-    </div>
-    <div id="mainPage" class="hidden">
-        <div class="user-bar">
-            Logged in as <b id="userName"></b>
-            <button onclick="logout()">Logout</button>
+   <!-- Login/Register Modal -->
+   <!-- Login/Register Modal -->
+<section>
+<div id="login-modal">
+    <div id="login-box">
+        <h2 id="login-title">Login</h2>
+        <input type="text" id="login-username" placeholder="Username" autocomplete="off"><br>
+        <input type="password" id="login-password" placeholder="Password"><br>
+        <button id="login-btn" onclick="login()">Login</button>
+        <button id="register-btn" onclick="register()" style="display:none;">Register</button>
+        <div>
+            <span class="switch-link" id="switch-to-register" onclick="showRegister()">Don't have an account? Register</span>
+            <span class="switch-link" id="switch-to-login" onclick="showLogin()" style="display:none;">Already have an account? Login</span>
         </div>
-        <header>
-            <div class="logo">
-                <img src="logo.png" alt="Ongod Gadget Logo">
+        <div id="login-error" style="color:#e74c3c;margin-top:10px;"></div>
+    </div>
+    <!-- Registration Address Modal -->
+    <div id="register-form-modal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;z-index:10000;">
+        <div style="background:#fff;padding:28px 20px;border-radius:12px;max-width:350px;box-shadow:0 4px 24px rgba(0,0,0,0.18);text-align:center;position:relative;margin:auto;">
+            <h2 style="color:#0078d7;">Complete Registration</h2>
+            <label>State:<br>
+                <select id="reg-state" style="width:90%;padding:8px;margin:8px 0;border-radius:5px;">
+                    <option value="">Select State</option>
+                    <option>Abia</option><option>Adamawa</option><option>Akwa Ibom</option><option>Anambra</option>
+                    <option>Bauchi</option><option>Bayelsa</option><option>Benue</option><option>Borno</option>
+                    <option>Cross River</option><option>Delta</option><option>Ebonyi</option><option>Edo</option>
+                    <option>Ekiti</option><option>Enugu</option><option>FCT</option><option>Gombe</option>
+                    <option>Imo</option><option>Jigawa</option><option>Kaduna</option><option>Kano</option>
+                    <option>Katsina</option><option>Kebbi</option><option>Kogi</option><option>Kwara</option>
+                    <option>Lagos</option><option>Nasarawa</option><option>Niger</option><option>Ogun</option>
+                    <option>Ondo</option><option>Osun</option><option>Oyo</option><option>Plateau</option>
+                    <option>Rivers</option><option>Sokoto</option><option>Taraba</option><option>Yobe</option>
+                    <option>Zamfara</option>
+                </select>
+            </label><br>
+            <label>Area:<br>
+                <select id="reg-area" style="width:90%;padding:8px;margin:8px 0;border-radius:5px;">
+                    <option value="">Select Area</option>
+                </select>
+            </label><br>
+            <label>Street:<br>
+                <input type="text" id="reg-street" placeholder="Street" style="width:90%;padding:8px;margin:8px 0;border-radius:5px;">
+            </label><br>
+            <button onclick="completeRegistration()" style="background:#0078d7;color:#fff;border:none;border-radius:5px;padding:10px 18px;font-size:1em;cursor:pointer;margin-top:10px;">Finish</button>
+            <button onclick="document.getElementById('register-form-modal').style.display='none';" style="margin-left:10px;background:#e74c3c;color:#fff;border:none;border-radius:5px;padding:10px 18px;font-size:1em;cursor:pointer;">Cancel</button>
+            <div id="reg-error" style="color:#e74c3c;margin-top:10px;"></div>
+        </div>
+    </div>
+</div>
+</section>
+</section>
+    <!-- Main Content -->
+<div id="main-content">
+    <header>
+        <div class="header-container">
+            <div class="header-logo">
+            <img src="logo.png" alt="ONGOD Logo" class="logo" width="50" height="50" align="left">
+                <div class="header-title">ONGOD PHONE GADGET</div>
+
             </div>
-        </header>
+            </div>  
+            <div class="header-actions">
+                <img src="notification icon.png" alt="Notification" class="icon" id="notification-btn">
+                <div id="notification-history-modal" style="display:none;position:fixed;top:80px;right:20px;min-width:300px;max-width:90vw;max-height:70vh;overflow-y:auto;background:#fff;color:#222;border:2px solid #0078d7;z-index:3000;padding:18px 12px;border-radius:8px;">
+                    <h3 style="color:#0078d7;margin-top:0;">Notification History</h3>
+                    <div id="notification-history-list"></div>
+                    <button onclick="document.getElementById('notification-history-modal').style.display='none';" style="background:#0078d7;color:#fff;border:none;border-radius:5px;padding:6px 16px;margin-top:10px;cursor:pointer;">Close</button>
+                </div>
+            </div>
+        </div>
+    </header>
+    <br>
+    <section class="search-bar">
+        <input type="text" id="search-input" placeholder="Search for gadgets...">
+        <button id="search-btn" onclick="searchGadgets()">Search</button>   
+        </section>
         <main>
-            <section class="gadget-section">
-                <h2 class="section-title">Latest Phones</h2>
-                <div class="gadget-list" id="phone-list"></div>
-                <h2 class="section-title">Latest Laptops</h2>
-                <div class="gadget-list" id="laptop-list"></div>
-                <h2 class="section-title">Accessories</h2>
-                <div class="gadget-list" id="accessory-list"></div>
+            <h1 class="main-title">Latest Phones, Laptops & Accessories</h1>
+            <!-- PHONES -->
+            <div class="section-title">Phones</div>
+            <section class="Gadget-list">
+                <div class="Gadget-item"><img src="phone1.webp" alt="Redmin"><h2>Redmin</h2><p>Price: $200</p><div class="button-group"><button onclick="viewDetails('Redmin', 200, 'phone1.webp')">View Details</button><button onclick="buyNow('Redmin', 200)">Buy Now</button></div></div>
+                <div class="Gadget-item"><img src="phone2.jpeg" alt="Iphone"><h2>Iphone</h2><p>Price: $300</p><div class="button-group"><button onclick="viewDetails('Iphone', 300, 'phone2.jpeg')">View Details</button><button onclick="buyNow('Iphone', 300)">Buy Now</button></div></div>
+                <div class="Gadget-item"><img src="phone13.webp" alt="Samsung Galaxy"><h2>Samsung Galaxy</h2><p>Price: $400</p><div class="button-group"><button onclick="viewDetails('Samsung Galaxy', 400, 'phone3.jpeg')">View Details</button><button onclick="buyNow('Samsung Galaxy', 400)">Buy Now</button></div></div>
+                <div class="Gadget-item"><img src="phone19.jpeg" alt="OnePlus"><h2>OnePlus</h2><p>Price: $350</p><div class="button-group"><button onclick="viewDetails('OnePlus', 350, 'phone4.jpeg')">View Details</button><button onclick="buyNow('OnePlus', 350)">Buy Now</button></div></div>
+                <div class="Gadget-item"><img src="phone5.jpeg" alt="Google Pixel"><h2>Google Pixel</h2><p>Price: $450</p><div class="button-group"><button onclick="viewDetails('Google Pixel', 450, 'phone5.jpeg')">View Details</button><button onclick="buyNow('Google Pixel', 450)">Buy Now</button></div></div>
+                <div class="Gadget-item"><img src="phone2.webp" alt="Huawei P30"><h2>Huawei P30</h2><p>Price: $500</p><div class="button-group"><button onclick="viewDetails('Huawei P30', 500, 'phone6.jpeg')">View Details</button><button onclick="buyNow('Huawei P30', 500)">Buy Now</button></div></div>
+
+                <div class="Gadget-item"><img src="phone9.jpeg" alt="Vivo V21"><h2>Vivo V21</h2><p>Price: $280</p><div class="button-group"><button onclick="viewDetails('Vivo V21', 280, 'phone9.jpeg')">View Details</button><button onclick="buyNow('Vivo V21', 280)">Buy Now</button></div></div>
+          
+                <div class="Gadget-item"><img src="phone11.jpeg" alt="Motorola Edge"><h2>Motorola Edge</h2><p>Price: $380</p><div class="button-group"><button onclick="viewDetails('Motorola Edge', 380, 'phone11.jpeg')">View Details</button><button onclick="buyNow('Motorola Edge', 380)">Buy Now</button></div></div>
+                <div class="Gadget-item"><img src="phone12.jpeg" alt="LG Velvet"><h2>LG Velvet</h2><p>Price: $320</p><div class="button-group"><button onclick="viewDetails('LG Velvet', 320, 'phone12.jpeg')">View Details</button><button onclick="buyNow('LG Velvet', 320)">Buy Now</button></div></div>
+                <div class="Gadget-item"><img src="phone12.jpeg" alt="Nokia 8.3"><h2>Nokia 8.3</h2><p>Price: $360</p><div class="button-group"><button onclick="viewDetails('Nokia 8.3', 360, 'phone13.jpeg')">View Details</button><button onclick="buyNow('Nokia 8.3', 360)">Buy Now</button></div></div>
+                <div class="Gadget-item"><img src="phone14.jpeg" alt="Asus Zenfone"><h2>Asus Zenfone</h2><p>Price: $400</p><div class="button-group"><button onclick="viewDetails('Asus Zenfone', 400, 'phone14.jpeg')">View Details</button><button onclick="buyNow('Asus Zenfone', 400)">Buy Now</button></div></div>
+                <div class="Gadget-item"><img src="phone15.jpeg" alt="Sony Xperia"><h2>Sony Xperia</h2><p>Price: $450</p><div class="button-group"><button onclick="viewDetails('Sony Xperia', 450, 'phone15.jpeg')">View Details</button><button onclick="buyNow('Sony Xperia', 450)">Buy Now</button></div></div>
+                <div class="Gadget-item"><img src="phone16.jpeg" alt="HTC U20"><h2>HTC U20</h2><p>Price: $300</p><div class="button-group"><button onclick="viewDetails('HTC U20', 300, 'phone16.jpeg')">View Details</button><button onclick="buyNow('HTC U20', 300)">Buy Now</button></div></div>
+                <div class="Gadget-item"><img src="phone17.jpeg" alt="Lenovo Legion"><h2>Lenovo Legion</h2><p>Price: $350</p><div class="button-group"><button onclick="viewDetails('Lenovo Legion', 350, 'phone17.jpeg')">View Details</button><button onclick="buyNow('Lenovo Legion', 350)">Buy Now</button></div></div>
+                <div class="Gadget-item"><img src="phone18.jpeg" alt="BlackBerry Key2"><h2>BlackBerry Key2</h2><p>Price: $400</p><div class="button-group"><button onclick="viewDetails('BlackBerry Key2', 400, 'phone18.jpeg')">View Details</button><button onclick="buyNow('BlackBerry Key2', 400)">Buy Now</button></div></div>
+                <div class="Gadget-item"><img src="phone19.jpeg" alt="Realme X50"><h2>Realme X50</h2><p>Price: $280</p><div class="button-group"><button onclick="viewDetails('Realme X50', 280, 'phone19.jpeg')">View Details</button><button onclick="buyNow('Realme X50', 280)">Buy Now</button></div></div>
             </section>
-            <section class="cart">
-                <h2>Your Cart</h2>
-                <ul id="cart-items"></ul>
-                <button onclick="checkoutCart()">Checkout</button>
-                <button onclick="clearCart()">Clear Cart</button>
+            <!-- LAPTOPS -->
+            <div class="section-title">Laptops</div>
+            <section class="Gadget-list">
+                <div class="Gadget-item"><img src="laptop1.jpeg" alt="Dell"><h2>Dell</h2><p>Price: $800</p><div class="button-group"><button onclick="viewDetails('Dell', 800, 'laptop1.jpeg')">View Details</button><button onclick="buyNow('Dell', 800)">Buy Now</button></div></div>
+                <div class="Gadget-item"><img src="laptop2.jpeg" alt="HP"><h2>HP</h2><p>Price: $750</p><div class="button-group"><button onclick="viewDetails('HP', 750, 'laptop2.jpeg')">View Details</button><button onclick="buyNow('HP', 750)">Buy Now</button></div></div>
+                <div class="Gadget-item"><img src="laptop3.jpeg" alt="Lenovo"><h2>Lenovo</h2><p>Price: $700</p><div class="button-group"><button onclick="viewDetails('Lenovo', 700, 'laptop3.jpeg')">View Details</button><button onclick="buyNow('Lenovo', 700)">Buy Now</button></div></div>
+                <div class="Gadget-item"><img src="laptop4.jpeg" alt="Apple"><h2>Apple</h2><p>Price: $1200</p><div class="button-group"><button onclick="viewDetails('Apple', 1200, 'laptop4.jpeg')">View Details</button><button onclick="buyNow('Apple', 1200)">Buy Now</button></div></div>
+                <div class="Gadget-item"><img src="laptop5.webp" alt="Asus"><h2>Asus</h2><p>Price: $900</p><div class="button-group"><button onclick="viewDetails('Asus', 900, 'laptop5.jpeg')">View Details</button><button onclick="buyNow('Asus', 900)">Buy Now</button></div></div>
+                <div class="Gadget-item"><img src="laptop6.jpeg" alt="Acer"><h2>Acer</h2><p>Price: $650</p><div class="button-group"><button onclick="viewDetails('Acer', 650, 'laptop6.jpeg')">View Details</button><button onclick="buyNow('Acer', 650)">Buy Now</button></div></div>
+                <div class="Gadget-item"><img src="laptop7.webp" alt="Microsoft"><h2>Microsoft</h2><p>Price: $1100</p><div class="button-group"><button onclick="viewDetails('Microsoft', 1100, 'laptop7.webp')">View Details</button><button onclick="buyNow('Microsoft', 1100)">Buy Now</button></div></div>
+                <div class="Gadget-item"><img src="laptop8.webp" alt="Razer"><h2>Razer</h2><p>Price: $1500</p><div class="button-group"><button onclick="viewDetails('Razer', 1500, 'laptop8.jpeg')">View Details</button><button onclick="buyNow('Razer', 1500)">Buy Now</button></div></div>
+                <div class="Gadget-item"><img src="laptop9.jpeg" alt="Alienware"><h2>Alienware</h2><p>Price: $2000</p><div class="button-group"><button onclick="viewDetails('Alienware', 2000, 'laptop9.jpeg')">View Details</button><button onclick="buyNow('Alienware', 2000)">Buy Now</button></div></div>
+                <div class="Gadget-item"><img src="laptop10.jpeg" alt="MSI"><h2>MSI</h2><p>Price: $1300</p><div class="button-group"><button onclick="viewDetails('MSI', 1300, 'laptop10.jpeg')">View Details</button><button onclick="buyNow('MSI', 1300)">Buy Now</button></div></div>
             </section>
+            <!-- ACCESSORIES -->
+            <div class="section-title">Accessories</div>
+            <section class="Gadget-list">
+                <div class="Gadget-item"><img src="sandiskssd.jpeg" alt="SanDisk SSD"><h2>SanDisk SSD</h2><p>Price: $100</p><div class="button-group"><button onclick="viewDetails('SanDisk SSD', 100, 'sandiskssd.jpeg')">View Details</button><button onclick="buyNow('SanDisk SSD', 100)">Buy Now</button></div></div>
+                <div class="Gadget-item"><img src="samsungbunds.jpeg" alt="Samsung Buds"><h2>Samsung Buds</h2><p>Price: $150</p><div class="button-group"><button onclick="viewDetails('Samsung Buds', 150, 'samsungbunds.jpeg')">View Details</button><button onclick="buyNow('Samsung Buds', 150)">Buy Now</button></div></div>
+                <div class="Gadget-item"><img src="applewatch.jpeg" alt="Apple Watch"><h2>Apple Watch</h2><p>Price: $400</p><div class="button-group"><button onclick="viewDetails('Apple Watch', 400, 'applewatch.jpeg')">View Details</button><button onclick="buyNow('Apple Watch', 400)">Buy Now</button></div></div>
+                <div class="Gadget-item"><img src="jblgo3.jpeg" alt="JBL Go 3"><h2>JBL Go 3</h2><p>Price: $250</p><div class="button-group"><button onclick="viewDetails('JBL Go 3', 250, 'jblgo3.jpeg')">View Details</button><button onclick="buyNow('JBL Go 3', 250)">Buy Now</button></div></div>
+                <div class="Gadget-item"><img src="apowerbanknker.jpeg" alt="Anker Power Bank"><h2>Anker Power Bank</h2><p>Price: $300</p><div class="button-group"><button onclick="viewDetails('Anker Power Bank', 300, 'apowerbanknker.jpeg')">View Details</button><button onclick="buyNow('Anker Power Bank', 300)">Buy Now</button></div></div>
+                <div class="Gadget-item"><img src="ankercharger.jpeg" alt="Anker Charger"><h2>Anker Charger</h2><p>Price: $350</p><div class="button-group"><button onclick="viewDetails('Anker Charger', 350, 'ankercharger.jpeg')">View Details</button><button onclick="buyNow('Anker Charger', 350)">Buy Now</button></div></div>
+                <div class="Gadget-item"><img src="airpod.jpeg" alt="Apple AirPods"><h2>Apple AirPods</h2><p>Price: $200</p><div class="button-group"><button onclick="viewDetails('Apple AirPods', 200, 'airpod.jpeg')">View Details</button><button onclick="buyNow('Apple AirPods', 200)">Buy Now</button></div></div>
+                <div class="Gadget-item"><img src="logitechkeyboard.jpeg" alt="Logitech Keyboard"><h2>Logitech Keyboard</h2><p>Price: $120</p><div class="button-group"><button onclick="viewDetails('Logitech Keyboard', 120, 'logitechkeyboard.jpeg')">View Details</button><button onclick="buyNow('Logitech Keyboard', 120)">Buy Now</button></div></div>
+                <div class="Gadget-item"><img src="logitechmouse.jpeg" alt="Logitech Mouse"><h2>Logitech Mouse</h2><p>Price: $80</p><div class="button-group"><button onclick="viewDetails('Logitech Mouse', 80, 'logitechmouse.jpeg')">View Details</button><button onclick="buyNow('Logitech Mouse', 80)">Buy Now</button></div></div>
+            </section>
+            <!-- Floating Chat Button (use your own icon image) -->
+<button id="ai-chat-btn" title="Chat with AI" style="position:fixed;bottom:30px;right:30px;z-index:10001;background:#0078d7;border:none;border-radius:50%;width:60px;height:60px;box-shadow:0 2px 8px rgba(0,0,0,0.18);cursor:pointer;">
+  <img src="profile.jpeg" alt="AI Chat" style="width:32px;height:32px;">
+</button>
+
+<!-- AI Chat Window -->
+<div id="ai-chat-modal" style="display:none;position:fixed;bottom:100px;right:30px;width:320px;max-width:95vw;background:#fff;border-radius:14px;box-shadow:0 4px 24px rgba(0,0,0,0.18);z-index:10002;flex-direction:column;">
+  <div style="background:#0078d7;color:#fff;padding:14px 18px;border-radius:14px 14px 0 0;display:flex;align-items:center;justify-content:space-between;">
+    <span><img src="profile.jpeg" alt="AI" style="width:24px;height:24px;vertical-align:middle;margin-right:6px;"> ONGOD AI Assistant</span>
+    <button onclick="document.getElementById('ai-chat-modal').style.display='none';" style="background:none;border:none;color:#fff;font-size:1.3em;cursor:pointer;">&times;</button>
+  </div>
+  <div id="ai-chat-messages" style="padding:16px;max-height:220px;overflow-y:auto;font-size:1em;background:#f6fafd;"></div>
+  <form id="ai-chat-form" style="display:flex;gap:6px;padding:10px;" onsubmit="event.preventDefault(); sendAIMessage();">
+    <input type="text" id="ai-chat-input" placeholder="Type your message..." required style="flex:1;padding:8px;border-radius:6px;border:1px solid #ccc;">
+    <button type="submit" style="background:#0078d7;color:#fff;border:none;border-radius:6px;padding:8px 14px;">Send</button>
+  </form>
+</div>
         </main>
-        <address>
-            <p>Contact us at: 
-                <a href="tel:+2349138154963">+234 913 815 4963</a></p>
-                <a href="mailto:ayomideoluniyi49@gmail.com">ayomideoluniyi49@gmail.com</a>
-        </address>
-        <footer>
-            <p>&copy; 2025 Ongod Gadget. All rights reserved. | 
-            <a href="#" onclick="showAdminPanel()">Admin Panel</a></p>
+        <section class="contact-us">
+            <h2>Contact Us</h2>
+            <p>Email: <a href="mailto:ayomideoluniyi49@gmail.com">ayomideoluniyi49@gmail.com</a></p>
+            <p>Phone: <a href="tel:+234123456789">+234 123 456 789</a></p>
+            <p>Address: 123 Gadget Street, Tech City, Nigeria</p>
+            <p><button onclick="showMapModal()">View Map</button></p>
+        </section>
+        <footer class="footer">
+            <p>&copy; 2025 Gadget Store. All rights reserved.</p>
         </footer>
     </div>
-    <!-- Map Modal -->
-    <div id="mapModal">
-      <div id="mapModalBox">
-        <div id="map"></div>
-        <img id="placeImage" src="" alt="Place Image" style="display:none;">
-        <button onclick="closeMapModal()">Cancel</button>
-      </div>
-    </div>
-    <!-- Payment Modal -->
-    <div id="paymentModal">
-      <div id="paymentModalBox">
-        <h3>Payment Method</h3>
-        <select id="paymentMethod">
-            <option value="transfer">Bank Transfer</option>
-            <option value="card">Card Payment</option>
-            <option value="ussd">USSD</option>
-            <option value="cash">Cash on Delivery</option>
-        </select>
-        <button onclick="finishOrder()">Pay & Send to Admin</button>
-      </div>
-    </div>
-    <!-- Admin Panel Modal -->
-    <div id="adminPanel">
-      <div id="adminPanelBox">
-        <h2>Admin Panel - Orders</h2>
-        <div id="adminOrders" style="max-height:500px;overflow:auto;"></div>
-        <button onclick="closeAdminPanel()">Close</button>
-        <!-- Broadcast Message Form (Admin Only) -->
-        <hr>
-        <h3>Send Broadcast Message</h3>
-        <form id="broadcastForm">
-            <input type="text" id="broadcastMsg" placeholder="Type message to all users" required>
-            <button type="submit">Send Message</button>
-        </form>
-      </div>
-    </div>
-    <!-- Checkout Modal -->
-    <div id="checkoutModal">
-      <div id="checkoutModalBox">
-        <h3>Choose Order Type</h3>
-        <button onclick="checkoutPick('Pickup')">Pick Up</button>
-        <button onclick="checkoutPick('Delivery')">Delivery</button>
-        <button onclick="closeCheckoutModal()">Cancel</button>
-      </div>
-    </div>
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
-    // --- AREA, STATE, STREET LOGIC ---
-    const AVAILABLE_AREAS = {
-        "Lagos": {
-            "Ikeja": ["Allen Avenue", "Opebi", "Alausa", "Oba Akran"],
-            "Yaba": ["Herbert Macaulay", "Commercial Ave", "Tejuosho", "Sabo"],
-            "Lekki": ["Admiralty Way", "Lekki Phase 1", "Chevron", "VGC"],
-            "Surulere": ["Bode Thomas", "Adeniran Ogunsanya", "Aguda", "Ijesha"],
-            "Ikorodu": ["Ijede Road", "Ebute", "Agbede", "Igbogbo"],
-            "Ajah": ["Abraham Adesanya", "Sangotedo", "Badore", "Ilaje"],
-            "Victoria Island": ["Ozumba Mbadiwe", "Akin Adesola", "Ahmadu Bello", "Adeola Odeku"],
-            "Agege": ["Dopemu", "Oko Oba", "Pen Cinema", "Capitol Road"],
-            "Oshodi": ["Oshodi Road", "Bolade", "Mafoluku", "Shogunle"],
-            "Badagry": ["Ajara", "Ibereko", "Topo", "Gbaji"]
-        }
-    };
+  // --- LOGIN/REGISTER LOGIC ---
+function showRegister() {
+    document.getElementById('login-title').innerText = "Register";
+    document.getElementById('login-btn').style.display = "none";
+    document.getElementById('register-btn').style.display = "inline-block";
+    document.getElementById('switch-to-register').style.display = "none";
+    document.getElementById('switch-to-login').style.display = "inline-block";
+    document.getElementById('login-error').innerText = "";
+}
 
-    document.addEventListener('DOMContentLoaded', function() {
-        const stateSelect = document.getElementById('regState');
-        stateSelect.innerHTML = '<option value="">Select State</option>';
-        Object.keys(AVAILABLE_AREAS).forEach(state => {
+function showLogin() {
+    document.getElementById('login-title').innerText = "Login";
+    document.getElementById('login-btn').style.display = "inline-block";
+    document.getElementById('register-btn').style.display = "none";
+    document.getElementById('switch-to-register').style.display = "inline-block";
+    document.getElementById('switch-to-login').style.display = "none";
+    document.getElementById('login-error').innerText = "";
+}
+
+function login() {
+    const username = document.getElementById('login-username').value.trim();
+    const password = document.getElementById('login-password').value;
+    const users = JSON.parse(localStorage.getItem('gadgetUsers') || '{}');
+    if (users[username] && users[username] === password) {
+        localStorage.setItem('gadgetLoggedIn', username);
+        document.getElementById('login-modal').style.display = "none";
+        document.getElementById('main-content').style.display = "block";
+    } else {
+        document.getElementById('login-error').innerText = "Invalid username or password.";
+    }
+}
+
+function register() {
+    const username = document.getElementById('login-username').value.trim();
+    const password = document.getElementById('login-password').value;
+    if (!username || !password) {
+        document.getElementById('login-error').innerText = "Please enter username and password.";
+        return;
+    }
+    let users = JSON.parse(localStorage.getItem('gadgetUsers') || '{}');
+    if (users[username]) {
+        document.getElementById('login-error').innerText = "Username already exists.";
+        return;
+    }
+    document.getElementById('register-form-modal').style.display = 'flex';
+    window._pendingReg = { username, password };
+}
+
+// --- State and Area Data ---
+const stateAreaData = {
+    "Abia": ["Aba North", "Aba South", "Umuahia", "Isiala Ngwa North", "Isiala Ngwa South"],
+    "Adamawa": ["Yola North", "Yola South", "Mubi North", "Mubi South", "Ganye"],
+    "Akwa Ibom": ["Uyo", "Ikot Ekpene", "Eket", "Abak", "Etinan"],
+    "Anambra": ["Awka", "Onitsha", "Nnewi", "Ekwulobia", "Ogidi"],
+    "Bauchi": ["Bauchi", "Azare", "Misau", "Ningi", "Darazo"],
+    "Bayelsa": ["Yenagoa", "Brass", "Southern Ijaw", "Ekeremor", "Kolokuma/Opokuma"],
+    "Benue": ["Makurdi", "Gboko", "Otukpo", "Vandeikya", "Katsina-Ala"],
+    "Borno": ["Maiduguri", "Biu", "Gubio", "Dikwa", "Ngala"],
+    "Cross River": ["Calabar Municipal", "Calabar South", "Ogoja", "Ikom", "Obubra"],
+    "Delta": ["Warri", "Asaba", "Ughelli", "Sapele", "Effurun"],
+    "Ebonyi": ["Abakaliki", "Afikpo North", "Ikwo", "Ezza North", "Ishielu"],
+    "Edo": ["Benin City", "Ekpoma", "Auchi", "Igueben", "Uromi"],
+    "Ekiti": ["Ado-Ekiti", "Ikere-Ekiti", "Ise-Ekiti", "Emure-Ekiti", "Oye-Ekiti"],
+    "Enugu": ["Enugu North", "Enugu South", "Nsukka", "Udi", "Oji River"],
+    "FCT": ["Garki", "Wuse", "Maitama", "Asokoro", "Gwarinpa"],
+    "Gombe": ["Gombe", "Kaltungo", "Bajoga", "Billiri", "Akko"],
+    "Imo": ["Owerri Municipal", "Owerri North", "Orlu", "Okigwe", "Mbaitoli"],
+    "Jigawa": ["Dutse", "Babura", "Kazaure", "Gwaram", "Hadejia"],
+    "Kaduna": ["Kaduna North", "Kaduna South", "Zaria", "Kachia", "Kafanchan"],
+    "Kano": ["Fagge", "Dala", "Gwale", "Kumbotso", "Tarauni"],
+    "Katsina": ["Katsina", "Daura", "Funtua", "Malumfashi", "Dutsin-Ma"],
+    "Kebbi": ["Birnin Kebbi", "Argungu", "Yauri", "Zuru", "Jega"],
+    "Kogi": ["Lokoja", "Okene", "Idah", "Ajaokuta", "Kabba"],
+    "Kwara": ["Ilorin West", "Ilorin East", "Offa", "Omu-Aran", "Kaiama"],
+    "Lagos": ["Ikeja", "Surulere", "Lekki", "Yaba", "Ikorodu", "Epe", "Badagry"],
+    "Nasarawa": ["Lafia", "Keffi", "Akwanga", "Karu", "Doma"],
+    "Niger": ["Minna", "Bida", "Suleja", "Kontagora", "Mokwa"],
+    "Ogun": ["Abeokuta North", "Abeokuta South", "Ifo", "Ijebu Ode", "Sagamu"],
+    "Ondo": ["Akure", "Ondo Town", "Owo", "Ikare", "Okitipupa"],
+    "Osun": ["Osogbo", "Ilesa", "Ife Central", "Ife East", "Iwo"],
+    "Oyo": ["Ibadan North", "Ibadan South-West", "Ogbomosho", "Oyo East", "Oyo West"],
+    "Plateau": ["Jos North", "Jos South", "Barkin Ladi", "Pankshin", "Shendam"],
+    "Rivers": ["Port Harcourt", "Obio-Akpor", "Eleme", "Oyigbo", "Ikwerre"],
+    "Sokoto": ["Sokoto North", "Sokoto South", "Wamakko", "Tambuwal", "Gwadabawa"],
+    "Taraba": ["Jalingo", "Wukari", "Bali", "Gassol", "Karim Lamido"],
+    "Yobe": ["Damaturu", "Potiskum", "Gashua", "Bade", "Fika"],
+    "Zamfara": ["Gusau", "Kaura Namoda", "Talata Mafara", "Anka", "Maru"]
+    // Add more as needed
+};
+
+// Populate Area dropdown based on selected State
+document.getElementById('reg-state').onchange = function() {
+    const state = this.value;
+    const areaSelect = document.getElementById('reg-area');
+    areaSelect.innerHTML = '<option value="">Select Area</option>';
+    if (stateAreaData[state]) {
+        stateAreaData[state].forEach(area => {
             const opt = document.createElement('option');
-            opt.value = state;
-            opt.textContent = state;
-            stateSelect.appendChild(opt);
+            opt.value = area;
+            opt.textContent = area;
+            areaSelect.appendChild(opt);
         });
-    });
+    }
+};
 
-    function populateAreas(stateId, areaId) {
-        const state = document.getElementById(stateId).value;
-        const areaSelect = document.getElementById(areaId);
-        areaSelect.innerHTML = '<option value="">Select Area</option>';
-        document.getElementById('regStreet').innerHTML = '<option value="">Select Street</option>';
-        if (AVAILABLE_AREAS[state]) {
-            Object.keys(AVAILABLE_AREAS[state]).forEach(area => {
-                const opt = document.createElement('option');
-                opt.value = area;
-                opt.textContent = area;
-                areaSelect.appendChild(opt);
-            });
-        }
+function completeRegistration() {
+    const state = document.getElementById('reg-state').value.trim();
+    const area = document.getElementById('reg-area').value.trim();
+    const street = document.getElementById('reg-street').value.trim();
+    if (!state || !area || !street) {
+        document.getElementById('reg-error').innerText = "Please fill all fields.";
+        return;
     }
-    function populateStreets(stateId, areaId, streetId) {
-        const state = document.getElementById(stateId).value;
-        const area = document.getElementById(areaId).value;
-        const streetSelect = document.getElementById(streetId);
-        streetSelect.innerHTML = '<option value="">Select Street</option>';
-        if (AVAILABLE_AREAS[state] && AVAILABLE_AREAS[state][area]) {
-            AVAILABLE_AREAS[state][area].forEach(street => {
-                const opt = document.createElement('option');
-                opt.value = street;
-                opt.textContent = street;
-                streetSelect.appendChild(opt);
-            });
-        }
-    }
+    const address = `${street}, ${area}, ${state}, Nigeria`;
+    let users = JSON.parse(localStorage.getItem('gadgetUsers') || '{}');
+    const { username, password } = window._pendingReg;
+    users[username] = password;
+    users[username + '_address'] = address;
+    localStorage.setItem('gadgetUsers', JSON.stringify(users));
+    document.getElementById('register-form-modal').style.display = 'none';
+    document.getElementById('login-error').innerText = "Registration successful! Please login.";
+    showLogin();
+}
 
-    // --- NOTIFICATION LOGIC ---
-    function saveNotification(msg) {
-        let messages = JSON.parse(localStorage.getItem('user_messages') || '[]');
-        messages.unshift({ msg, time: new Date().toLocaleString() });
-        localStorage.setItem('user_messages', JSON.stringify(messages.slice(0, 50)));
+window.onload = function() {
+    if (localStorage.getItem('gadgetLoggedIn')) {
+        document.getElementById('login-modal').style.display = "none";
+        document.getElementById('main-content').style.display = "block";
+    } else {
+        document.getElementById('login-modal').style.display = "flex";
+        document.getElementById('main-content').style.display = "none";
     }
-    function showNotification(msg, color = "#333") {
-        const n = document.getElementById('notification');
-        const dot = document.getElementById('notifDot');
-        n.textContent = msg;
-        n.style.background = color;
-        n.style.display = 'block';
-        dot.style.display = 'block';
-        saveNotification(msg);
-        clearTimeout(window._notifTimeout);
-        window._notifTimeout = setTimeout(() => {
-            n.style.display = 'none';
-            dot.style.display = 'none';
-        }, 3000);
-    }
-    function showNotifMessages() {
-        const modal = document.getElementById('notifMessagesModal');
-        const list = document.getElementById('notifMessagesList');
-        let messages = JSON.parse(localStorage.getItem('user_messages') || '[]');
-        if (messages.length === 0) {
-            list.innerHTML = "<li>No messages yet.</li>";
-        } else {
-            list.innerHTML = messages.map(m => `<li>${m.msg}<br><small style="color:#888;">${m.time}</small></li>`).join('');
-        }
-        modal.style.display = 'block';
-    }
-    function closeNotifMessages() {
-        document.getElementById('notifMessagesModal').style.display = 'none';
-    }
-    document.getElementById('notificationIcon').onclick = showNotifMessages;
-    document.getElementById('notification').onclick = showNotifMessages;
+};
+// --- NOTIFICATION LOGIC ---
+// Show notification popup (local, for instant feedback)
+function showNotification(message) {
+    let popup = document.createElement('div');
+    popup.className = 'notification-popup';
+    popup.innerText = message;
+    document.body.appendChild(popup);
+    setTimeout(() => { popup.remove(); }, 3500);
+}
 
-    // --- SOUND LOGIC ---
-    function playClick() {
-        const audio = document.getElementById('clickSound');
-        if (audio) {
-            audio.currentTime = 0;
-            audio.play();
-        }
-    }
-    document.addEventListener('DOMContentLoaded', function() {
-        document.body.addEventListener('click', function(e) {
-            if (e.target.tagName === "BUTTON" || e.target.classList.contains('gadget-item') || e.target.id === "notificationIcon") {
-                playClick();
+// --- BACKEND URL (auto switch for localhost or hosting) ---
+const NOTIF_SHEET_URL =
+  window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+    ? "http://localhost:3000"
+    : "https://your-domain.com"; // <-- Replace with your hosting URL
+
+// --- SHOW NOTIFICATIONS MODAL (User) ---
+document.getElementById('notification-btn').onclick = function() {
+    loadNotificationsFromSheet();
+};
+
+// --- LOAD NOTIFICATIONS FROM SHEET ---
+function loadNotificationsFromSheet() {
+    fetch("http://localhost:3000/orders")
+        .then(res => res.json())
+        .then(data => {
+            // Show ALL notifications, including rejected/confirmed
+            const notifications = data.filter(n => n.type === 'notification');
+            let list = notifications.length
+                ? notifications.map(n => `
+                    <div style="margin-bottom:10px;">
+                        <b>${n.title}</b><br>
+                        ${n.message.replace(/\n/g, '<br>')}
+                        <br>
+                        <small>${new Date(n.timestamp).toLocaleString()}</small>
+                        <br>
+                        <span style="color:${n.status === 'confirmed' ? '#2ecc71' : n.status === 'rejected' ? '#e74c3c' : '#888'};">
+                            Status: ${n.status || 'pending'}
+                        </span>
+                    </div>
+                `).join('')
+                : '<div style="color:#888;">No notifications yet.</div>';
+            document.getElementById('notification-history-list').innerHTML = list;
+            document.getElementById('notification-history-modal').style.display = 'block';
+        })
+        .catch(err => {
+            document.getElementById('notification-history-list').innerHTML = '<div style="color:#888;">Error loading notifications.</div>';
+            document.getElementById('notification-history-modal').style.display = 'block';
+            console.error(err);
+        });
+}
+
+// --- BUY NOW MODAL ---
+function buyNow(name, price) {
+    const username = localStorage.getItem('gadgetLoggedIn') || '';
+    const users = JSON.parse(localStorage.getItem('gadgetUsers') || '{}');
+    const userAddress = (users[username + '_address']) || '';
+
+    // Helper to calculate price
+    function calculateAmount(base, method, address) {
+        let percent = 0;
+        if (method === 'pickup') {
+            percent = 0.15;
+        } else if (method === 'delivery') {
+            // If address contains "Ikeja" or "Lagos", use 30%, else 40%
+            if (address && /ikeja|lagos/i.test(address)) {
+                percent = 0.30;
+            } else {
+                percent = 0.40;
             }
-        });
-    });
-
-    // --- LOGIN/REGISTER LOGIC ---
-    function showLogin() {
-        document.getElementById('loginPage').classList.remove('hidden');
-        document.getElementById('registerPage').classList.add('hidden');
-        document.getElementById('mainPage').classList.add('hidden');
-    }
-    function showRegister() {
-        document.getElementById('loginPage').classList.add('hidden');
-        document.getElementById('registerPage').classList.remove('hidden');
-        document.getElementById('mainPage').classList.add('hidden');
-    }
-    function showMain() {
-        document.getElementById('loginPage').classList.add('hidden');
-        document.getElementById('registerPage').classList.add('hidden');
-        document.getElementById('mainPage').classList.remove('hidden');
-    }
-    function getCurrentUser() {
-        return JSON.parse(localStorage.getItem('user'));
-    }
-    function setCurrentUser(user) {
-        localStorage.setItem('user', JSON.stringify(user));
-    }
-    function login() {
-        const email = document.getElementById('loginEmail').value.trim().toLowerCase();
-        const password = document.getElementById('loginPassword').value;
-        const user = JSON.parse(localStorage.getItem('user_' + email));
-        if (!user || user.password !== password) {
-            document.getElementById('loginError').textContent = 'Invalid email or password.';
-            showNotification("Invalid email or password!", "#dc3545");
-            return;
         }
-        setCurrentUser(user);
-        showMain();
-        onMainLoad();
-    }
-    function register() {
-        const name = document.getElementById('regName').value.trim();
-        const email = document.getElementById('regEmail').value.trim().toLowerCase();
-        const password = document.getElementById('regPassword').value;
-        const phone = document.getElementById('regPhone').value.trim();
-        const state = document.getElementById('regState').value;
-        const area = document.getElementById('regArea').value;
-        const street = document.getElementById('regStreet').value;
-        if (!name || !email || !password || !phone || !state || !area || !street) {
-            document.getElementById('registerError').textContent = 'Please fill all fields.';
-            showNotification("Please fill all fields.", "#dc3545");
-            return;
-        }
-        if (phone.length < 10) {
-            document.getElementById('registerError').textContent = 'Please enter a valid phone number.';
-            showNotification("Please enter a valid phone number.", "#dc3545");
-            return;
-        }
-        if (localStorage.getItem('user_' + email)) {
-            document.getElementById('registerError').textContent = 'Email already registered.';
-            showNotification("Email already registered.", "#dc3545");
-            return;
-        }
-        const user = { name, email, password, phone, state, area, street };
-        localStorage.setItem('user_' + email, JSON.stringify(user));
-        setCurrentUser(user);
-        showMain();
-        onMainLoad();
-        showNotification("Registration successful!", "#28a745");
+        return Math.round(base + (base * percent));
     }
 
-    // --- MAP LOGIC ---
-    let map, mapMarker;
-    function showMapModal() {
-        document.getElementById('mapModal').style.display = 'block';
-        document.getElementById('placeImage').style.display = 'none';
-        const user = getCurrentUser();
-        const address = `${user.street}, ${user.area}, ${user.state}, Nigeria`;
-        setTimeout(() => {
-            if (map) map.remove();
-            map = L.map('map').setView([9.082, 8.6753], 6);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; OpenStreetMap contributors'
-            }).addTo(map);
-            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`)
-            .then(r=>r.json())
-            .then(res=>{
-                if(res && res[0]) {
-                    let lat = parseFloat(res[0].lat), lng = parseFloat(res[0].lon);
-                    map.setView([lat, lng], 16);
-                    mapMarker = L.marker([lat, lng]).addTo(map)
-                        .bindPopup(address).openPopup();
-                    let img = document.getElementById('placeImage');
-                    img.src = `https://source.unsplash.com/350x120/?${encodeURIComponent(user.street + " " + user.area + " " + user.state + ", Nigeria")}`;
-                    img.onerror = function() {
-                        img.src = "https://images.unsplash.com/photo-1506744038136-46273834b3fb?fit=crop&w=350&q=80";
-                    };
-                    img.style.display = 'block';
-                } else {
-                    map.setView([9.082, 8.6753], 6);
-                    mapMarker = L.marker([9.082, 8.6753]).addTo(map)
-                        .bindPopup("Address not found").openPopup();
-                    let img = document.getElementById('placeImage');
-                    img.src = "https://images.unsplash.com/photo-1506744038136-46273834b3fb?fit=crop&w=350&q=80";
-                    img.style.display = 'block';
-                }
-            });
-        }, 200);
-    }
-    function closeMapModal() {
-        document.getElementById('mapModal').style.display = 'none';
-        showPaymentModal();
+    let currentMethod = 'pickup';
+    let currentAddress = userAddress || 'Allen Ave, Ikeja, Lagos';
+    let currentAmount = calculateAmount(price, currentMethod, currentAddress);
+
+    const modal = document.createElement('div');
+    modal.style.position = 'fixed';
+    modal.style.top = 0;
+    modal.style.left = 0;
+    modal.style.width = '100vw';
+    modal.style.height = '100vh';
+    modal.style.background = 'rgba(0,0,0,0.5)';
+    modal.style.display = 'flex';
+    modal.style.alignItems = 'center';
+    modal.style.justifyContent = 'center';
+    modal.style.zIndex = 9999;
+
+    modal.innerHTML = `
+      <div style="background:#fff;padding:24px 18px;border-radius:12px;max-width:370px;box-shadow:0 4px 24px rgba(0,0,0,0.18);text-align:center;position:relative;">
+        <button onclick="this.closest('div').parentNode.remove();" style="position:absolute;top:10px;right:10px;background:none;border:none;font-size:22px;cursor:pointer;">&times;</button>
+        <h2>Buy Now: ${name}</h2>
+        <p style="color:#0078d7;font-weight:bold;">Price: $<span id="base-price">${price}</span></p>
+        <div style="margin:12px 0;">
+          <label><input type="radio" name="method" value="pickup" checked> Pickup</label>
+          <label style="margin-left:18px;"><input type="radio" name="method" value="delivery"> Delivery</label>
+        </div>
+        <div id="pickup-map" style="margin-bottom:10px;">
+          <iframe src="https://www.google.com/maps?q=Allen+Ave,+Ikeja,+Lagos&layer=c&output=svembed" width="320" height="150" style="border:0;border-radius:10px;" allowfullscreen="" loading="lazy"></iframe>
+          <div style="margin:8px 0;color:#555;">Pickup Location: Allen Avenue, Ikeja, Lagos (Street View)</div>
+        </div>
+        <div id="delivery-section" style="display:none;margin-bottom:10px;">
+          <input type="text" id="delivery-address-input" placeholder="Enter delivery address" value="${userAddress}" style="width:90%;padding:8px;border-radius:5px;border:1px solid #ccc;"><br>
+          <iframe id="delivery-map" src="https://www.google.com/maps?q=${encodeURIComponent(userAddress || 'Allen Ave, Ikeja, Lagos')}&layer=c&output=svembed" width="320" height="150" style="border:0;border-radius:10px;margin-top:8px;" allowfullscreen="" loading="lazy"></iframe>
+          <div style="margin:8px 0;color:#555;">Delivery Area Street View</div>
+        </div>
+        <div style="margin:10px 0;">
+          <strong style="color:#0078d7;">Total Amount to Pay: $<span id="total-amount">${currentAmount}</span></strong>
+        </div>
+        <div style="margin:16px 0;">
+          <strong>Bank Transfer Only</strong><br>
+          <strong>Bank Name:</strong> Zenith Bank<br>
+          <strong>Account Name:</strong> ONGOD GADGETS<br>
+          <strong>Account Number:</strong> 1234567890
+          <button type="button" onclick="navigator.clipboard.writeText('Zenith Bank, ONGOD GADGETS, 1234567890');alert('Bank details copied!');" style="margin-top:6px;">Copy Details</button>
+        </div>
+        <button id="confirm-order-btn" style="background:#2ecc71;color:#fff;border:none;border-radius:5px;padding:10px 18px;font-size:1em;cursor:pointer;">I Have Paid</button>
+      </div>
+    `;
+    document.body.appendChild(modal);
+
+    const pickupMap = modal.querySelector('#pickup-map');
+    const deliverySection = modal.querySelector('#delivery-section');
+    const totalAmountSpan = modal.querySelector('#total-amount');
+    const addressInput = modal.querySelector('#delivery-address-input');
+    const deliveryMap = modal.querySelector('#delivery-map');
+
+    function updateAmount() {
+        let method = currentMethod;
+        let address = currentAddress;
+        let amt = calculateAmount(price, method, address);
+        totalAmountSpan.textContent = amt;
     }
 
-    // --- CART, GADGETS, CHECKOUT, PAYMENT LOGIC ---
-    let orderStatusInterval = null;
-    function startOrderStatusPolling() {
-        if (orderStatusInterval) clearInterval(orderStatusInterval);
-        checkOrderStatusAndNotify();
-        orderStatusInterval = setInterval(checkOrderStatusAndNotify, 10000);
-    }
-    function logout() {
-        localStorage.removeItem('user');
-        if (orderStatusInterval) clearInterval(orderStatusInterval);
-        showLogin();
-        showNotification("Logged out.", "#333");
-    }
-    function addToCart(name, price) {
-        let cart = JSON.parse(localStorage.getItem('cart')) || [];
-        cart.push({ name, price });
-        localStorage.setItem('cart', JSON.stringify(cart));
-        renderCart();
-        showNotification("Added to cart!", "#28a745");
-    }
-    function removeFromCart(index) {
-        let cart = JSON.parse(localStorage.getItem('cart')) || [];
-        cart.splice(index, 1);
-        localStorage.setItem('cart', JSON.stringify(cart));
-        renderCart();
-        showNotification("Removed from cart.", "#333");
-    }
-    function clearCart() {
-        localStorage.removeItem('cart');
-        renderCart();
-        showNotification("Cart cleared.", "#333");
-    }
-    function renderCart() {
-        const cartList = document.getElementById('cart-items');
-        cartList.innerHTML = '';
-        let cart = JSON.parse(localStorage.getItem('cart')) || [];
-        cart.forEach((item, i) => {
-            const li = document.createElement('li');
-            li.textContent = item.name + ' - #' + item.price.toLocaleString();
-            const btn = document.createElement('button');
-            btn.textContent = 'Remove';
-            btn.style.marginLeft = '10px';
-            btn.onclick = () => removeFromCart(i);
-            li.appendChild(btn);
-            cartList.appendChild(li);
-        });
-    }
-    function checkoutCart() {
-        let cart = JSON.parse(localStorage.getItem('cart')) || [];
-        if (cart.length === 0) {
-            showNotification('Your cart is empty.', "#dc3545");
-            return;
-        }
-        document.getElementById('checkoutModal').style.display = 'block';
-    }
-    function closeCheckoutModal() {
-        document.getElementById('checkoutModal').style.display = 'none';
-    }
-    function checkoutPick(type) {
-        closeCheckoutModal();
-        let cart = JSON.parse(localStorage.getItem('cart')) || [];
-        let user = getCurrentUser();
-        if (!user) {
-            showNotification('Please login first.', "#dc3545");
-            return;
-        }
-        let total = cart.reduce((sum, item) => sum + item.price, 0);
-        let order = {
-            date: new Date().toISOString(),
-            type: type,
-            name: user.name,
-            phone: user.phone,
-            email: user.email,
-            items: cart.map(i => i.name).join(', '),
-            details: type === "Pickup" ? "Ongod Gadget Store, Ikeja, Lagos" : `${user.street}, ${user.area}, ${user.state}, Nigeria`,
-            total: total,
-            status: "pending"
+    modal.querySelectorAll('input[name="method"]').forEach(radio => {
+        radio.onchange = function() {
+            currentMethod = this.value;
+            if (this.value === 'pickup') {
+                pickupMap.style.display = '';
+                deliverySection.style.display = 'none';
+                currentAddress = 'Allen Ave, Ikeja, Lagos';
+            } else {
+                pickupMap.style.display = 'none';
+                deliverySection.style.display = '';
+                currentAddress = addressInput.value.trim() || 'Allen Ave, Ikeja, Lagos';
+            }
+            updateAmount();
         };
-        pendingOrder = order;
-        if (type === "Delivery") {
-            showMapModal();
-        } else {
-            showPaymentModal();
-        }
-        clearCart();
-    }
-    let pendingOrder = null;
-    function buyNow(name, pickup, delivery) {
-        const user = getCurrentUser();
-        if (!user) {
-            showNotification('Please login first.', "#dc3545");
-            return;
-        }
-        let choice = prompt('Do you want to pick up or have it delivered?\n1. Pick up\n2. Delivery:');
-        if (choice === '1') {
-            pendingOrder = {
-                date: new Date().toISOString(),
-                type: 'Pickup',
-                name: user.name,
-                phone: user.phone,
-                email: user.email,
-                items: name,
-                details: "Ongod Gadget Store, Ikeja, Lagos",
-                total: pickup,
-                status: "pending"
-            };
-            showPaymentModal();
-        } else if (choice === '2') {
-            pendingOrder = {
-                date: new Date().toISOString(),
-                type: 'Delivery',
-                name: user.name,
-                phone: user.phone,
-                email: user.email,
-                items: name,
-                details: `${user.street}, ${user.area}, ${user.state}, Nigeria`,
-                total: delivery,
-                status: "pending"
-            };
-            showMapModal();
-        } else {
-            showNotification('Invalid choice. Please try again.', "#dc3545");
-        }
-    }
-    function showPaymentModal() {
-        document.getElementById('paymentModal').style.display = 'block';
-    }
-    const SHEETBEST_URL = 'https://api.sheetbest.com/sheets/4115eaae-b505-4191-83bf-a0d58cec1644';
-    function finishOrder() {
-        document.getElementById('paymentModal').style.display = 'none';
-        let user = getCurrentUser();
-        let order = pendingOrder;
-        if (!order) return;
-        order.status = document.getElementById('paymentMethod').value;
-        fetch(SHEETBEST_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(order)
-        }).then(() => {
-            showNotification("Order sent to admin!", "#28a745");
-        }).catch(() => {
-            showNotification("Order failed to send to admin!", "#dc3545");
-        });
-        pendingOrder = null;
-    }
-
-    // --- ADMIN PANEL LOGIC (SHOW ORDERS FROM SHEET) ---
-    function showAdminPanel() {
-        document.getElementById('adminPanel').style.display = 'block';
-        document.getElementById('adminOrders').innerHTML = 'Loading...';
-        fetch(SHEETBEST_URL)
-            .then(res => res.json())
-            .then(data => {
-                if (!data.length) {
-                    document.getElementById('adminOrders').innerHTML = '<p>No orders yet.</p>';
-                    return;
-                }
-                let html = `<table>
-                  <tr>
-                    <th>Date</th>
-                    <th>Order Type</th>
-                    <th>Name</th>
-                    <th>Phone</th>
-                    <th>Email</th>
-                    <th>Items</th>
-                    <th>Address/Details</th>
-                    <th>Total (₦)</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                    <th>Message</th>
-                  </tr>`;
-                data.reverse().forEach(order => {
-                  html += `<tr>
-                    <td>${order.date ? order.date.replace('T', ' ').slice(0, 16) : ''}</td>
-                    <td>${order.type || ''}</td>
-                    <td>${order.name || ''}</td>
-                    <td>${order.phone || ''}</td>
-                    <td>${order.email || ''}</td>
-                    <td>${order.items || ''}</td>
-                    <td>${order.details || ''}</td>
-                    <td>${order.total ? Number(order.total).toLocaleString() : ''}</td>
-                    <td>${order.status || ''}</td>
-                    <td><button onclick="markConfirmed('${order.date}')">Confirm</button></td>
-                    <td>${order.message || ''}</td>
-                  </tr>`;
-                });
-                html += `</table>`;
-                document.getElementById('adminOrders').innerHTML = html;
-            })
-            .catch(() => {
-                document.getElementById('adminOrders').innerHTML = '<p style="color:#d00;">Failed to load orders.</p>';
-            });
-    }
-    function closeAdminPanel() {
-        document.getElementById('adminPanel').style.display = 'none';
-    }
-    function markConfirmed(date) {
-        alert('Order with date ' + date + ' marked as Confirmed!');
-        // Here you can send a PATCH/PUT request to SheetBest to update the status if you want
-    }
-
-    // --- SHOW-ONCE PER MESSAGE LOGIC ---
-    function getShownMessageIds() {
-        return JSON.parse(localStorage.getItem('shown_message_ids') || '[]');
-    }
-    function addShownMessageId(id) {
-        let ids = getShownMessageIds();
-        ids.push(id);
-        localStorage.setItem('shown_message_ids', JSON.stringify(ids));
-    }
-    function showNotificationOnce(msg, color = "#333", id = null) {
-        if (id) {
-            let ids = getShownMessageIds();
-            if (ids.includes(id)) return; // Already shown, skip
-            addShownMessageId(id);
-        }
-        showNotification(msg, color);
-    }
-    function checkOrderStatusAndNotify() {
-        const user = getCurrentUser();
-        if (!user) return;
-        fetch(SHEETBEST_URL)
-            .then(res => res.json())
-            .then(data => {
-                const orders = data.filter(o => o.email && o.email.toLowerCase() === user.email.toLowerCase());
-                // Show alert for each new message (not shown before)
-                orders.forEach(order => {
-                    if (order.message && order.status === "Confirmed") {
-                        showNotificationOnce(order.message, "#28a745", order.date);
-                    }
-                });
-            });
-    }
-
-    function onMainLoad() {
-        const user = getCurrentUser();
-        if (!user) {
-            showLogin();
-            return;
-        }
-        document.getElementById('userName').textContent = user.name;
-        renderCart();
-        renderGadgets();
-        startOrderStatusPolling();
-    }
-    function renderGadgets() {
-        const phones = [
-            { img: "phone1.webp", name: "Redmi Note 14", pickup: 262983, delivery: 306813 },
-            { img: "phone2.jpeg", name: "iPhone 14", pickup: 278279, delivery: 324659 },
-            { img: "phone15.jpeg", name: "Samsung Galaxy S22", pickup: 294000, delivery: 343000 },
-            { img: "phone5.jpeg", name: "Google Pixel 6", pickup: 310800, delivery: 362600 },
-            { img: "phone6.jpg", name: "OnePlus 9 Pro", pickup: 324000, delivery: 378000 },
-            { img: "phone7.jpeg", name: "Tecno Camon 20", pickup: 144000, delivery: 168000 },
-            { img: "phone8.jpeg", name: "Infinix Hot 30", pickup: 117600, delivery: 137200 },
-            { img: "phone16.jpeg", name: "Samsung Galaxy A54", pickup: 216000, delivery: 252000 },
-            { img: "phone13.jpeg", name: "iPhone 13 Pro Max", pickup: 540000, delivery: 630000 },
-            { img: "phone11.jpeg", name: "Realme GT 5 Pro", pickup: 350000, delivery: 400000 },
-            { img: "phone12.jpeg", name: "Nokia G60", pickup: 95000, delivery: 110000 },
-            { img: "phone14.jpeg", name: "Vivo V27", pickup: 180000, delivery: 210000 },
-            { img: "phone17.jpeg", name: "iPhone 15 Pro", pickup: 900000, delivery: 1050000 },
-            { img: "phone18.jpeg", name: "Tecno Spark 20", pickup: 85000, delivery: 95000 },
-            { img: "phone19.jpeg", name: "Samsung Galaxy Z Fold 5", pickup: 1200000, delivery: 1350000 }
-        ];
-        const laptops = [
-            { img: "laptop1.jpeg", name: "Dell Inspiron 15", pickup: 180000, delivery: 210000 },
-            { img: "laptop2.jpeg", name: "HP Pavilion x360", pickup: 240000, delivery: 280000 },
-            { img: "laptop3.jpeg", name: "Lenovo ThinkPad X1", pickup: 300000, delivery: 350000 },
-            { img: "laptop9.jpeg", name: "Asus ZenBook 14", pickup: 360000, delivery: 420000 },
-            { img: "laptop5.webp", name: "Apple MacBook Air M2", pickup: 720000, delivery: 840000 },
-            { img: "laptop4.jpeg", name: "Acer Aspire 5", pickup: 216000, delivery: 252000 },
-            { img: "laptop8.webp", name: "HP EliteBook 840", pickup: 420000, delivery: 490000 },
-            { img: "laptop7.webp", name: "Microsoft Surface Laptop 5", pickup: 600000, delivery: 700000 },
-            { img: "laptop10.jpeg", name: "MSI GF63 Thin", pickup: 410000, delivery: 470000 },
-            { img: "laptop11.jpeg", name: "Razer Blade 15", pickup: 900000, delivery: 1050000 },
-            { img: "laptop12.jpeg", name: "Apple MacBook Pro M3", pickup: 1200000, delivery: 1350000 },
-            { img: "laptop13.jpeg", name: "Dell XPS 13", pickup: 650000, delivery: 750000 }
-        ];
-        const accessories = [
-            { img: "airpod.jpeg", name: "Apple AirPods Pro", pickup: 85000, delivery: 95000 },
-            { img: "samsungbunds.jpeg", name: "Samsung Galaxy Buds", pickup: 60000, delivery: 70000 },
-            { img: "apowerbanknker.jpeg", name: "Anker Power Bank 20000mAh", pickup: 35000, delivery: 40000 },
-            { img: "logitechmouse.jpeg", name: "Logitech MX Master 3 Mouse", pickup: 32000, delivery: 37000 },
-            { img: "sandiskssd.jpeg", name: "SanDisk 1TB SSD", pickup: 65000, delivery: 75000 },
-            { img: "jblgo3.jpeg", name: "JBL Go 3 Speaker", pickup: 18000, delivery: 22000 },
-            { img: "ankercharger.jpeg", name: "Anker 65W Charger", pickup: 25000, delivery: 30000 },
-            { img: "applewatch.jpeg", name: "Apple Watch Series 9", pickup: 220000, delivery: 250000 },
-            { img: "fitbit.jpeg", name: "Fitbit Versa 4", pickup: 90000, delivery: 105000 },
-            { img: "logitechkeyboard.jpeg", name: "Logitech K380 Keyboard", pickup: 18000, delivery: 22000 }
-        ];
-        const phoneList = document.getElementById('phone-list');
-        const laptopList = document.getElementById('laptop-list');
-        const accessoryList = document.getElementById('accessory-list');
-        phoneList.innerHTML = '';
-        laptopList.innerHTML = '';
-        accessoryList.innerHTML = '';
-        phones.forEach(phone => {
-            phoneList.innerHTML += `
-                <div class="gadget-item">
-                    <img src="${phone.img}" alt="${phone.name}" onerror="this.onerror=null;this.src='https://source.unsplash.com/200x110/?phone,${encodeURIComponent(phone.name)}';">
-                    <h3>${phone.name}</h3>
-                    <div class="prices">
-                        <span>Pickup Total: #${phone.pickup.toLocaleString()}</span><br>
-                        <span>Delivery Total: #${phone.delivery.toLocaleString()}</span>
-                    </div>
-                    <div class="action-buttons">
-                        <button onclick="buyNow('${phone.name}', ${phone.pickup}, ${phone.delivery})">Buy Now</button>
-                        <button onclick="addToCart('${phone.name}', ${phone.pickup})">Add to Cart</button>
-                    </div>
-                </div>
-            `;
-        });
-        laptops.forEach(laptop => {
-            laptopList.innerHTML += `
-                <div class="gadget-item">
-                    <img src="${laptop.img}" alt="${laptop.name}" onerror="this.onerror=null;this.src='https://source.unsplash.com/200x110/?laptop,${encodeURIComponent(laptop.name)}';">
-                    <h3>${laptop.name}</h3>
-                    <div class="prices">
-                        <span>Pickup Total: #${laptop.pickup.toLocaleString()}</span><br>
-                        <span>Delivery Total: #${laptop.delivery.toLocaleString()}</span>
-                    </div>
-                    <div class="action-buttons">
-                        <button onclick="buyNow('${laptop.name}', ${laptop.pickup}, ${laptop.delivery})">Buy Now</button>
-                        <button onclick="addToCart('${laptop.name}', ${laptop.pickup})">Add to Cart</button>
-                    </div>
-                </div>
-            `;
-        });
-        accessories.forEach(acc => {
-            accessoryList.innerHTML += `
-                <div class="gadget-item">
-                    <img src="${acc.img}" alt="${acc.name}" onerror="this.onerror=null;this.src='https://source.unsplash.com/200x110/?accessory,${encodeURIComponent(acc.name)}';">
-                    <h3>${acc.name}</h3>
-                    <div class="prices">
-                        <span>Pickup Total: #${acc.pickup.toLocaleString()}</span><br>
-                        <span>Delivery Total: #${acc.delivery.toLocaleString()}</span>
-                    </div>
-                    <div class="action-buttons">
-                        <button onclick="buyNow('${acc.name}', ${acc.pickup}, ${acc.delivery})">Buy Now</button>
-                        <button onclick="addToCart('${acc.name}', ${acc.pickup})">Add to Cart</button>
-                    </div>
-                </div>
-            `;
-        });
-    }
-    window.addEventListener('DOMContentLoaded', function() {
-        getCurrentUser() ? (showMain(), onMainLoad()) : showLogin();
     });
 
-    // --- BROADCAST NOTIFICATION SYSTEM ---
-    // Replace with your SheetBest endpoint for broadcast messages
-    const BROADCAST_URL = 'https://api.sheetbest.com/sheets/YOUR_BROADCAST_SHEET_ID';
+    if (addressInput) {
+        addressInput.addEventListener('input', function() {
+            currentAddress = addressInput.value.trim() || 'Allen Ave, Ikeja, Lagos';
+            deliveryMap.src = `https://www.google.com/maps?q=${encodeURIComponent(currentAddress)}&layer=c&output=svembed`;
+            updateAmount();
+        });
+    }
 
-    // Admin send broadcast
-    document.getElementById('broadcastForm').onsubmit = function(e) {
-        e.preventDefault();
-        const msg = document.getElementById('broadcastMsg').value.trim();
-        if (!msg) return;
-        const id = Date.now().toString();
-        fetch(BROADCAST_URL, {
+    modal.querySelector('#confirm-order-btn').onclick = function() {
+        const method = modal.querySelector('input[name="method"]:checked').value;
+        let address = '';
+        if (method === 'delivery') {
+            address = addressInput.value.trim();
+            if (!address) {
+                alert('Please enter your delivery address.');
+                return;
+            }
+            users[username + '_address'] = address;
+            localStorage.setItem('gadgetUsers', JSON.stringify(users));
+        } else {
+            address = 'Allen Avenue, Ikeja, Lagos';
+        }
+
+        // Compose order details as a notification message
+        const orderTitle = `New Order: ${name}`;
+        const orderMessage = `User: ${username || 'Guest'}\nProduct: ${name}\nPrice: $${price}\nMethod: ${method}\nAddress: ${address}\nTotal: $${totalAmountSpan.textContent}`;
+
+        fetch("http://localhost:3000/order", {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id, msg, time: new Date().toLocaleString() })
-        }).then(() => {
-            alert('Message sent!');
-            document.getElementById('broadcastMsg').value = '';
+            body: JSON.stringify({
+                timestamp: new Date().toISOString(),
+                type: 'notification',
+                sender: username || 'Guest',
+                title: orderTitle,
+                message: orderMessage,
+                status: 'active'
+            })
+        })
+        .then(res => {
+            if (!res.ok) throw new Error('Network response was not ok');
+            return res.json();
+        })
+        .then(() => {
+            showNotification('Order sent to admin!');
+            modal.remove();
+        })
+        .catch((err) => {
+            showNotification('Error sending order.');
+            console.error(err);
+            modal.remove();
         });
     };
+}
 
-    // User receive broadcast
-    function getShownBroadcastIds() {
-        return JSON.parse(localStorage.getItem('shown_broadcast_ids') || '[]');
-    }
-    function addShownBroadcastId(id) {
-        let ids = getShownBroadcastIds();
-        ids.push(id);
-        localStorage.setItem('shown_broadcast_ids', JSON.stringify(ids));
-    }
-    function showBroadcastNotification(msg) {
-        const n = document.getElementById('notification');
-        const dot = document.getElementById('notifDot');
-        n.textContent = msg;
-        n.style.background = "#007bff";
-        n.style.display = 'block';
-        dot.style.display = 'block';
-        saveNotification(msg);
-        clearTimeout(window._broadcastNotifTimeout);
-        window._broadcastNotifTimeout = setTimeout(() => {
-            n.style.display = 'none';
-            dot.style.display = 'none';
-        }, 4000);
-    }
-    function showBroadcastOnce(msg, id) {
-        let ids = getShownBroadcastIds();
-        if (ids.includes(id)) return;
-        addShownBroadcastId(id);
-        showBroadcastNotification(msg);
-    }
-    // Poll for new broadcast messages every 5 seconds
-    function pollBroadcasts() {
-        fetch(BROADCAST_URL)
-            .then(res => res.json())
-            .then(data => {
-                data.forEach(m => {
-                    if (m.id && m.msg) {
-                        showBroadcastOnce(m.msg, m.id);
-                    }
+// --- OPTIONAL: CSS for notification popup ---
+const style = document.createElement('style');
+style.innerHTML = `
+.notification-popup {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: #0078d7;
+  color: #fff;
+  padding: 16px 28px;
+  border-radius: 8px;
+  font-size: 1.1em;
+  z-index: 10001;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  animation: fadeInOut 3.5s;
+}
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(30px);}
+  10% { opacity: 1; transform: translateY(0);}
+  90% { opacity: 1;}
+  100% { opacity: 0; transform: translateY(30px);}
+}
+`;
+document.head.appendChild(style);
+//view detals
+function viewDetails(name, price, img) {
+    // You can add more details here if you want
+    const description = {
+        "Redmin": "A reliable smartphone with great battery life.",
+        "Iphone": "The latest iPhone with advanced features.",
+        "Samsung Galaxy": "High performance and stunning display.",
+        // ...add descriptions for other products as needed...
+    };
+
+    const modal = document.createElement('div');
+    modal.style.position = 'fixed';
+    modal.style.top = 0;
+    modal.style.left = 0;
+    modal.style.width = '100vw';
+    modal.style.height = '100vh';
+    modal.style.background = 'rgba(0,0,0,0.5)';
+    modal.style.display = 'flex';
+    modal.style.alignItems = 'center';
+    modal.style.justifyContent = 'center';
+    modal.style.zIndex = 9999;
+
+    modal.innerHTML = `
+      <div style="background:#fff;padding:28px 20px;border-radius:14px;max-width:400px;box-shadow:0 4px 24px rgba(0,0,0,0.18);text-align:center;position:relative;">
+        <button onclick="this.closest('div').parentNode.remove();" style="position:absolute;top:10px;right:10px;background:none;border:none;font-size:22px;cursor:pointer;">&times;</button>
+        <img src="${img}" alt="${name}" style="max-width:90%;height:160px;object-fit:contain;border-radius:10px;margin-bottom:18px;">
+        <h2 style="color:#0078d7;">${name}</h2>
+        <p style="color:#e60023;font-weight:bold;font-size:18px;">Price: $${price}</p>
+        <p style="color:#444;font-size:1em;margin:12px 0 18px 0;">${description[name] || "No description available."}</p>
+        <button onclick="buyNow('${name}', ${price})" style="background:#2ecc71;color:#fff;border:none;border-radius:6px;padding:10px 20px;font-size:1em;cursor:pointer;">Buy Now</button>
+      </div>
+    `;
+    document.body.appendChild(modal);
+}
+function searchGadgets() {
+    const query = document.getElementById('search-input').value.toLowerCase();
+    // Example: filter items with class 'Gadget-item'
+    document.querySelectorAll('.Gadget-item').forEach(item => {
+        const name = item.querySelector('h2')?.textContent.toLowerCase() || '';
+        item.style.display = name.includes(query) ? '' : 'none';
+    });
+}
+// --- BACKEND URL (auto switch for localhost or hosting) ---
+const BACKEND_URL =
+  window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+    ? "http://localhost:3000"
+    : "https://your-domain.com"; // <-- Replace with your hosting URL
+
+const SEND_CHAT_URL =  "http://localhost:3000/send-message";
+const RECEIVE_CHAT_URL =  "http://localhost:3000/receive-messages";
+
+// Show chat window when button is clicked
+document.getElementById('ai-chat-btn').onclick = function() {
+    document.getElementById('ai-chat-modal').style.display = 'flex';
+    loadAdminReplies();
+};
+
+// Send user message to backend
+function sendAIMessage() {
+    const input = document.getElementById('ai-chat-input');
+    const msg = input.value.trim();
+    if (!msg) return;
+    const chat = document.getElementById('ai-chat-messages');
+    // Show user message
+    chat.innerHTML += `<div style="text-align:right;margin-bottom:6px;"><span style="background:#0078d7;color:#fff;padding:6px 12px;border-radius:12px 12px 2px 12px;display:inline-block;">${msg}</span></div>`;
+    input.value = '';
+    chat.scrollTop = chat.scrollHeight;
+
+    // Send to backend
+    let name = localStorage.getItem('gadgetLoggedIn') || 'Guest';
+    fetch("http://localhost:3000/send-message", {
+        method: "POST",
+        body: JSON.stringify({ name, message: msg }),
+        headers: { "Content-Type": "application/json" }
+    })
+    .then(res => res.json())
+    .then(() => {
+        // Optionally show a confirmation or do nothing
+    })
+    .catch(() => {
+        chat.innerHTML += `<div style="text-align:left;margin-bottom:6px;"><span style="background:#e60023;color:#fff;padding:6px 12px;border-radius:12px 12px 12px 2px;display:inline-block;">Failed to send message.</span></div>`;
+        chat.scrollTop = chat.scrollHeight;
+    });
+
+    // Optionally, load admin replies after sending
+    setTimeout(loadAdminReplies, 1000);
+}
+
+// Load admin replies from backend
+function loadAdminReplies() {
+    fetch("http://localhost:3000/receive-messages")
+        .then(res => res.json())
+        .then(data => {
+            const chat = document.getElementById('ai-chat-messages');
+            chat.innerHTML = '';
+            if (Array.isArray(data) && data.length) {
+                data.forEach(reply => {
+                    chat.innerHTML += `<div style="text-align:left;margin-bottom:6px;"><span style="background:#eaf3fa;color:#222;padding:6px 12px;border-radius:12px 12px 12px 2px;display:inline-block;"><strong>${reply.name || "Admin"}:</strong> ${reply.reply || reply.message || ""}</span></div>`;
                 });
-            });
-    }
-    setInterval(pollBroadcasts, 5000);
-    pollBroadcasts();
+            } else {
+                chat.innerHTML = `<div style="text-align:center;color:#888;">No replies yet.</div>`;
+            }
+            chat.scrollTop = chat.scrollHeight;
+        });
+}
+
+// Optionally, load admin replies when chat opens
+document.getElementById('ai-chat-modal').addEventListener('show', loadAdminReplies);
     </script>
 </body>
 </html>
