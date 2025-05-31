@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="phone.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <title>ONGOD PHONE GADGET</title>
 </head>
 <body>
@@ -134,7 +135,7 @@
                 <div class="Gadget-item"><img src="logitechkeyboard.jpeg" alt="Logitech Keyboard"><h2>Logitech Keyboard</h2><p>Price: $120</p><div class="button-group"><button onclick="viewDetails('Logitech Keyboard', 120, 'logitechkeyboard.jpeg')">View Details</button><button onclick="buyNow('Logitech Keyboard', 120)">Buy Now</button></div></div>
                 <div class="Gadget-item"><img src="logitechmouse.jpeg" alt="Logitech Mouse"><h2>Logitech Mouse</h2><p>Price: $80</p><div class="button-group"><button onclick="viewDetails('Logitech Mouse', 80, 'logitechmouse.jpeg')">View Details</button><button onclick="buyNow('Logitech Mouse', 80)">Buy Now</button></div></div>
             </section>
-            <!-- Floating Chat Button (use your own icon image) -->
+           <!-- Floating Chat Button (use your own icon image) -->
 <button id="ai-chat-btn" title="Chat with AI" style="position:fixed;bottom:30px;right:30px;z-index:10001;background:#0078d7;border:none;border-radius:50%;width:60px;height:60px;box-shadow:0 2px 8px rgba(0,0,0,0.18);cursor:pointer;">
   <img src="profile.jpeg" alt="AI Chat" style="width:32px;height:32px;">
 </button>
@@ -155,8 +156,8 @@
         <section class="contact-us">
             <h2>Contact Us</h2>
             <p>Email: <a href="mailto:ayomideoluniyi49@gmail.com">ayomideoluniyi49@gmail.com</a></p>
-            <p>Phone: <a href="tel:+234123456789">+234 123 456 789</a></p>
-            <p>Address: 123 Gadget Street, Tech City, Nigeria</p>
+            <p>Phone: <a href="tel:+234123456789">+234 9138 1549 63</a></p>
+            <p>Address: no 61 okeola street ilishan ogun state</p>
             <p><button onclick="showMapModal()">View Map</button></p>
         </section>
         <footer class="footer">
@@ -296,8 +297,7 @@ window.onload = function() {
         document.getElementById('login-modal').style.display = "flex";
         document.getElementById('main-content').style.display = "none";
     }
-};
-// --- NOTIFICATION LOGIC ---
+};// --- NOTIFICATION LOGIC ---
 // Show notification popup (local, for instant feedback)
 function showNotification(message) {
     let popup = document.createElement('div');
@@ -307,31 +307,29 @@ function showNotification(message) {
     setTimeout(() => { popup.remove(); }, 3500);
 }
 
-// --- BACKEND URL (auto switch for localhost or hosting) ---
-const NOTIF_SHEET_URL =
-  window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
-    ? "http://localhost:3000"
-    : "https://your-domain.com"; // <-- Replace with your hosting URL
+// --- BACKEND URL ---
+// Use your SheetBest API endpoint directly
+const BACKEND_URL = "https://api.sheetbest.com/sheets/da756097-1974-49b4-bee3-34954fa429da";
 
-// --- SHOW NOTIFICATIONS MODAL (User) ---
-document.getElementById('notification-btn').onclick = function() {
+// --- SHOW NOTIFICATIONS MODAL ---
+document.getElementById('notification-btn').onclick = function () {
     loadNotificationsFromSheet();
 };
 
-// --- LOAD NOTIFICATIONS FROM SHEETfetch("http://10.121.54.210:3000/send-message", { ... }) ---
+// --- LOAD NOTIFICATIONS FROM SHEETBEST ---
 function loadNotificationsFromSheet() {
-    fetch("http://10.121.54.210:3000/orders")
+    fetch(`https://api.sheetbest.com/sheets/da756097-1974-49b4-bee3-34954fa429da`)
         .then(res => res.json())
         .then(data => {
-            // Show ALL notifications, including rejected/confirmed
-            const notifications = data.filter(n => n.type === 'notification');
+            // Filter for orders (Google Sheets rows) that have a title
+            const notifications = data.filter(n => n.title && n.title.startsWith('New Order'));
             let list = notifications.length
                 ? notifications.map(n => `
                     <div style="margin-bottom:10px;">
                         <b>${n.title}</b><br>
                         ${n.message.replace(/\n/g, '<br>')}
                         <br>
-                        <small>${new Date(n.timestamp).toLocaleString()}</small>
+                        <small>${n.timestamp ? new Date(n.timestamp).toLocaleString() : ''}</small>
                         <br>
                         <span style="color:${n.status === 'confirmed' ? '#2ecc71' : n.status === 'rejected' ? '#e74c3c' : '#888'};">
                             Status: ${n.status || 'pending'}
@@ -351,23 +349,21 @@ function loadNotificationsFromSheet() {
 
 // --- BUY NOW MODAL ---
 function buyNow(name, price) {
-    const username = localStorage.getItem('gadgetLoggedIn') || '';
+    const username = localStorage.getItem('gadgetLoggedIn') || 'Guest';
     const users = JSON.parse(localStorage.getItem('gadgetUsers') || '{}');
-    const userAddress = (users[username + '_address']) || '';
+    const userAddress = users[username + '_address'] || '';
 
-    // Helper to calculate price
-    function calculateAmount(base, method, address) {
-        let percent = 0;
-        if (method === 'pickup') {
-            percent = 0.15;
-        } else if (method === 'delivery') {
-            // If address contains "Ikeja" or "Lagos", use 30%, else 40%
-            if (address && /ikeja|lagos/i.test(address)) {
-                percent = 0.30;
-            } else {
-                percent = 0.40;
-            }
+    // Extract state from address (assumes format: "street, area, state, Nigeria")
+    let userState = 'Lagos';
+    if (userAddress) {
+        const parts = userAddress.split(',');
+        if (parts.length >= 3) {
+            userState = parts[parts.length - 2].trim();
         }
+    }
+
+    function calculateAmount(base, method, address) {
+        let percent = method === 'pickup' ? 0.15 : (/ikeja|lagos/i.test(address) ? 0.30 : 0.40);
         return Math.round(base + (base * percent));
     }
 
@@ -375,18 +371,11 @@ function buyNow(name, price) {
     let currentAddress = userAddress || 'Allen Ave, Ikeja, Lagos';
     let currentAmount = calculateAmount(price, currentMethod, currentAddress);
 
-    const modal = document.createElement('div');
-    modal.style.position = 'fixed';
-    modal.style.top = 0;
-    modal.style.left = 0;
-    modal.style.width = '100vw';
-    modal.style.height = '100vh';
-    modal.style.background = 'rgba(0,0,0,0.5)';
-    modal.style.display = 'flex';
-    modal.style.alignItems = 'center';
-    modal.style.justifyContent = 'center';
-    modal.style.zIndex = 9999;
+    // Google Maps embed URL for the user's state
+    const stateMapUrl = `https://www.google.com/maps?q=${encodeURIComponent(userState + ', Nigeria')}&output=embed`;
 
+    const modal = document.createElement('div');
+    modal.style = "position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:9999;";
     modal.innerHTML = `
       <div style="background:#fff;padding:24px 18px;border-radius:12px;max-width:370px;box-shadow:0 4px 24px rgba(0,0,0,0.18);text-align:center;position:relative;">
         <button onclick="this.closest('div').parentNode.remove();" style="position:absolute;top:10px;right:10px;background:none;border:none;font-size:22px;cursor:pointer;">&times;</button>
@@ -397,192 +386,93 @@ function buyNow(name, price) {
           <label style="margin-left:18px;"><input type="radio" name="method" value="delivery"> Delivery</label>
         </div>
         <div id="pickup-map" style="margin-bottom:10px;">
-          <iframe src="https://www.google.com/maps?q=Allen+Ave,+Ikeja,+Lagos&layer=c&output=svembed" width="320" height="150" style="border:0;border-radius:10px;" allowfullscreen="" loading="lazy"></iframe>
-          <div style="margin:8px 0;color:#555;">Pickup Location: Allen Avenue, Ikeja, Lagos (Street View)</div>
+          <iframe src="${stateMapUrl}" width="320" height="150" style="border:0;border-radius:10px;"></iframe>
+          <div style="margin:8px 0;color:#555;">Pickup Location: ${userState}, Nigeria</div>
         </div>
         <div id="delivery-section" style="display:none;margin-bottom:10px;">
-          <input type="text" id="delivery-address-input" placeholder="Enter delivery address" value="${userAddress}" style="width:90%;padding:8px;border-radius:5px;border:1px solid #ccc;"><br>
-          <iframe id="delivery-map" src="https://www.google.com/maps?q=${encodeURIComponent(userAddress || 'Allen Ave, Ikeja, Lagos')}&layer=c&output=svembed" width="320" height="150" style="border:0;border-radius:10px;margin-top:8px;" allowfullscreen="" loading="lazy"></iframe>
+          <input type="text" id="delivery-address-input" placeholder="Enter delivery address" value="${userAddress}" style="width:90%;padding:8px;border-radius:5px;border:1px solid #ccc;">
+          <iframe id="delivery-map" width="320" height="150" style="border:0;border-radius:10px;margin-top:8px;"></iframe>
           <div style="margin:8px 0;color:#555;">Delivery Area Street View</div>
         </div>
         <div style="margin:10px 0;">
           <strong style="color:#0078d7;">Total Amount to Pay: $<span id="total-amount">${currentAmount}</span></strong>
-        </div>
-        <div style="margin:16px 0;">
-          <strong>Bank Transfer Only</strong><br>
-          <strong>Bank Name:</strong> Zenith Bank<br>
-          <strong>Account Name:</strong> ONGOD GADGETS<br>
-          <strong>Account Number:</strong> 1234567890
-          <button type="button" onclick="navigator.clipboard.writeText('Zenith Bank, ONGOD GADGETS, 1234567890');alert('Bank details copied!');" style="margin-top:6px;">Copy Details</button>
         </div>
         <button id="confirm-order-btn" style="background:#2ecc71;color:#fff;border:none;border-radius:5px;padding:10px 18px;font-size:1em;cursor:pointer;">I Have Paid</button>
       </div>
     `;
     document.body.appendChild(modal);
 
-    const pickupMap = modal.querySelector('#pickup-map');
-    const deliverySection = modal.querySelector('#delivery-section');
-    const totalAmountSpan = modal.querySelector('#total-amount');
-    const addressInput = modal.querySelector('#delivery-address-input');
-    const deliveryMap = modal.querySelector('#delivery-map');
-
-    function updateAmount() {
-        let method = currentMethod;
-        let address = currentAddress;
-        let amt = calculateAmount(price, method, address);
-        totalAmountSpan.textContent = amt;
-    }
-
+    // Show/hide delivery section based on method
     modal.querySelectorAll('input[name="method"]').forEach(radio => {
         radio.onchange = function() {
-            currentMethod = this.value;
-            if (this.value === 'pickup') {
-                pickupMap.style.display = '';
-                deliverySection.style.display = 'none';
-                currentAddress = 'Allen Ave, Ikeja, Lagos';
+            if (this.value === 'delivery') {
+                modal.querySelector('#pickup-map').style.display = 'none';
+                modal.querySelector('#delivery-section').style.display = '';
+                currentMethod = 'delivery';
+                currentAddress = modal.querySelector('#delivery-address-input').value.trim() || currentAddress;
             } else {
-                pickupMap.style.display = 'none';
-                deliverySection.style.display = '';
-                currentAddress = addressInput.value.trim() || 'Allen Ave, Ikeja, Lagos';
+                modal.querySelector('#pickup-map').style.display = '';
+                modal.querySelector('#delivery-section').style.display = 'none';
+                currentMethod = 'pickup';
+                currentAddress = userAddress || 'Allen Ave, Ikeja, Lagos';
             }
-            updateAmount();
+            currentAmount = calculateAmount(price, currentMethod, currentAddress);
+            modal.querySelector('#total-amount').innerText = currentAmount;
         };
     });
 
-    if (addressInput) {
-        addressInput.addEventListener('input', function() {
-            currentAddress = addressInput.value.trim() || 'Allen Ave, Ikeja, Lagos';
-            deliveryMap.src = `https://www.google.com/maps?q=${encodeURIComponent(currentAddress)}&layer=c&output=svembed`;
-            updateAmount();
-        });
-    }
+    // Update amount on address change
+    modal.querySelector('#delivery-address-input').oninput = function() {
+        currentAddress = this.value.trim();
+        currentAmount = calculateAmount(price, currentMethod, currentAddress);
+        modal.querySelector('#total-amount').innerText = currentAmount;
+    };
 
     modal.querySelector('#confirm-order-btn').onclick = function() {
         const method = modal.querySelector('input[name="method"]:checked').value;
-        let address = '';
-        if (method === 'delivery') {
-            address = addressInput.value.trim();
-            if (!address) {
-                alert('Please enter your delivery address.');
-                return;
-            }
-            users[username + '_address'] = address;
-            localStorage.setItem('gadgetUsers', JSON.stringify(users));
-        } else {
-            address = 'Allen Avenue, Ikeja, Lagos';
+        let address = method === 'delivery' ? modal.querySelector('#delivery-address-input').value.trim() : userAddress || 'Allen Ave, Ikeja, Lagos';
+
+        if (method === 'delivery' && !address) {
+            alert('Please enter your delivery address.');
+            return;
         }
 
-        // Compose order details as a notification messagefetch("http://10.121.54.210:3000/send-message", { ... })
-        const orderTitle = `New Order: ${name}`;
-        const orderMessage = `User: ${username || 'Guest'}\nProduct: ${name}\nPrice: $${price}\nMethod: ${method}\nAddress: ${address}\nTotal: $${totalAmountSpan.textContent}`;
+        users[username + '_address'] = address;
+        localStorage.setItem('gadgetUsers', JSON.stringify(users));
 
-        fetch("http://10.121.54.210:3000/order", {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                timestamp: new Date().toISOString(),
-                type: 'notification',
-                sender: username || 'Guest',
-                title: orderTitle,
-                message: orderMessage,
-                status: 'active'
-            })
+        // --- SHEETBEST ORDER SUBMISSION ---
+        axios.post(`https://api.sheetbest.com/sheets/da756097-1974-49b4-bee3-34954fa429da`, {
+            timestamp: new Date().toISOString(),
+            sender: username,
+            title: `New Order: ${name}`,
+            message: `User: ${username}\nProduct: ${name}\nPrice: $${price}\nMethod: ${method}\nAddress: ${address}\nTotal: $${currentAmount}`,
+            status: 'active'
         })
-        .then(res => {
-            if (!res.ok) throw new Error('Network response was not ok');
-            return res.json();
-        })
-        .then(() => {
+        .then(response => {
             showNotification('Order sent to admin!');
             modal.remove();
         })
-        .catch((err) => {
+        .catch(error => {
             showNotification('Error sending order.');
-            console.error(err);
             modal.remove();
         });
     };
 }
-
-// --- OPTIONAL: CSS for notification popup ---
-const style = document.createElement('style');
-style.innerHTML = `
-.notification-popup {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  background: #0078d7;
-  color: #fff;
-  padding: 16px 28px;
-  border-radius: 8px;
-  font-size: 1.1em;
-  z-index: 10001;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
-  animation: fadeInOut 3.5s;
-}
-@keyframes fadeInOut {
-  0% { opacity: 0; transform: translateY(30px);}
-  10% { opacity: 1; transform: translateY(0);}
-  90% { opacity: 1;}
-  100% { opacity: 0; transform: translateY(30px);}
-}
-`;
-document.head.appendChild(style);
-//view detals
-function viewDetails(name, price, img) {
-    // You can add more details here if you want
-    const description = {
-        "Redmin": "A reliable smartphone with great battery life.",
-        "Iphone": "The latest iPhone with advanced features.",
-        "Samsung Galaxy": "High performance and stunning display.",
-        // ...add descriptions for other products as needed...
-    };
-
-    const modal = document.createElement('div');
-    modal.style.position = 'fixed';
-    modal.style.top = 0;
-    modal.style.left = 0;
-    modal.style.width = '100vw';
-    modal.style.height = '100vh';
-    modal.style.background = 'rgba(0,0,0,0.5)';
-    modal.style.display = 'flex';
-    modal.style.alignItems = 'center';
-    modal.style.justifyContent = 'center';
-    modal.style.zIndex = 9999;
-
-    modal.innerHTML = `
-      <div style="background:#fff;padding:28px 20px;border-radius:14px;max-width:400px;box-shadow:0 4px 24px rgba(0,0,0,0.18);text-align:center;position:relative;">
-        <button onclick="this.closest('div').parentNode.remove();" style="position:absolute;top:10px;right:10px;background:none;border:none;font-size:22px;cursor:pointer;">&times;</button>
-        <img src="${img}" alt="${name}" style="max-width:90%;height:160px;object-fit:contain;border-radius:10px;margin-bottom:18px;">
-        <h2 style="color:#0078d7;">${name}</h2>
-        <p style="color:#e60023;font-weight:bold;font-size:18px;">Price: $${price}</p>
-        <p style="color:#444;font-size:1em;margin:12px 0 18px 0;">${description[name] || "No description available."}</p>
-        <button onclick="buyNow('${name}', ${price})" style="background:#2ecc71;color:#fff;border:none;border-radius:6px;padding:10px 20px;font-size:1em;cursor:pointer;">Buy Now</button>
-      </div>
-    `;
-    document.body.appendChild(modal);
-}
-function searchGadgets() {
-    const query = document.getElementById('search-input').value.toLowerCase();
-    // Example: filter items with class 'Gadget-item'
-    document.querySelectorAll('.Gadget-item').forEach(item => {
-        const name = item.querySelector('h2')?.textContent.toLowerCase() || '';
-        item.style.display = name.includes(query) ? '' : 'none';
-    });
-}
-// --- BACKEND URL (auto switch for localhost or hosting) fetch("http://10.121.54.210:3000/send-message", { ... })---
-const BACKEND_URL =
-  window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
-    ? "http://localhost:3000"
-    : "https://your-domain.com"; // <-- Replace with your hosting URL
-
-const SEND_CHAT_URL =  "http://10.121.54.210:3000/send-message";
-const RECEIVE_CHAT_URL =  "http://10.121.54.210:3000/receive-messages";
+// --- CHAT LOGIC ---
+const SHEETBEST_URL = `https://api.sheetbest.com/sheets/0454fba2-42fd-49f5-9ec9-18e1e09c36da`;
 
 // Show chat window when button is clicked
 document.getElementById('ai-chat-btn').onclick = function() {
     document.getElementById('ai-chat-modal').style.display = 'flex';
     loadAdminReplies();
+    // Start polling for new messages every 2 seconds while chat is open
+    window._chatInterval = setInterval(loadAdminReplies, 2000);
+};
+
+// Hide chat and stop polling when closed
+document.querySelector('#ai-chat-modal button[onclick]').onclick = function() {
+    document.getElementById('ai-chat-modal').style.display = 'none';
+    clearInterval(window._chatInterval);
 };
 
 // Send user message to backend
@@ -596,29 +486,27 @@ function sendAIMessage() {
     input.value = '';
     chat.scrollTop = chat.scrollHeight;
 
-    // Send to backendfetch("http://10.121.54.210:3000/send-message", { ... })
+    // Send to backend
     let name = localStorage.getItem('gadgetLoggedIn') || 'Guest';
-    fetch("http://10.121.54.210:3000/send-message", {
+    fetch(SHEETBEST_URL, {
         method: "POST",
         body: JSON.stringify({ name, message: msg }),
         headers: { "Content-Type": "application/json" }
     })
     .then(res => res.json())
     .then(() => {
-        // Optionally show a confirmation or do nothing
+        // Immediately refresh chat after sending
+        loadAdminReplies();
     })
     .catch(() => {
         chat.innerHTML += `<div style="text-align:left;margin-bottom:6px;"><span style="background:#e60023;color:#fff;padding:6px 12px;border-radius:12px 12px 12px 2px;display:inline-block;">Failed to send message.</span></div>`;
         chat.scrollTop = chat.scrollHeight;
     });
-
-    // Optionally, load admin replies after sending
-    setTimeout(loadAdminReplies, 1000);
 }
 
-// Load admin replies from backendfetch("http://10.121.54.210:3000/send-message", { ... })
+// Load admin replies from backend
 function loadAdminReplies() {
-    fetch("http://10.121.54.210:3000/receive-messages")
+    fetch(SHEETBEST_URL)
         .then(res => res.json())
         .then(data => {
             const chat = document.getElementById('ai-chat-messages');
@@ -634,8 +522,45 @@ function loadAdminReplies() {
         });
 }
 
-// Optionally, load admin replies when chat opens
-document.getElementById('ai-chat-modal').addEventListener('show', loadAdminReplies);
+// Attach send handler
+document.getElementById('ai-chat-form').onsubmit = function(e) {
+    e.preventDefault();
+    sendAIMessage();
+};
+// Search gadgets by name
+function searchGadgets() {
+    const searchTerm = document.getElementById('search-input').value.toLowerCase();
+    const gadgets = document.querySelectorAll('.Gadget-item');
+    gadgets.forEach(gadget => {
+        const title = gadget.querySelector('h2').innerText.toLowerCase();
+        if (title.includes(searchTerm)) {
+            gadget.style.display = 'block';
+        } else {
+            gadget.style.display = 'none';
+        }
+    });
+}
+
+// Optional: Live search as you type
+document.getElementById('search-input').addEventListener('input', searchGadgets);
+// Show map modal
+function showMapModal() {
+    const modal = document.createElement('div');
+    modal.style = "position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:10000;";
+    modal.innerHTML = `
+        <div style="background:#fff;padding:24px 18px;border-radius:12px;max-width:600px;box-shadow:0 4px 24px rgba(0,0,0,0.18);text-align:center;position:relative;">
+            <button onclick="this.closest('div').parentNode.remove();" style="position:absolute;top:10px;right:10px;background:none;border:none;font-size:22px;cursor:pointer;">&times;</button>
+            <h2>Our Location</h2>
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3976.123456789012!2d3.1234567890123456!3d6.123456789012345!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x103b123456789012%3A0x1234567890123456!2sGadget%20Store%20Location!5e0!3m2!1sen!2sng!4v1612345678901" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    // Close on outside click
+    modal.onclick = function(e) {
+        if (e.target === modal) modal.remove();
+    };
+}
+
     </script>
 </body>
 </html>
