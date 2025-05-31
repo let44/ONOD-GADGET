@@ -75,6 +75,7 @@
                     <h3 style="color:#0078d7;margin-top:0;">Notification History</h3>
                     <div id="notification-history-list"></div>
                     <button onclick="document.getElementById('notification-history-modal').style.display='none';" style="background:#0078d7;color:#fff;border:none;border-radius:5px;padding:6px 16px;margin-top:10px;cursor:pointer;">Close</button>
+                    <button onclick="clearNotifications()" style="background:#e74c3c;color:#fff;border:none;border-radius:5px;padding:6px 16px;margin-top:10px;cursor:pointer;float:right;">Clear All</button>
                 </div>
             </div>
         </div>
@@ -156,8 +157,8 @@
         <section class="contact-us">
             <h2>Contact Us</h2>
             <p>Email: <a href="mailto:ayomideoluniyi49@gmail.com">ayomideoluniyi49@gmail.com</a></p>
-            <p>Phone: <a href="tel:+234123456789">+234 9138 1549 63</a></p>
-            <p>Address: no 61 okeola street ilishan ogun state</p>
+            <p>Phone: <a href="tel:+234123456789">+234 123 456 789</a></p>
+            <p>Address: 123 Gadget Street, Tech City, Nigeria</p>
             <p><button onclick="showMapModal()">View Map</button></p>
         </section>
         <footer class="footer">
@@ -297,46 +298,70 @@ window.onload = function() {
         document.getElementById('login-modal').style.display = "flex";
         document.getElementById('main-content').style.display = "none";
     }
-};// --- NOTIFICATION LOGIC ---
-// Show notification popup (local, for instant feedback)
-function showNotification(message) {
-    let popup = document.createElement('div');
-    popup.className = 'notification-popup';
-    popup.innerText = message;
-    document.body.appendChild(popup);
-    setTimeout(() => { popup.remove(); }, 3500);
-}
-
-// --- BACKEND URL ---
-// Use your SheetBest API endpoint directly
-const BACKEND_URL = "https://api.sheetbest.com/sheets/da756097-1974-49b4-bee3-34954fa429da";
+};
+// --- BACKEND URLS ---
+const ORDERS_SHEET_URL = "https://api.sheetbest.com/sheets/da756097-1974-49b4-bee3-34954fa429da";
+const ADMIN_SHEET_URL = "https://api.sheetbest.com/sheets/241df24d-b61e-4584-9a0a-cde50541263b"; // <-- Use your admin replies SheetBest URL
 
 // --- SHOW NOTIFICATIONS MODAL ---
 document.getElementById('notification-btn').onclick = function () {
     loadNotificationsFromSheet();
 };
 
-// --- LOAD NOTIFICATIONS FROM SHEETBEST ---
+// --- LOAD NOTIFICATIONS FROM SHEET ---
 function loadNotificationsFromSheet() {
-    fetch(`https://api.sheetbest.com/sheets/da756097-1974-49b4-bee3-34954fa429da`)
-        .then(res => res.json())
-        .then(data => {
-            // Filter for orders (Google Sheets rows) that have a title
-            const notifications = data.filter(n => n.title && n.title.startsWith('New Order'));
-            let list = notifications.length
-                ? notifications.map(n => `
+    // Fetch orders notifications
+    const ordersPromise = fetch(ORDERS_SHEET_URL)
+        .then(response => response.json())
+        .then(data => Array.isArray(data) ? data : []);
+
+    // Fetch admin replies notifications (DIFFERENT SHEET)
+    const adminRepliesPromise = fetch(ADMIN_SHEET_URL)
+        .then(response => response.json())
+        .then(data => Array.isArray(data) ? data : []);
+
+    Promise.all([ordersPromise, adminRepliesPromise])
+        .then(([orderNotes, adminReplies]) => {
+            // Map admin replies
+            const adminNotes = adminReplies
+                .filter(n => n.title || n.message)
+                .map(n => ({
+                    type: 'admin',
+                    title: n.title || 'Admin Reply',
+                    message: n.message,
+                    timestamp: n.timestamp,
+                    status: n.status || 'admin'
+                }));
+
+            // Map order notes (if you want to show them too)
+            const orderNotesMapped = orderNotes
+                .filter(n => n.title || n.message)
+                .map(n => ({
+                    type: 'order',
+                    title: n.title || 'Order',
+                    message: n.message,
+                    timestamp: n.timestamp,
+                    status: n.status || 'pending'
+                }));
+
+            // Combine and sort by time (latest first)
+            const allNotes = [...orderNotesMapped, ...adminNotes].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+            let list = allNotes.length
+                ? allNotes.map(n => `
                     <div style="margin-bottom:10px;">
-                        <b>${n.title}</b><br>
-                        ${n.message.replace(/\n/g, '<br>')}
+                        <b>${n.type === 'admin' ? '<span style="color:#0078d7;">' + n.title + '</span>' : n.title}</b><br>
+                        ${n.message ? n.message.replace(/\n/g, '<br>') : ''}
                         <br>
                         <small>${n.timestamp ? new Date(n.timestamp).toLocaleString() : ''}</small>
                         <br>
-                        <span style="color:${n.status === 'confirmed' ? '#2ecc71' : n.status === 'rejected' ? '#e74c3c' : '#888'};">
+                        <span style="color:${n.status === 'confirmed' ? '#2ecc71' : n.status === 'rejected' ? '#e74c3c' : n.status === 'admin' ? '#0078d7' : '#888'};">
                             Status: ${n.status || 'pending'}
                         </span>
                     </div>
                 `).join('')
                 : '<div style="color:#888;">No notifications yet.</div>';
+
             document.getElementById('notification-history-list').innerHTML = list;
             document.getElementById('notification-history-modal').style.display = 'block';
         })
@@ -347,20 +372,48 @@ function loadNotificationsFromSheet() {
         });
 }
 
-// --- BUY NOW MODAL ---
+// --- CLEAR ALL NOTIFICATIONS FUNCTION ---
+function clearNotifications() {
+    // Option 1: Just clear from the UI (for local/temporary clear)
+    document.getElementById('notification-history-list').innerHTML = '<div style="color:#888;">No notifications yet.</div>';
+
+    // Option 2: If you want to clear from SheetBest backend, you must clear the data from the sheet itself.
+    // SheetBest API does not support DELETE, so you must clear the sheet manually or via Google Sheets.
+    // Optionally, you can POST a "clear" marker or show a notification:
+    showNotification("Notifications cleared from view. To clear from backend, clear the sheet in Google Sheets.");
+}
+
+// --- NOTIFICATION POPUP FUNCTION ---
+function showNotification(message) {
+    let notif = document.getElementById('custom-notification');
+    if (!notif) {
+        notif = document.createElement('div');
+        notif.id = 'custom-notification';
+        notif.style.position = 'fixed';
+        notif.style.bottom = '30px';
+        notif.style.right = '30px';
+        notif.style.background = '#0078d7';
+        notif.style.color = '#fff';
+        notif.style.padding = '16px 24px';
+        notif.style.borderRadius = '8px';
+        notif.style.boxShadow = '0 2px 8px rgba(0,0,0,0.18)';
+        notif.style.fontSize = '1.1em';
+        notif.style.zIndex = '99999';
+        notif.style.display = 'none';
+        document.body.appendChild(notif);
+    }
+    notif.innerText = message;
+    notif.style.display = 'block';
+    setTimeout(() => {
+        notif.style.display = 'none';
+    }, 3000);
+}
+
+// --- BUY NOW LOGIC WITH ONSEND NOTIFICATION ---
 function buyNow(name, price) {
     const username = localStorage.getItem('gadgetLoggedIn') || 'Guest';
     const users = JSON.parse(localStorage.getItem('gadgetUsers') || '{}');
     const userAddress = users[username + '_address'] || '';
-
-    // Extract state from address (assumes format: "street, area, state, Nigeria")
-    let userState = 'Lagos';
-    if (userAddress) {
-        const parts = userAddress.split(',');
-        if (parts.length >= 3) {
-            userState = parts[parts.length - 2].trim();
-        }
-    }
 
     function calculateAmount(base, method, address) {
         let percent = method === 'pickup' ? 0.15 : (/ikeja|lagos/i.test(address) ? 0.30 : 0.40);
@@ -368,11 +421,9 @@ function buyNow(name, price) {
     }
 
     let currentMethod = 'pickup';
+    let currentPayment = 'transfer';
     let currentAddress = userAddress || 'Allen Ave, Ikeja, Lagos';
     let currentAmount = calculateAmount(price, currentMethod, currentAddress);
-
-    // Google Maps embed URL for the user's state
-    const stateMapUrl = `https://www.google.com/maps?q=${encodeURIComponent(userState + ', Nigeria')}&output=embed`;
 
     const modal = document.createElement('div');
     modal.style = "position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:9999;";
@@ -383,11 +434,16 @@ function buyNow(name, price) {
         <p style="color:#0078d7;font-weight:bold;">Price: $<span id="base-price">${price}</span></p>
         <div style="margin:12px 0;">
           <label><input type="radio" name="method" value="pickup" checked> Pickup</label>
-          <label style="margin-left:18px;"><input type="radio" name="method" value="delivery"> Delivery</label>
+          <label style="margin-left:12px;"><input type="radio" name="method" value="delivery"> Delivery</label>
+        </div>
+        <div style="margin:12px 0;">
+          <label><input type="radio" name="payment" value="transfer" checked> Transfer</label>
+          <label style="margin-left:8px;"><input type="radio" name="payment" value="card"> Card</label>
+          <label style="margin-left:8px;"><input type="radio" name="payment" value="payondelivery"> Pay on Delivery</label>
         </div>
         <div id="pickup-map" style="margin-bottom:10px;">
-          <iframe src="${stateMapUrl}" width="320" height="150" style="border:0;border-radius:10px;"></iframe>
-          <div style="margin:8px 0;color:#555;">Pickup Location: ${userState}, Nigeria</div>
+          <iframe src="https://www.google.com/maps?q=Allen+Ave,+Ikeja,+Lagos&layer=c&output=svembed" width="320" height="150" style="border:0;border-radius:10px;"></iframe>
+          <div style="margin:8px 0;color:#555;">Pickup Location: Allen Avenue, Ikeja, Lagos</div>
         </div>
         <div id="delivery-section" style="display:none;margin-bottom:10px;">
           <input type="text" id="delivery-address-input" placeholder="Enter delivery address" value="${userAddress}" style="width:90%;padding:8px;border-radius:5px;border:1px solid #ccc;">
@@ -410,27 +466,72 @@ function buyNow(name, price) {
                 modal.querySelector('#delivery-section').style.display = '';
                 currentMethod = 'delivery';
                 currentAddress = modal.querySelector('#delivery-address-input').value.trim() || currentAddress;
+                // Show map for current address if not empty
+                const mapFrame = modal.querySelector('#delivery-map');
+                if (currentAddress) {
+                    mapFrame.src = `https://www.google.com/maps?q=${encodeURIComponent(currentAddress)}&output=embed`;
+                } else {
+                    mapFrame.src = "";
+                }
             } else {
                 modal.querySelector('#pickup-map').style.display = '';
                 modal.querySelector('#delivery-section').style.display = 'none';
                 currentMethod = 'pickup';
-                currentAddress = userAddress || 'Allen Ave, Ikeja, Lagos';
+                currentAddress = 'Allen Ave, Ikeja, Lagos';
             }
             currentAmount = calculateAmount(price, currentMethod, currentAddress);
             modal.querySelector('#total-amount').innerText = currentAmount;
         };
     });
 
-    // Update amount on address change
+   // Payment method selection
+modal.querySelectorAll('input[name="payment"]').forEach(radio => {
+    radio.onchange = function() {
+        currentPayment = this.value;
+        // Show bank transfer info if selected
+        const transferInfoId = 'bank-transfer-info';
+        let info = modal.querySelector(`#${transferInfoId}`);
+        if (this.value === 'transfer') {
+            if (!info) {
+                info = document.createElement('div');
+                info.id = transferInfoId;
+                info.style = "margin:10px 0 0 0;padding:10px;background:#eaf3fa;border-radius:6px;color:#222;font-size:1em;";
+                info.innerHTML = `<b>Bank Transfer Only</b><br>Account Number: <span style="color:#0078d7;font-weight:bold;">9138154963</span>`;
+                modal.querySelector('.order-details')?.after(info) ||
+                modal.querySelector('#total-amount').parentNode.after(info);
+            } else {
+                info.style.display = '';
+            }
+        } else if (info) {
+            info.style.display = 'none';
+        }
+    };
+});
+// Set default to show bank transfer info on modal open
+setTimeout(() => {
+    const transferRadio = modal.querySelector('input[name="payment"][value="transfer"]');
+    if (transferRadio) transferRadio.checked = true;
+    transferRadio?.dispatchEvent(new Event('change'));
+}, 0);
+
+    // Update amount and map on address change
     modal.querySelector('#delivery-address-input').oninput = function() {
         currentAddress = this.value.trim();
         currentAmount = calculateAmount(price, currentMethod, currentAddress);
         modal.querySelector('#total-amount').innerText = currentAmount;
+        // Update the map to show the entered address
+        const mapFrame = modal.querySelector('#delivery-map');
+        if (currentAddress) {
+            mapFrame.src = `https://www.google.com/maps?q=${encodeURIComponent(currentAddress)}&output=embed`;
+        } else {
+            mapFrame.src = "";
+        }
     };
 
     modal.querySelector('#confirm-order-btn').onclick = function() {
         const method = modal.querySelector('input[name="method"]:checked').value;
-        let address = method === 'delivery' ? modal.querySelector('#delivery-address-input').value.trim() : userAddress || 'Allen Ave, Ikeja, Lagos';
+        const payment = modal.querySelector('input[name="payment"]:checked').value;
+        let address = method === 'delivery' ? modal.querySelector('#delivery-address-input').value.trim() : 'Allen Ave, Ikeja, Lagos';
 
         if (method === 'delivery' && !address) {
             alert('Please enter your delivery address.');
@@ -441,16 +542,29 @@ function buyNow(name, price) {
         localStorage.setItem('gadgetUsers', JSON.stringify(users));
 
         // --- SHEETBEST ORDER SUBMISSION ---
-        axios.post(`https://api.sheetbest.com/sheets/da756097-1974-49b4-bee3-34954fa429da`, {
+        showNotification('Sending order...');
+        axios.post("https://api.sheetbest.com/sheets/da756097-1974-49b4-bee3-34954fa429da", {
             timestamp: new Date().toISOString(),
             sender: username,
             title: `New Order: ${name}`,
-            message: `User: ${username}\nProduct: ${name}\nPrice: $${price}\nMethod: ${method}\nAddress: ${address}\nTotal: $${currentAmount}`,
+            message: `User: ${username}\nProduct: ${name}\nPrice: $${price}\nMethod: ${method}\nPayment: ${payment}\nAddress: ${address}\nTotal: $${currentAmount}`,
             status: 'active'
         })
         .then(response => {
-            showNotification('Order sent to admin!');
-            modal.remove();
+            // Send notification to notification sheet for user
+            axios.post("https://api.sheetbest.com/sheets/da756097-1974-49b4-bee3-34954fa429da", {
+                timestamp: new Date().toISOString(),
+                user: username,
+                title: "Order Placed",
+                message: `Your order for ${name} has been placed and is pending admin confirmation.`,
+                status: 'pending'
+            }).then(() => {
+                showNotification('Order sent! You will see admin reaction here.');
+                modal.remove();
+            }).catch(() => {
+                showNotification('Order sent, but notification failed.');
+                modal.remove();
+            });
         })
         .catch(error => {
             showNotification('Error sending order.');
@@ -527,7 +641,7 @@ document.getElementById('ai-chat-form').onsubmit = function(e) {
     e.preventDefault();
     sendAIMessage();
 };
-// Search gadgets by name
+//seach nodel 
 function searchGadgets() {
     const searchTerm = document.getElementById('search-input').value.toLowerCase();
     const gadgets = document.querySelectorAll('.Gadget-item');
@@ -540,27 +654,6 @@ function searchGadgets() {
         }
     });
 }
-
-// Optional: Live search as you type
-document.getElementById('search-input').addEventListener('input', searchGadgets);
-// Show map modal
-function showMapModal() {
-    const modal = document.createElement('div');
-    modal.style = "position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:10000;";
-    modal.innerHTML = `
-        <div style="background:#fff;padding:24px 18px;border-radius:12px;max-width:600px;box-shadow:0 4px 24px rgba(0,0,0,0.18);text-align:center;position:relative;">
-            <button onclick="this.closest('div').parentNode.remove();" style="position:absolute;top:10px;right:10px;background:none;border:none;font-size:22px;cursor:pointer;">&times;</button>
-            <h2>Our Location</h2>
-            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3976.123456789012!2d3.1234567890123456!3d6.123456789012345!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x103b123456789012%3A0x1234567890123456!2sGadget%20Store%20Location!5e0!3m2!1sen!2sng!4v1612345678901" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-        </div>
-    `;
-    document.body.appendChild(modal);
-    // Close on outside click
-    modal.onclick = function(e) {
-        if (e.target === modal) modal.remove();
-    };
-}
-
     </script>
 </body>
 </html>
