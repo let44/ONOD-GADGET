@@ -165,7 +165,8 @@
         </footer>
     </div>
     <script>
-  // --- LOGIN/REGISTER LOGIC ---
+
+// --- LOGIN/REGISTER LOGIC ---
 function showRegister() {
     document.getElementById('login-title').innerText = "Register";
     document.getElementById('login-btn').style.display = "none";
@@ -300,7 +301,7 @@ window.onload = function() {
 };
 // --- BACKEND URLS ---
 const ORDERS_SHEET_URL = "https://api.sheetbest.com/sheets/da756097-1974-49b4-bee3-34954fa429da";
-const ADMIN_SHEET_URL = "https://api.sheetbest.com/sheets/59b9bd3c-b08b-4e5f-96c5-3e8b812974c0"; // <-- Use your admin replies SheetBest URL
+const ADMIN_SHEET_URL = "https://api.sheetbest.com/sheets/59b9bd3c-b08b-4e5f-96c5-3e8b812974c0";
 
 // --- NOTIFICATION DOT LOGIC ---
 function setNotificationDot(show) {
@@ -449,6 +450,7 @@ function pollNotificationsDot() {
 // Start polling every 10 seconds
 setInterval(pollNotificationsDot, 10000);
 pollNotificationsDot();
+
 // --- BUY NOW LOGIC WITH ONSEND NOTIFICATION ---
 function buyNow(name, price) {
     const username = localStorage.getItem('gadgetLoggedIn') || 'Guest';
@@ -598,7 +600,7 @@ function buyNow(name, price) {
                 title: "Order Placed",
                 message: `Order Details:\nProduct: ${name}\nPrice: $${price}\nMethod: ${method}\nPayment: ${payment}\nAddress: ${address}\nTotal: $${currentAmount}\n\nYour order for ${name} has been placed and is pending admin confirmation.`,
                 status: 'pending',
-                total: $currentAmount,
+                total: currentAmount,
                 address: address,
                 product: name
             }).then(() => {
@@ -615,13 +617,10 @@ function buyNow(name, price) {
         });
     };
 }
-//chat model
-// --- CHAT LOGIC WITH TWO SHEETS (SEND & RECEIVE) ---
 
-// Sheet for sending user messages
+// --- CHAT LOGIC WITH TWO SHEETS (SEND & RECEIVE) ---
 const CHAT_SEND_SHEET = "https://api.sheetbest.com/sheets/0454fba2-42fd-49f5-9ec9-18e1e09c36da";
-// Sheet for receiving admin replies
-const CHAT_RECEIVE_SHEET = "https://api.sheetbest.com/sheets/241df24d-b61e-4584-9a0a-cde50541263b"; // <-- Replace with your admin reply SheetBest URL
+const CHAT_RECEIVE_SHEET = "https://api.sheetbest.com/sheets/241df24d-b61e-4584-9a0a-cde50541263b";
 
 // Show chat window when button is clicked
 document.getElementById('ai-chat-btn').onclick = function() {
@@ -647,7 +646,7 @@ function sendAIMessage() {
     chat.scrollTop = chat.scrollHeight;
 
     let name = localStorage.getItem('gadgetLoggedIn') || 'Guest';
-    fetch("https://api.sheetbest.com/sheets/0454fba2-42fd-49f5-9ec9-18e1e09c36da", {
+    fetch(CHAT_SEND_SHEET, {
         method: "POST",
         body: JSON.stringify({ name, message: msg }),
         headers: { "Content-Type": "application/json" }
@@ -664,7 +663,7 @@ function sendAIMessage() {
 
 // Load admin replies from receive sheet
 function loadAdminReplies() {
-    fetch( "https://api.sheetbest.com/sheets/241df24d-b61e-4584-9a0a-cde50541263b")
+    fetch(CHAT_RECEIVE_SHEET)
         .then(res => res.json())
         .then(data => {
             const chat = document.getElementById('ai-chat-messages');
@@ -684,9 +683,9 @@ document.getElementById('ai-chat-form').onsubmit = function(e) {
     e.preventDefault();
     sendAIMessage();
 };
+
 // Show map modal
 function showMapModal() {
-    // If modal doesn't exist, create it
     if (!document.getElementById('map-modal')) {
         const modal = document.createElement('div');
         modal.id = 'map-modal';
@@ -709,7 +708,8 @@ function closeMapModal() {
     const modal = document.getElementById('map-modal');
     if (modal) modal.style.display = 'none';
 }
-//view details function
+
+// View details function
 function viewDetails(name, price, image) {
     const detailsModal = document.createElement('div');
     detailsModal.style = "position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:10000;";
@@ -724,7 +724,8 @@ function viewDetails(name, price, image) {
     `;
     document.body.appendChild(detailsModal);
 }
-// search function
+
+// Search function (show all if empty, filter by name if not)
 function searchGadgets() {
     const query = document.getElementById('search-input').value.toLowerCase();
     const gadgets = document.querySelectorAll('.Gadget-item');
@@ -733,11 +734,9 @@ function searchGadgets() {
         const name = gadget.querySelector('h2').innerText.toLowerCase();
         if (name.includes(query) && query !== "") {
             gadget.style.display = '';
-            // Show only the name and image, hide other gadgets
             gadgets.forEach(g => {
                 if (g !== gadget) g.style.display = 'none';
             });
-            // Optionally, scroll to the found gadget
             gadget.scrollIntoView({ behavior: "smooth", block: "center" });
             found = true;
         } else if (query === "") {
@@ -758,6 +757,7 @@ document.getElementById('search-input').addEventListener('keydown', function(e) 
         });
     }
 });
+
 </script>
 </body>
 </html>
