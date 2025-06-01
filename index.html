@@ -527,34 +527,37 @@ function buyNow(name, price) {
     });
 
     // Payment method selection
-    modal.querySelectorAll('input[name="payment"]').forEach(radio => {
-        radio.onchange = function() {
-            currentPayment = this.value;
-            // Show bank transfer info if selected
-            const transferInfoId = 'bank-transfer-info';
-            let info = modal.querySelector(`#${transferInfoId}`);
-            if (this.value === 'transfer') {
-                if (!info) {
-                    info = document.createElement('div');
-                    info.id = transferInfoId;
-                    info.style = "margin:10px 0 0 0;padding:10px;background:#eaf3fa;border-radius:6px;color:#222;font-size:1em;";
-                    info.innerHTML = `<b>Bank Transfer Only</b><br>Account Number: <span style="color:#0078d7;font-weight:bold;">9138154963</span>`;
-                    modal.querySelector('.order-details')?.after(info) ||
-                    modal.querySelector('#total-amount').parentNode.after(info);
-                } else {
-                    info.style.display = '';
-                }
-            } else if (info) {
-                info.style.display = 'none';
+modal.querySelectorAll('input[name="payment"]').forEach(radio => {
+    radio.onchange = function() {
+        currentPayment = this.value;
+        // Show bank transfer info if selected
+        const transferInfoId = 'bank-transfer-info';
+        let info = modal.querySelector(`#${transferInfoId}`);
+        if (this.value === 'transfer') {
+            if (!info) {
+                info = document.createElement('div');
+                info.id = transferInfoId;
+                info.style = "margin:10px 0 0 0;padding:10px;background:#eaf3fa;border-radius:6px;color:#222;font-size:1em;";
+                info.innerHTML = `<b>Bank Transfer Only</b><br>
+                    Account Number: <span style="color:#0078d7;font-weight:bold;">9138154963</span><br>
+                    Bank Name: <span style="color:#0078d7;font-weight:bold;">Opay</span><br>
+                    Account Name: <span style="color:#0078d7;font-weight:bold;">Ayomide Amos</span>`;
+                modal.querySelector('.order-details')?.after(info) ||
+                modal.querySelector('#total-amount').parentNode.after(info);
+            } else {
+                info.style.display = '';
             }
-        };
-    });
-    // Set default to show bank transfer info on modal open
-    setTimeout(() => {
-        const transferRadio = modal.querySelector('input[name="payment"][value="transfer"]');
-        if (transferRadio) transferRadio.checked = true;
-        transferRadio?.dispatchEvent(new Event('change'));
-    }, 0);
+        } else if (info) {
+            info.style.display = 'none';
+        }
+    };
+});
+// Set default to show bank transfer info on modal open
+setTimeout(() => {
+    const transferRadio = modal.querySelector('input[name="payment"][value="transfer"]');
+    if (transferRadio) transferRadio.checked = true;
+    transferRadio?.dispatchEvent(new Event('change'));
+}, 0);
 
     // Update amount and map on address change
     modal.querySelector('#delivery-address-input').oninput = function() {
