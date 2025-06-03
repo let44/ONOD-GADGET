@@ -461,6 +461,34 @@ body {
                 <div class="Gadget-item"><img src="Htc - Copy.jpeg" alt="HTC U20"><h2>HTC U20</h2><p>Price: #300,000</p><div class="button-group"><button onclick="viewDetails('HTC U20', 300, 'Htc - Copy.jpeg')">View Details</button><button onclick="buyNow('HTC U20', 300)">Buy Now</button></div></div>
                 <div class="Gadget-item"><img src="black berry - Copy.jpeg" alt="BlackBerry Key2"><h2>BlackBerry Key2</h2><p>Price: #400,000</p><div class="button-group"><button onclick="viewDetails('BlackBerry Key2', 400, 'black berry - Copy.jpeg')">View Details</button><button onclick="buyNow('BlackBerry Key2', 400)">Buy Now</button></div></div>
                 <div class="Gadget-item"><img src="Realme.jpeg" alt="Realme X50"><h2>Realme X50</h2><p>Price: #280,000</p><div class="button-group"><button onclick="viewDetails('Realme X50', 280, 'phone19.jpeg')">View Details</button><button onclick="buyNow('Realme X50', 280)">Buy Now</button></div></div>
+                </div>
+                <div class="more-phones">
+  <a href="#" id="show-more-phones-btn" onclick="showMorePhones(event)">View More Phones</a>
+<!-- Hidden gadgets start -->
+<div id="more-phones-list" style="display:none;">
+  <div class="Gadget-list" style="margin-top: 10px;">
+    <div class="Gadget-item"><img src="phone10.jpeg" alt="Oppo Reno"><h2>Oppo Reno</h2><p>Price: #300,000</p><div class="button-group"><button onclick="viewDetails('Oppo Reno', 300, 'phone10.jpeg')">View Details</button><button onclick="buyNow('Oppo Reno', 300)">Buy Now</button></div></div>
+    <div class="Gadget-item"><img src="phone11.jpeg" alt="Xiaomi Mi 10"><h2>Xiaomi Mi 10</h2><p>Price: #350,000</p><div class="button-group"><button onclick="viewDetails('Xiaomi Mi 10', 350, 'phone11.jpeg')">View Details</button><button onclick="buyNow('Xiaomi Mi 10', 350)">Buy Now</button></div></div>
+    <div class="Gadget-item"><img src="phone14.jpeg" alt="Tecno Camon 16"><h2>Tecno Camon 16</h2><p>Price: #200,000</p><div class="button-group"><button onclick="viewDetails('Tecno Camon 16', 200, 'phone14.jpeg')">View Details</button><button onclick="buyNow('Tecno Camon 16', 200)">Buy Now</button></div></div>
+    <div class="Gadget-item"><img src="phone16.jpeg" alt="Infinix Zero 8"><h2>Infinix Zero 8</h2><p>Price: #180,000</p><div class="button-group"><button onclick="viewDetails('Infinix Zero 8', 180, 'phone16.jpeg')">View Details</button><button onclick="buyNow('Infinix Zero 8', 180)">Buy Now</button></div></div>
+    <div class="Gadget-item"><img src="phone17.jpeg" alt="Tecno Spark 6"><h2>Tecno Spark 6</h2><p>Price: #150,000</p><div class="button-group"><button onclick="viewDetails('Tecno Spark 6', 150, 'phone17.jpeg')">View Details</button><button onclick="buyNow('Tecno Spark 6', 150)">Buy Now</button></div></div>
+    <div class="Gadget-item"><img src="phone18.jpeg" alt="Infinix Hot 10"><h2>Infinix Hot 10</h2><p>Price: #120,000</p><div class="button-group"><button onclick="viewDetails('Infinix Hot 10', 120, 'phone18.jpeg')">View Details</button><button onclick="buyNow('Infinix Hot 10', 120)">Buy Now</button></div></div>
+    <div class="Gadget-item"><img src="phone20.jpeg" alt="Vivo Y20"><h2>Vivo Y20</h2><p>Price: #130,000</p><div class="button-group"><button onclick="viewDetails('Vivo Y20', 130, 'phone20.jpeg')">View Details</button><button onclick="buyNow('Vivo Y20', 130)">Buy Now</button></div></div>
+  </div>
+</div>
+<script>
+function showMorePhones(e) {
+  e.preventDefault();
+  var morePhones = document.getElementById('more-phones-list');
+  if (morePhones.style.display === 'none') {
+    morePhones.style.display = '';
+    document.getElementById('show-more-phones-btn').innerText = "Hide More Phones";
+  } else {
+    morePhones.style.display = 'none';
+    document.getElementById('show-more-phones-btn').innerText = "View More Phones";
+  }
+}
+</script>
             </section>
             <!-- LAPTOPS -->
             <div class="section-title">Laptops</div>
@@ -475,6 +503,32 @@ body {
                 <div class="Gadget-item"><img src="laptop8.webp" alt="Razer"><h2>Razer</h2><p>Price: #1500,000</p><div class="button-group"><button onclick="viewDetails('Razer', 1500, 'laptop8.jpeg')">View Details</button><button onclick="buyNow('Razer', 1500)">Buy Now</button></div></div>
                 <div class="Gadget-item"><img src="laptop9.jpeg" alt="Alienware"><h2>Alienware</h2><p>Price: #200,000</p><div class="button-group"><button onclick="viewDetails('Alienware', 2000, 'laptop9.jpeg')">View Details</button><button onclick="buyNow('Alienware', 2000)">Buy Now</button></div></div>
                 <div class="Gadget-item"><img src="laptop10.jpeg" alt="MSI"><h2>MSI</h2><p>Price: #130,000</p><div class="button-group"><button onclick="viewDetails('MSI', 1300, 'laptop10.jpeg')">View Details</button><button onclick="buyNow('MSI', 1300)">Buy Now</button></div></div>
+                </div>
+                <div class="more-laptops">
+  <a href="#" id="show-more-laptops-btn" onclick="showMoreLaptops(event)">View More Laptops</a>
+<!-- Hidden gadgets start -->
+<div id="more-laptops-list" style="display:none;">
+    <div class="Gadget-list" style="margin-top: 10px;">
+        <div class="Gadget-item"><img src="laptop11.jpeg" alt="Gigabyte"><h2>Gigabyte</h2><p>Price: #140,000</p><div class="button-group"><button onclick="viewDetails('Gigabyte', 1400, 'laptop11.jpeg')">View Details</button><button onclick="buyNow('Gigabyte', 1400)">Buy Now</button></div></div>
+        <div class="Gadget-item"><img src="laptop12.jpeg" alt="Toshiba"><h2>Toshiba</h2><p>Price: #600,000</p><div class="button-group"><button onclick="viewDetails('Toshiba', 600, 'laptop12.jpeg')">View Details</button><button onclick="buyNow('Toshiba', 600)">Buy Now</button></div></div>
+        <div class="Gadget-item"><img src="laptop13.jpeg" alt="Huawei MateBook"><h2>Huawei MateBook</h2><p>Price: #700,000</p><div class="button-group"><button onclick="viewDetails('Huawei MateBook', 700, 'laptop13.jpeg')">View Details</button><button onclick="buyNow('Huawei MateBook', 700)">Buy Now</button></div></div>
+        <div class="Gadget-item"><img src="laptop14.jpeg" alt="LG Gram"><h2>LG Gram</h2><p>Price: #800,000</p><div class="button-group"><button onclick="viewDetails('LG Gram', 800, 'laptop14.jpeg')">View Details</button><button onclick="buyNow('LG Gram', 800)">Buy Now</button></div></div>
+        <div class="Gadget-item"><img src="laptop15.jpeg" alt="Samsung Galaxy Book"><h2>Samsung Galaxy Book</h2><p>Price: #900,000</p><div class="button-group"><button onclick="viewDetails('Samsung Galaxy Book', 900, 'laptop15.jpeg')">View Details</button><button onclick="buyNow('Samsung Galaxy Book', 900)">Buy Now</button></div></div>
+    </div>
+</div>
+<script>
+function showMoreLaptops(e) {
+    e.preventDefault();
+    var moreLaptops = document.getElementById('more-laptops-list');
+    if (moreLaptops.style.display === 'none') {
+        moreLaptops.style.display = '';
+        document.getElementById('show-more-laptops-btn').innerText = "Hide More Laptops";
+    } else {
+        moreLaptops.style.display = 'none';
+        document.getElementById('show-more-laptops-btn').innerText = "View More Laptops";
+    }
+}
+</script>
             </section>
             <!-- ACCESSORIES -->
             <div class="section-title">Accessories</div>
@@ -488,6 +542,31 @@ body {
                 <div class="Gadget-item"><img src="airpod.jpeg" alt="Apple AirPods"><h2>Apple AirPods</h2><p>Price: #20,000</p><div class="button-group"><button onclick="viewDetails('Apple AirPods', 200, 'airpod.jpeg')">View Details</button><button onclick="buyNow('Apple AirPods', 200)">Buy Now</button></div></div>
                 <div class="Gadget-item"><img src="logitechkeyboard.jpeg" alt="Logitech Keyboard"><h2>Logitech Keyboard</h2><p>Price: #12,000</p><div class="button-group"><button onclick="viewDetails('Logitech Keyboard', 120, 'logitechkeyboard.jpeg')">View Details</button><button onclick="buyNow('Logitech Keyboard', 120)">Buy Now</button></div></div>
                 <div class="Gadget-item"><img src="logitechmouse.jpeg" alt="Logitech Mouse"><h2>Logitech Mouse</h2><p>Price: #80,000</p><div class="button-group"><button onclick="viewDetails('Logitech Mouse', 80, 'logitechmouse.jpeg')">View Details</button><button onclick="buyNow('Logitech Mouse', 80)">Buy Now</button></div></div>
+                </div>
+                <div class="more-accessories">]
+    <a href="#" id="show-more-accessories-btn" onclick="showMoreAccessories(event)">View More Accessories</a>
+<!-- Hidden gadgets start -->
+<div id="more-accessories-list" style="display:none;">
+    <div class="Gadget-list" style="margin-top: 10px;">
+        <div class="Gadget-item"><img src="samsungcharger.jpeg" alt="Samsung Charger"><h2>Samsung Charger</h2><p>Price: #18,000</p><div class="button-group"><button onclick="viewDetails('Samsung Charger', 180, 'samsungcharger.jpeg')">View Details</button><button onclick="buyNow('Samsung Charger', 180)">Buy Now</button></div></div>
+        <div class="Gadget-item"><img src="samsungbuds.jpeg" alt="Samsung Buds Pro"><h2>Samsung Buds Pro</h2><p>Price: #22,000</p><div class="button-group"><button onclick="viewDetails('Samsung Buds Pro', 220, 'samsungbuds.jpeg')">View Details</button><button onclick="buyNow('Samsung Buds Pro', 220)">Buy Now</button></div></div>
+        <div class="Gadget-item"><img src="samsungwatch.jpeg" alt="Samsung Galaxy Watch"><h2>Samsung Galaxy Watch</h2><p>Price: #50,000</p><div class="button-group"><button onclick="viewDetails('Samsung Galaxy Watch', 500, 'samsungwatch.jpeg')">View Details</button><button onclick="buyNow('Samsung Galaxy Watch', 500)">Buy Now</button></div></div>
+        <div class="Gadget-item"><img src="ankerwirelesscharger.jpeg" alt="Anker Wireless Charger"><h2>Anker Wireless Charger</h2><p>Price: #15,000</p><div class="button-group"><button onclick="viewDetails('Anker Wireless Charger', 150, 'ankerwirelesscharger.jpeg')">View Details</button><button onclick="buyNow('Anker Wireless Charger', 150)">Buy Now</button></div></div>
+        </div>
+</div>
+<script>
+function showMoreAccessories(e) {
+    e.preventDefault();
+    var moreAccessories = document.getElementById('more-accessories-list');
+    if (moreAccessories.style.display === 'none') {
+        moreAccessories.style.display = '';
+        document.getElementById('show-more-accessories-btn').innerText = "Hide More Accessories";
+    } else {
+        moreAccessories.style.display = 'none';
+        document.getElementById('show-more-accessories-btn').innerText = "View More Accessories";
+    }
+}
+</script>
             </section>
            <!-- Floating Chat Button (use your own icon image) -->
 <button id="ai-chat-btn" title="Chat with AI" style="position:fixed;bottom:30px;right:30px;z-index:10001;background:#0078d7;border:none;border-radius:50%;width:60px;height:60px;box-shadow:0 2px 8px rgba(0,0,0,0.18);cursor:pointer;">
@@ -510,8 +589,8 @@ body {
         <section class="contact-us">
             <h2>Contact Us</h2>
             <p>Email: <a href="mailto:ayomideoluniyi49@gmail.com">ayomideoluniyi49@gmail.com</a></p>
-            <p>Phone: <a href="tel:+234123456789">+234 123 456 789</a></p>
-            <p>Address: 123 Gadget Street, Tech City, Nigeria</p>
+            <p>Phone: <a href="tel:+2349138154963">+234 9138154963</a></p>
+            <p>Address: NO 12, Gadget Avenue, Tech City, Nigeria</p>
             <p><button onclick="showMapModal()">View Map</button></p>
         </section>
         <footer class="footer">
